@@ -95,3 +95,9 @@ if __name__== '__main__':
     manager.start()
     d = manager.dict()
     n = manager.dict()
+
+def mythread(New, params, i, a, filename, string2):
+    d= AromaticArray.copy()
+    n= AromaticArray.copy()
+    f= open('output/' + filename + '.txt', 'w+')
+    
