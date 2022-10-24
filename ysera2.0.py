@@ -152,4 +152,15 @@ def mythread(New, params, i, a, filename, string2):
                         'Salt_Bridge' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + atom2 + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(
                     distance) + '\n')
             #Looking for Dissulfide_Bond
+
+            if atom1 in ligdb[:] and atom2 in ligdb[:] and 0.0< distance < 2.2:
+                db += 1
+                string2= string2 + ('Dissulfide_bond' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + atom2 + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(distance) + '\n')
+
+            #Looking for Van Der Walls
+
+            if aa1 in aavdw[:] and atom1 in ligvdw[:] and aa2 in aavdw[:] and atom2 in ligvdw[:] and 0.0< distance < params['vdw']:
+                vdw += 1
+                string2 = string2 + ('Van_der_Waals' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + atom2 + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(distance) + '\n')
             
+            #----
