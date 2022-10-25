@@ -163,4 +163,28 @@ def mythread(New, params, i, a, filename, string2):
                 vdw += 1
                 string2 = string2 + ('Van_der_Waals' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + atom2 + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(distance) + '\n')
             
-            #----
+            # Pi Stacking
+
+            if aa1 in aapi[:] and aa2 in aapi[:]:
+                if(chaincode1 not in Invalids and chaincode2 not in Invalids and [chaincode1, chaincode2] not in Exclusions and [chaincode2, chaincode1] not in Exclusions):
+                    coordinates1= d[chaincode1]
+                    coordinates2= d[chaincode2]
+                    aromaticdistance=  np.linalg.norm(coordinates1 - coordinates2) # calculate one of the eight different matrix norms or one of the vector norms.
+                    if(aromaticdistance < params['aaspi']):
+                        string2= string2 + ('Pi_stacking  ' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + atom2 + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
+                        NormalVector1= n[chaincode1] / np.linalg.norm(n[chaincode1])
+                        NormalVector2= n[chaincode2] / np.linalg.norm(n[chaincode2])
+                        Angle= np.arccos(np.clip(np.dot(NormalVector1, NormalVector2), -1.0, 1.0)) #clip tem a fução de retornar um valor entre um intervalo, nesse caso entre -1 e 1
+
+                        if (Angle> 50):
+                            tshaped += 1
+                        elif (30< Angle < 50):
+                            inter += 1
+                        elif (Angle<30):
+                            paralel += 1
+                        
+                        lpi += 1
+                        Exclusions.append([chaincode1, chaincode2])
+            # Looking for Cation Aryl 
+            if aa1 in aactn[:] and atom2 in ligctn[:]:
+                pass
