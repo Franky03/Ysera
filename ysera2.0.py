@@ -187,4 +187,23 @@ def mythread(New, params, i, a, filename, string2):
                         Exclusions.append([chaincode1, chaincode2])
             # Looking for Cation Aryl 
             if aa1 in aactn[:] and atom2 in ligctn[:]:
-                pass
+                if (chaincode1 not in Invalids and chaincode2 not in Invalids and [chaincode1, chaincode2] not in Exclusions and [chaincode2, chaincode1] not in Exclusions):
+                    coordinates1= d[chaincode1]
+                    coordinates2= np.array([New['X'].iloc[j], New['Y'].iloc[j], New['Z'].iloc[j]]) #Coordenadas 2 colocadas em um array 
+                    aromaticdistance = np.linalg.norm(coordinates1 - coordinates2)
+
+                    #Se a distancia aromática estiver entre aa começo e o aa final
+                    if (params['aactn_beg'] < aromaticdistance < params['aactn_end']):
+                        ctn+=1
+                        string2 = string2 + ('Cation_Aryl' + '\t\t' + 'centroid' + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + atom2 + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
+                        Exclusions.append([chaincode1, chaincode2])
+            elif (atom1 in ligctn[:] and aa2 in aactn[:]):
+                if(chaincode1 not in Invalids and chaincode2 not in Invalids and [chaincode1, chaincode2] not in Exclusions and [chaincode2, chaincode1] not in Exclusions):
+                    coordinates1 = np.array([New['X'].iloc[i], New['Y'].iloc[i], New['Z'].iloc[i]])
+                    coordinates2 = d[chaincode2]
+                    aromaticdistance = np.linalg.norm(coordinates1 - coordinates2)
+                    if (params['aactn_beg']< aromaticdistance < params['aactn_end']):
+                        ctn += 1
+                        string2= string2 + ('Cation_Aryl' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + 'centroid' + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
+                        Exclusions.append([chaincode1, chaincode2])
+            #Looking for Sulfur Aryl
