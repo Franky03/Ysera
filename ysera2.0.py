@@ -15,6 +15,8 @@ import json
 import concurrent.futures
 from multiprocessing import set_start_method, Pool, Manager
 
+from ysera import myfunction
+
 PROJECT_HOME= os.path.dirname(os.path.realpath(__file__)) #Pega a pasta em que o arquivo atual está
 
 HB_DEFAULT= 3.1
@@ -100,7 +102,7 @@ if __name__== '__main__':
 def mythread(New, params, i, a, filename, string2):
     d= AromaticArray.copy()
     n= AromaticNormals.copy()
-    f= open('output/' + filename + '.txt', 'w+')
+    f= open('output/' + filename + '.txt', 'w+') #arquivo de saída
     while i< a:
         for j in range(i + 1, len(New)):
             distance= New[j].iloc[i]
@@ -122,12 +124,12 @@ def mythread(New, params, i, a, filename, string2):
 
             atom1= New['Atom Type'].iloc[i]
             atom2= New['Atom Type'].iloc[j]
-            #O que é aa1 e aa2?
-            aa1= New['aa'].iloc[i]
-            aa2= New['aa'].iloc[j]
-            #O que é chaincode?
-            chaincode1= New['Chain ID'].iloc[i]
-            chaincode2= New['Chain ID'].iloc[j]
+            
+            aa1= New['aa'].iloc[i] #aminoácido do atomo 1
+            aa2= New['aa'].iloc[j] #aminoácido do atomo 2
+            
+            chaincode1= New['Chain ID'].iloc[i] #cadeia do atomo 1
+            chaincode2= New['Chain ID'].iloc[j] #cadeia do atomo 2
 
             distance= New[j].iloc[i]
             print(f"down distance: {distance}\n")
@@ -185,6 +187,7 @@ def mythread(New, params, i, a, filename, string2):
                         
                         lpi += 1
                         Exclusions.append([chaincode1, chaincode2])
+
             # Looking for Cation Aryl 
             if aa1 in aactn[:] and atom2 in ligctn[:]:
                 if (chaincode1 not in Invalids and chaincode2 not in Invalids and [chaincode1, chaincode2] not in Exclusions and [chaincode2, chaincode1] not in Exclusions):
@@ -197,6 +200,7 @@ def mythread(New, params, i, a, filename, string2):
                         ctn+=1
                         string2 = string2 + ('Cation_Aryl' + '\t\t' + 'centroid' + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + atom2 + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
                         Exclusions.append([chaincode1, chaincode2])
+
             elif (atom1 in ligctn[:] and aa2 in aactn[:]):
                 if(chaincode1 not in Invalids and chaincode2 not in Invalids and [chaincode1, chaincode2] not in Exclusions and [chaincode2, chaincode1] not in Exclusions):
                     coordinates1 = np.array([New['X'].iloc[i], New['Y'].iloc[i], New['Z'].iloc[i]])
@@ -207,3 +211,117 @@ def mythread(New, params, i, a, filename, string2):
                         string2= string2 + ('Cation_Aryl' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + 'centroid' + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
                         Exclusions.append([chaincode1, chaincode2])
             #Looking for Sulfur Aryl
+            if (aa1 in aaspi[:] and atom2 in ligspi1[:]):
+                if(chaincode1 not in Invalids and chaincode2 not in Invalids and [chaincode1, chaincode2] not in Exclusions and [chaincode2, chaincode1] not in Exclusions):
+                    coordinates1= d[chaincode1]
+                    coordinates2= np.array([New['X'].iloc[j], New['Y'].iloc[j], New['Z'].iloc[j]])
+                    aromaticdistance= np.linalg.norm(coordinates1 - coordinates2)
+                    if (0 < aromaticdistance < params['aaspi']):
+                        spi += 1
+                        string2= string2 + ('Sulfur_Aryl  ' + '\t\t' + 'centroid' + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + atom2 + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
+                        Exclusions.append([chaincode1, chaincode2])
+            elif (atom1 in ligspi1[:] and aa2 in aaspi[:]):
+                if (chaincode1 not in Invalids and chaincode2 not in Invalids and [chaincode1, chaincode2] not in Exclusions and [chaincode2, chaincode1] not in Exclusions):
+                    coordinates1 = np.array([New['X'].iloc[i], New['Y'].iloc[i], New['Z'].iloc[i]])
+                    coordinates2 = d[chaincode2]
+                    aromaticdistance= np.linalg.norm(coordinates1 - coordinates2)
+                    if(0 < aromaticdistance < params['aaspi']): 
+                        spi += 1
+                        string2 = string2 + ('Sulfur_Aryl' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + 'centroid' + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
+                        Exclusions.append([chaincode1, chaincode2])
+            #Looking for Anion Aryl
+            if aa1 in aaan[:] and atom2 in ligan1[:]:
+                if (chaincode1 not in Invalids and chaincode2 not in Invalids and [chaincode1,chaincode2] not in Exclusions and [chaincode2, chaincode1] not in Exclusions):
+                    coordinates1 = d[chaincode1]
+                    coordinates2 = np.array([New['X'].iloc[j], New['Y'].iloc[j], New['Z'].iloc[j]])
+                    aromaticdistance = np.linalg.norm(coordinates1 - coordinates2)
+                    if (params['aaan_beg'] < aromaticdistance < params['aaan_end']):
+                        an += 1
+                        string2 = string2 + ('Anion_Aryl' + '\t\t' + 'centroid' + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + atom2 + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
+                        Exclusions.append([chaincode1, chaincode2])
+            elif (atom1 in ligan1[:] and aa2 in aaan[:]):
+                if (chaincode1 not in Invalids and chaincode2 not in Invalids and [chaincode1,chaincode2] not in Exclusions and [chaincode2, chaincode1] not in Exclusions):
+                    coordinates1 = np.array([New['X'].iloc[i], New['Y'].iloc[i], New['Z'].iloc[i]])
+                    coordinates2 = d[chaincode2]
+                    aromaticdistance = np.linalg.norm(coordinates1 - coordinates2)
+                    if (params['aaan_beg']< aromaticdistance < params['aaan_end']):
+                        an += 1
+                        string2 = string2 + ('Anion_Aryl' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + 'centroid' + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
+                        Exclusions.append([chaincode1, chaincode2])
+        i += 1
+        f.write(string2)
+        f.close()
+        string1= {
+            "filename": filename,
+            "hb": hb,
+            "sb": sb,
+            "db": db,
+            "lpi": lpi,
+            "tshaped": tshaped,
+            "inter": inter,
+            "paralel": paralel,
+            "vdw": vdw,
+            "ctn": ctn,
+            "an": an,
+            "spi": spi
+        }
+        print(string1) #printando o total de cada tipo de ligação
+
+def ysera(filename, params):
+    #Corrigindo alguns valores das ligações nos parâmetros casos eles não estejam presentes
+
+    if(not ("hb" in params)):
+        params['hb']= HB_DEFAULT
+    if (not ("sb" in params)):
+        params['sb'] = SB_DEFAULT
+    if (not ("db" in params)):
+        params['db'] = DB_DEFAULT
+    if (not ("vdw" in params)):
+        params['vdw'] = VDW_DEFAULT
+    if (not ("ps" in params)):
+        params['ps'] = PS_DEFAULT
+    if (not ("aaan_beg" in params)):
+        params['aaan_beg'] = AAAN_BEG_DEFAULT
+    if (not ("aaan_end" in params)):
+        params['aaan_end'] = AAAN_END_DEFAULT
+    if (not ("aaspi" in params)):
+        params['aaspi'] = AASPI_DEFAULT
+    if (not ("aactn_beg" in params)):
+        params['aactn_beg'] = AACTN_BEG_DEFAULT
+    if (not ("aactn_end" in params)):
+        params['aactn_end'] = AACTN_END_DEFAULT
+
+    print(params)
+
+    res= myfunction(filename, params) #O que faz essa função?
+    return res
+
+def myfunction(filename, params):
+    string1= ""
+    string2= ""
+    path= PROJECT_HOME + '/temp' + filename
+    pathoutput = PROJECT_HOME + '/output/' + filename
+
+    #Aromático dos aminoácidos:
+    AROMTRP = ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2'] # Triptofano
+    AROMPHE = ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'] # Fenilalanina
+    AROMTYR = ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'] # Tirosina
+
+    datapdb= pd.DataFrame(columns=['Type', 'Atom ID', 'Atom Type', 'aa', 'Chain ID', 'X', 'Y', 'Z', 'occupancy', 'temperature factor',
+                 'element symbol']) #onde irá sair o arquivo txt, iremos modificar aqui em breve
+    
+    i=0
+
+    print("Starting to load data")
+    start_time = time.time()
+    Amin = '' # O aminoácido que vai ser encontrado 
+    Aromaticpos = [] #Posição do Aromático 
+    AromaticPoints = [] #Pontos do Aromatico
+    
+    file= open(path, 'r')
+    print(file)
+
+    #Aqui começaremos a ler o arquivo pdb
+    
+    for line in file:
+        pass
