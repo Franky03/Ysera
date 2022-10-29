@@ -1,4 +1,4 @@
-from ysera import myfunction, ysera, lerDados,mythread
+from new_ysera import myfunction, mythread, lerDados
 import os
 import numpy as np
 import time

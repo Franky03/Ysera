@@ -1,4 +1,3 @@
-from turtle import distance
 import pandas as pd
 import numpy as np
 import math
@@ -15,15 +14,13 @@ import json
 import concurrent.futures
 from multiprocessing import set_start_method, Pool, Manager
 
-from ysera import myfunction
-
 PROJECT_HOME= os.path.dirname(os.path.realpath(__file__)) #Pega a pasta em que o arquivo atual está
 
 HB_DEFAULT= 3.1
 SB_DEFAULT = 4.0
 DB_DEFAULT = 2.2
 VDW_DEFAULT = 5.5
-PS_DEFAULT = 7.2
+PS_DEFAULT = 7.2 #Pi Stacking, variável definida como lpi
 AAAN_BEG_DEFAULT = 2.0
 AAAN_END_DEFAULT = 3.0
 AASPI_DEFAULT = 5.3
@@ -99,10 +96,106 @@ if __name__== '__main__':
     d = manager.dict()
     n = manager.dict()
 
+def myfunction(filename, params):
+    string1= ""
+    string2= ""
+    path= PROJECT_HOME + '/temp/' + filename
+    pathoutput = PROJECT_HOME + '/output/' + filename
+
+    #Aromático dos aminoácidos:
+    AROMTRP = ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2'] # Triptofano
+    AROMPHE = ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'] # Fenilalanina
+    AROMTYR = ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'] # Tirosina
+
+    datapdb= pd.DataFrame(columns=['Type', 'Atom ID', 'Atom Type', 'aa', 'Chain ID', 'X', 'Y', 'Z', 'occupancy', 'temperature factor',
+                 'element symbol']) 
+    
+    i=0
+
+    print("Starting to load data")
+    start_time = time.time()
+    Amin = '' 
+    Aromaticpos = [] #Posição do Aromático 
+    AromaticPoints = [] #Pontos do Aromatico
+    
+    file= open(path, 'r')
+    print(file)
+
+    #Aqui começaremos a ler o arquivo pdb
+    
+    for line in file:
+        if ("ENDMDL" in line):
+            pass
+        if (line[16:20].strip() in "HOH"):
+            continue
+        if ("ATOM" in line[:6] or "HETATM" in line[:6]):
+            if (line[17:20].strip() in ['TYR', 'PHE', 'TRP']):
+                #Amin é aminoácido ?
+                if (Amin == ''):
+                    Amin = line[20:27].strip()
+                elif (Amin != line[20:27].strip()):
+                    AromaticArray[Amin] = np.asarray(Aromaticpos)
+                    if (len(AromaticPoints) == 3):
+                        veca= np.subtract(AromaticPoints[1], AromaticPoints[0])
+                        vecb = np.subtract(AromaticPoints[2], AromaticPoints[0])
+                        AromaticNormals[Amin] = np.cross(veca, vecb)
+                    else:
+                        print("Incomplete Aromatic Structure at {}".format(Amin))
+                        Invalids.append(Amin)
+                    Amin= line[20:27].strip()
+                    Aromaticpos = []
+                    AromaticPoints = []
+                
+                elif ((line[17:20].strip() == "TYR" and line[11:16].strip() in AROMTYR) or (line[17:20].strip() == 'PHE' and line[11:16].strip() in AROMPHE) or (line[17:20].strip() == 'TRP' and line[11:16].strip() in AROMTRP)):
+                    if (Aromaticpos == []):
+                        Aromaticpos = [float(line[27:38].strip()), float(line[38:46].strip()), float(line[46:54].strip())] #posição do aromático dos aminoácidos que entraram na condição
+                    else:
+                        Aromaticpos = [(x + y) / 2 for x, y in zip(Aromaticpos, [float(line[27:38].strip()), float(line[38:46].strip()), float(line[46:54].strip())])]
+                    
+                    if (len(AromaticPoints) < 3):
+                        AromaticPoints.append([float(line[27:38].strip()), float(line[38:46].strip()), float(line[46:54].strip())])
+            datapdb.loc[i] = [line[:6].strip(), line[6:11].strip(), line[11:16].strip(), line[17:20].strip(),line[20:27].strip(), line[27:38].strip(), line[38:46].strip(), line[46:54].strip(), line[54:60].strip(), line[60:66].strip(), line[66:80].strip()]
+
+            # datapdb.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
+
+            i += 1
+    
+    AromaticArray[Amin] = np.asarray(Aromaticpos)
+
+    if (len(AromaticPoints) == 3):
+        veca = np.subtract(AromaticPoints[1], AromaticPoints[0])
+        vecb = np.subtract(AromaticPoints[2], AromaticPoints[0])
+        AromaticNormals[Amin] = np.cross(veca, vecb)
+    elif (0 < len(AromaticPoints) < 3):
+        print("Incomplete Aromatic Structure at {}".format(Amin))
+        Invalids.append(Amin)
+    print("DataLoaded")
+    print("---%s seconds ---" % (time.time() - start_time))
+    if 'Atom ID' in datapdb.columns:
+        datapdb = datapdb.drop(['Atom ID', 'occupancy', 'temperature factor', 'element symbol'], axis=1)
+    
+    #Tirei o parametro downcast pois é de outra versão do numpy
+
+    datapdb["X"] = np.float32(datapdb["X"])
+    datapdb["Y"] = np.float32(datapdb["Y"])
+    datapdb["Z"] = np.float32(datapdb["Z"])
+
+    dist= euclidean_distances(np.float32(datapdb[["X", "Y", "Z"]].to_numpy()),
+                              np.float32(datapdb[["X", "Y", "Z"]].to_numpy()))
+
+    Dist= pd.DataFrame(data= dist, index=None)
+
+    New = pd.concat([datapdb, Dist], axis=1, sort= False)
+    print(New)
+    print(len(New))
+
+    return New #Retornará um dataset que irá para a função mythread
+
+
 def mythread(New, params, i, a, filename, string2):
     d= AromaticArray.copy()
     n= AromaticNormals.copy()
-    f= open('output/' + filename + '.txt', 'w+') #arquivo de saída
+    f= open('output/' + filename + '.txt', 'a+') #arquivo de saída
     while i< a:
         for j in range(i + 1, len(New)):
             distance= New[j].iloc[i]
@@ -296,32 +389,30 @@ def ysera(filename, params):
     res= myfunction(filename, params) #O que faz essa função?
     return res
 
-def myfunction(filename, params):
-    string1= ""
-    string2= ""
-    path= PROJECT_HOME + '/temp' + filename
-    pathoutput = PROJECT_HOME + '/output/' + filename
 
-    #Aromático dos aminoácidos:
-    AROMTRP = ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2'] # Triptofano
-    AROMPHE = ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'] # Fenilalanina
-    AROMTYR = ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ'] # Tirosina
+def lerDados(filename, params):
 
-    datapdb= pd.DataFrame(columns=['Type', 'Atom ID', 'Atom Type', 'aa', 'Chain ID', 'X', 'Y', 'Z', 'occupancy', 'temperature factor',
-                 'element symbol']) #onde irá sair o arquivo txt, iremos modificar aqui em breve
-    
-    i=0
+    if (not ("hb" in params)):
+        params['hb'] = HB_DEFAULT #Hydrogen Bond Default
+    if (not ("sb" in params)):
+        params['sb'] = SB_DEFAULT #Salt Brige Default 
+    if (not ("db" in params)):
+        params['db'] = DB_DEFAULT #Dissulfide Bond
+    if (not ("vdw" in params)):
+        params['vdw'] = VDW_DEFAULT #Van de Waals
+    if (not ("ps" in params)):
+        params['ps'] = PS_DEFAULT 
+    if (not ("aaan_beg" in params)):
+        params['aaan_beg'] = AAAN_BEG_DEFAULT #Anioan Aril aminoacido 
+    if (not ("aaan_end" in params)):
+        params['aaan_end'] = AAAN_END_DEFAULT
+    if (not ("aaspi" in params)):
+        params['aaspi'] = AASPI_DEFAULT
+    if (not ("aactn_beg" in params)):
+        params['aactn_beg'] = AACTN_BEG_DEFAULT
+    if (not ("aactn_end" in params)):
+        params['aactn_end'] = AACTN_END_DEFAULT
 
-    print("Starting to load data")
-    start_time = time.time()
-    Amin = '' # O aminoácido que vai ser encontrado 
-    Aromaticpos = [] #Posição do Aromático 
-    AromaticPoints = [] #Pontos do Aromatico
-    
-    file= open(path, 'r')
-    print(file)
+    new = myfunction(filename, params)
 
-    #Aqui começaremos a ler o arquivo pdb
-    
-    for line in file:
-        pass
+    return new, params
