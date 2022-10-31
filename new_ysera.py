@@ -200,7 +200,7 @@ def mythread(New, params, i, a, filename, string2):
         for j in range(i + 1, len(New)):
             distance= New[j].iloc[i]
             print(f"top distance: {distance}\n")
-            if distance > 8 or distance==0:
+            if (distance > 8 or distance == 0):
                 continue
             global hb
             global sb
@@ -360,7 +360,6 @@ def mythread(New, params, i, a, filename, string2):
     }
     print(string1) #printando o total de cada tipo de ligação
     
-    return string1
 
 def ysera(filename, params):
     #Corrigindo alguns valores das ligações nos parâmetros casos eles não estejam presentes
