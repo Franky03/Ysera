@@ -195,7 +195,7 @@ def myfunction(filename, params):
 def mythread(New, params, i, a, filename, string2):
     d= AromaticArray.copy()
     n= AromaticNormals.copy()
-    f= open('output/' + filename + '.txt', 'a+') #arquivo de saída
+    f= open('output/' + filename + '.txt', 'w') #arquivo de saída
     while i< a:
         for j in range(i + 1, len(New)):
             distance= New[j].iloc[i]
@@ -342,23 +342,25 @@ def mythread(New, params, i, a, filename, string2):
                         string2 = string2 + ('Anion_Aryl' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + 'centroid' + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
                         Exclusions.append([chaincode1, chaincode2])
         i += 1
-        f.write(string2)
-        f.close()
-        string1= {
-            "filename": filename,
-            "hb": hb,
-            "sb": sb,
-            "db": db,
-            "lpi": lpi,
-            "tshaped": tshaped,
-            "inter": inter,
-            "paralel": paralel,
-            "vdw": vdw,
-            "ctn": ctn,
-            "an": an,
-            "spi": spi
-        }
-        print(string1) #printando o total de cada tipo de ligação
+    f.write(string2)
+    f.close()
+    string1= {
+        "filename": filename,
+        "hb": hb,
+        "sb": sb,
+        "db": db,
+        "lpi": lpi,
+        "tshaped": tshaped,
+        "inter": inter,
+        "paralel": paralel,
+        "vdw": vdw,
+        "ctn": ctn,
+        "an": an,
+        "spi": spi
+    }
+    print(string1) #printando o total de cada tipo de ligação
+    
+    return string1
 
 def ysera(filename, params):
     #Corrigindo alguns valores das ligações nos parâmetros casos eles não estejam presentes

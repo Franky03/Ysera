@@ -7,10 +7,10 @@ import sys
 import multiprocessing as mp
 
 if __name__ == '__main__':
-    # try:
-    #     set_start_method('spawn')
-    # except RuntimeError:
-    #     pass
+    try:
+        set_start_method('spawn')
+    except RuntimeError:
+        pass
     start_time = time.time()
     print(np.__version__)
 
@@ -35,6 +35,5 @@ if __name__ == '__main__':
 
     pool.close()
     pool.join()
-
 
     print("---%s seconds ---" % (time.time() - start_time))
