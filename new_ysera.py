@@ -199,7 +199,6 @@ def mythread(New, params, i, a, filename, string2):
     while i< a:
         for j in range(i + 1, len(New)):
             distance= New[j].iloc[i]
-            print(f"top distance: {distance}\n")
             if (distance > 8 or distance == 0):
                 continue
             global hb
@@ -213,7 +212,7 @@ def mythread(New, params, i, a, filename, string2):
             global ctn
             global an
             global spi
-            print(tuple(hb,sb,db,lpi,tshaped,inter,paralel,vdw,ctn,an,spi))
+            # print(tuple(hb,sb,db,lpi,tshaped,inter,paralel,vdw,ctn,an,spi))
 
             atom1= New['Atom Type'].iloc[i]
             atom2= New['Atom Type'].iloc[j]
@@ -225,7 +224,7 @@ def mythread(New, params, i, a, filename, string2):
             chaincode2= New['Chain ID'].iloc[j] #cadeia do atomo 2
 
             distance= New[j].iloc[i]
-            print(f"down distance: {distance}\n")
+            # print(f"down distance: {distance}\n")
             #Looking for Hydrogen Bond
             
             if atom1 in lighbacep[:] and atom2 in lighbdono[:] and 0.0 < distance < params['hb']:
@@ -342,6 +341,7 @@ def mythread(New, params, i, a, filename, string2):
                         string2 = string2 + ('Anion_Aryl' + '\t\t' + atom1 + '\t\t' + aa1 + '\t\t' + chaincode1 + '\t\t' + 'centroid' + '\t\t' + aa2 + '\t\t' + chaincode2 + '\t\t' + str(aromaticdistance) + '\n')
                         Exclusions.append([chaincode1, chaincode2])
         i += 1
+    print("Teste Aqui !")
     f.write(string2)
     f.close()
     string1= {

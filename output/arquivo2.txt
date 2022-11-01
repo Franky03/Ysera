@@ -174,7 +174,7 @@ Van_der_Waals		CD2		LEU		D  69		CB		VAL		D 126		5.097926
 Van_der_Waals		CD2		LEU		D  69		CG1		VAL		D 126		4.3743753
 Van_der_Waals		CD2		LEU		D  69		CG2		VAL		D 126		4.519139
 Pi_stacking  		N		TRP		D  72		CA		TRP		D  72		0.0
-Pi_stacking  		CB		TRP		D  72		CE1		PHE		D 122		5.210935243346584
+Pi_stacking  		CB		TRP		D  72		CE1		PHE		D 122		5.210935243346583
 Van_der_Waals		CB		ILE		D  74		CG1		ILE		D  74		1.5312259
 Van_der_Waals		CB		ILE		D  74		CG2		ILE		D  74		1.52221
 Van_der_Waals		CB		ILE		D  74		CD1		ILE		D  74		2.5469618
@@ -611,7 +611,7 @@ Van_der_Waals		CB		LEU		E  77		CD2		LEU		E  77		2.4989827
 Van_der_Waals		CD1		LEU		E  77		CD2		LEU		E  77		2.495176
 Van_der_Waals		CD1		LEU		E  77		CD1		LEU		E  85		4.139275
 Pi_stacking  		N		TYR		E  79		CA		TYR		E  79		0.0
-Cation_Aryl		centroid		TYR		E  79		NH2		ARG		E  82		3.6188623809565352
+Cation_Aryl		centroid		TYR		E  79		NH2		ARG		E  82		3.6188623809565357
 Van_der_Waals		CB		VAL		E  80		CG1		VAL		E  80		1.5204502
 Van_der_Waals		CB		VAL		E  80		CG2		VAL		E  80		1.5188521
 Van_der_Waals		CB		VAL		E  80		CG1		VAL		E 111		5.4093027
@@ -1286,7 +1286,7 @@ Van_der_Waals		CB		LEU		G  28		CD2		LEU		G  28		2.5020466
 Van_der_Waals		CB		LEU		G  28		CG2		VAL		G  32		5.328015
 Van_der_Waals		CD1		LEU		G  28		CD2		LEU		G  28		2.4965956
 Pi_stacking  		N		PHE		G  29		CA		PHE		G  29		0.0
-Pi_stacking  		CA		PHE		G  29		CD1		TYR		G  44		4.813793191712554
+Pi_stacking  		CA		PHE		G  29		CD1		TYR		G  44		4.813793191712553
 Van_der_Waals		CB		VAL		G  32		CG1		VAL		G  32		1.5176654
 Van_der_Waals		CB		VAL		G  32		CG2		VAL		G  32		1.5170978
 Van_der_Waals		CB		VAL		G  32		CB		VAL		G  33		5.3668075
