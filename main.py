@@ -34,20 +34,20 @@ if __name__ == '__main__':
     mythread(New, params, 7031, 10545, "arquivo3", string3)
     mythread(New, params, 10547, 14060, "arquivo4", string4)
 
-    #Pool method not working
+    """
+    Pool method not working
 
-    # pool = Pool(processes=4)
-    # r1 = pool.apply_async(mythread, [New, params, 0, 3515, "arquivo1", string])
+    pool = Pool(processes=4)
 
-    # r2 = pool.apply_async(mythread, [New, params, 3516, 7031, "arquivo2", string2])
-
-    # r3 = pool.apply_async(mythread, [New, params, 7031, 10545, "arquivo3", string3])
-
-    # r4 = pool.apply_async(mythread, [New, params, 10547, 14060, "arquivo4", string4])
+    r1 = pool.apply_async(mythread, (New, params, 0, 3515, "arquivo1", string))
+    r2 = pool.apply_async(mythread, (New, params, 3516, 7031, "arquivo2", string2))
+    r3 = pool.apply_async(mythread, (New, params, 7031, 10545, "arquivo3", string3))
+    r4 = pool.apply_async(mythread, (New, params, 10547, 14060, "arquivo4", string4))
 
     # pool.close()
     # pool.join()
 
+    """
     print("---%s seconds ---" % (time.time() - start_time))
 
 #Linhas do arquivo 2 = 177, 614, 1289
