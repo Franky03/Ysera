@@ -15,6 +15,7 @@ class AromaticsFormat:
         self.path = project_home + '/temp/' + self.filename
         self.aromatic_pos = []
         self.aromatic_points = []
+        self.invalids = []
         self.aromatic_array = {}
         self.aromatic_normals = {}
         self.df_total = pd.DataFrame()
@@ -50,11 +51,12 @@ class AromaticsFormat:
         self.aromatic_pos = [df.iloc[0]['x_coord'], df.iloc[0]['y_coord'], df.iloc[0]['z_coord']]
         for index, linha in df.iterrows():
             coordenada = self._gera_coord(linha)
-            self.aromatic_pos = [(x + y) / 2 for x, y in zip(self.aromatic_pos, coordenada)]
-            self.aromatic_points = self._gera_coord(df.iloc[0:3])
+            self.aromatic_pos = [(x + y) / 2 for x, y in zip(self.aromatic_pos, coordenada)
             self.aromatic_array[amin] = self.aromatic_pos
-
-        if len(self.aromatic_points) == 3:
+        if len(df) < 3:
+            self.invalids.append(amin)
+        else:
+            self.aromatic_points = self._gera_coord(df.iloc[0:3])
             veca = np.subtract(self.aromatic_points[1], self.aromatic_points[0])
             vecb = np.subtract(self.aromatic_points[2], self.aromatic_points[0])
             self.aromatic_normals[amin] = np.cross(veca, vecb)
