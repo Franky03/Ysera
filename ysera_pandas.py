@@ -51,7 +51,7 @@ class AromaticsFormat:
         self.aromatic_pos = [df.iloc[0]['x_coord'], df.iloc[0]['y_coord'], df.iloc[0]['z_coord']]
         for index, linha in df.iterrows():
             coordenada = self._gera_coord(linha)
-            self.aromatic_pos = [(x + y) / 2 for x, y in zip(self.aromatic_pos, coordenada)
+            self.aromatic_pos = [(x + y) / 2 for x, y in zip(self.aromatic_pos, coordenada)]
             self.aromatic_array[amin] = self.aromatic_pos
         if len(df) < 3:
             self.invalids.append(amin)
