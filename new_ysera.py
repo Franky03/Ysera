@@ -342,8 +342,20 @@ def mythread(New, params, i, a, filename, string2):
                         Exclusions.append([chaincode1, chaincode2])
         i += 1
     print("Teste Aqui !")
+
     f.write(string2)
     f.close()
+    #Formatando a string para a saída desejada
+    
+    try:
+        final= pd.read_table(('output/' + filename + '.txt'), delimiter="\t\t", header= None, encoding='utf-8', engine='python')
+        colunas = ["Interaction", "Atom1", "AA1", "Chaincode1", "Atom2", "AA2", "Chaincode2", "Distance"]
+        for i in range(len(colunas)):
+            final.rename(columns={i: colunas[i]}, inplace=True)
+        final.to_csv(('output/' + filename + '.txt'), sep='\t', index=False)
+    except Exception as e:
+        print(e)
+        
     string1= {
         "filename": filename,
         "hb": hb,

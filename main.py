@@ -39,7 +39,9 @@ if __name__ == '__main__':
     # r1 = pool.apply_async(mythread, args= (New, params, 0, 3515, "arquivo1", string))
     # r2 = pool.apply_async(mythread, args= (New, params, 3516, 7031, "arquivo2", string2))
     # r3 = pool.apply_async(mythread, args= (New, params, 7031, 10545, "arquivo3", string3))
-    # r4 = pool.apply_async(mythread, args= (New, params, 10547, 14060, "arquivo4", string4))
+    # r4 = pool.apply_async(mythread, args= (New, params, 10547, 14060, "arquivo4", string4)) 
+    
+    # #Só executa o r4
 
     # pool.close()
     # pool.join()
