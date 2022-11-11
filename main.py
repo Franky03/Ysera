@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     print(f"New: {New}")
     print(f"Params: {params}")
-
+    
     mythread(New, params, 0, 3515, "arquivo1", string)
     mythread(New, params, 3516, 7031, "arquivo2", string2)
     mythread(New, params, 7031, 10545, "arquivo3", string3)
