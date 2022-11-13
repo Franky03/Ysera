@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
 
     PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
-    name = 'file_30.pdb'
+    name = 'file_24.pdb'
     params = {}
     string = ""
     string2 = ""
