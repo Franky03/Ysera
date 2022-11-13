@@ -4,18 +4,6 @@ import numpy as np
 import time
 import asyncio
 
-async def main():
-
-    L= await asyncio.gather(
-        mythread(New, params, 0, 3515, f"arquivo1_{name[5:7]}", string),
-        mythread(New, params, 3516, 7031, f"arquivo2_{name[5:7]}", string2),
-        mythread(New, params, 7031, 10545, f"arquivo3_{name[5:7]}", string3),
-        mythread(New, params, 10547, 14060, f"arquivo4_{name[5:7]}", string4)
-    )
-
-    print(L)
-        
-
 if __name__ == '__main__':
 
     start_time = time.time()
@@ -35,7 +23,20 @@ if __name__ == '__main__':
     print(f"Params: {params}")
 
     try:
-        asyncio.run(main())
+        loop= asyncio.get_event_loop()
+
+        r1= mythread(New, params, 0, 3515, f"arquivo1_{name[5:7]}", string)
+        r2= mythread(New, params, 3516, 7031, f"arquivo2_{name[5:7]}", string2)
+        r3= mythread(New, params, 7031, 10545, f"arquivo3_{name[5:7]}", string3)
+        r4= mythread(New, params, 10547, 14060, f"arquivo4_{name[5:7]}", string4)
+
+        all_rs= asyncio.gather(r1,r2,r3,r4)
+
+        Result= loop.run_until_complete(all_rs)
+
+        loop.close()
+
+        print(Result)
 
     except Exception as e:
         print(e)

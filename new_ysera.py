@@ -198,7 +198,9 @@ async def mythread(New, params, i, a, filename, string2):
     d= AromaticArray.copy()
     n= AromaticNormals.copy()
 
-    await asyncio.sleep(0.1)
+    print(f"Started mythread{filename[7]}")
+
+    await asyncio.sleep(0.5)
     
     while i< a:
         for j in range(i + 1, len(New)):
