@@ -3,5 +3,5 @@ As diferenças na saída são:
 - 30 vanderwaals a mais no meu arquivo 2
 - 11 salt bridges a mais no meu arquivo 2
 - 8 salt bridge a mais no meu arquivo 3
-- 2 pi_stack a mais no meu arquivo
+- 2 pi_stack a mais no meu arquivo - essa ta errada no meu pq as pools não tão compartilhando a variável de exclusão dos aromáticos entre si
 A priori faz sentido existirem essas ligações a mais
