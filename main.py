@@ -1,18 +1,16 @@
-from new_ysera import myfunction, mythread, lerDados
+from new_ysera import mythread, lerDados
 import os
 import numpy as np
 import time
 import asyncio
-from multiprocessing import Pool
 
 if __name__ == '__main__':
 
     start_time = time.time()
     print(np.__version__)
-
-
+ 
     PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
-    name = 'file_27.pdb'
+    name = '1txm.pdb'
     params = {}
     string = ""
     string2 = ""

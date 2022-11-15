@@ -2,18 +2,16 @@ import pandas as pd
 import numpy as np
 import os
 import asyncio
-from os import listdir
-from os.path import isfile, join
 from sklearn.metrics.pairwise import euclidean_distances
 import time
-from multiprocessing import  Manager
+
 
 PROJECT_HOME= os.path.dirname(os.path.realpath(__file__)) #Pega a pasta em que o arquivo atual está
 
 HB_DEFAULT= 3.1
 SB_DEFAULT = 4.0
 DB_DEFAULT = 2.2
-VDW_DEFAULT = 5.5
+VDW_DEFAULT = 3.2
 PS_DEFAULT = 7.2 #Pi Stacking, variável definida como lpi
 AAAN_BEG_DEFAULT = 2.0
 AAAN_END_DEFAULT = 3.0
@@ -116,7 +114,7 @@ def myfunction(filename, params):
     
     for line in file:
         if ("ENDMDL" in line):
-            pass
+            break
         if (line[16:20].strip() in "HOH"):
             continue
         if ("ATOM" in line[:6] or "HETATM" in line[:6]):
