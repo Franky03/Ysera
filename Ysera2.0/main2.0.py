@@ -2,6 +2,8 @@ from ysera_pandas import AromaticsFormat
 from thread import Thread
 from multiprocessing import Pool
 import time
+import glob
+import os
 
 
 def run_ysera(file):
@@ -27,11 +29,21 @@ def run_ysera(file):
     pool.apply_async(tr.run, (parts[2], parts[3], 'ysera_4'))
     pool.close()
     pool.join()
+    read_files = glob.glob("output/*.txt")
+    with open("output/Ysera2.0.txt", "wb") as outfile:
+        for f in read_files:
+            with open(f, "rb") as infile:
+                outfile.write(infile.read())
+
+    path = os.path.dirname(os.path.realpath(__file__))
+    os.remove(path + '/output/ysera_1.txt')
+    os.remove(path + '/output/ysera_2.txt')
+    os.remove(path + '/output/ysera_3.txt')
+    os.remove(path + '/output/ysera_4.txt')
 
 
-filename = 'file_30.pdb'
+filename = '1txm.pdb'
 if __name__ == '__main__':
     start = time.time()
     run_ysera(filename)
     print(f"---{(time.time() - start)} seconds ---")
-# 358s arquivo completo

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5f4f9766-4ab8-4886-b7f0-39d6ddff5e64" name="Default Changelist" comment="" />
+    <list default="true" id="5f4f9766-4ab8-4886-b7f0-39d6ddff5e64" name="Default Changelist" comment="add o arquivo da maurotoxina e da outra do tcc">
+      <change beforePath="$PROJECT_DIR$/Ysera2.0/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Ysera2.0/main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,7 +24,8 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true"
   }
 }]]></component>
   <component name="RunManager" selected="Python.ysera_pandas">
@@ -84,6 +87,14 @@
       <option name="presentableId" value="Default" />
       <updated>1615239435484</updated>
     </task>
+    <task id="LOCAL-00001" summary="add o arquivo da maurotoxina e da outra do tcc">
+      <created>1668553967302</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1668553967302</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -96,5 +107,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add o arquivo da maurotoxina e da outra do tcc" />
+    <option name="LAST_COMMIT_MESSAGE" value="add o arquivo da maurotoxina e da outra do tcc" />
   </component>
 </project>
