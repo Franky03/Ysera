@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5f4f9766-4ab8-4886-b7f0-39d6ddff5e64" name="Default Changelist" comment="Implementa a junção de todos os arquivos em um só">
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/README" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/main2.0.py" beforeDir="false" afterPath="$PROJECT_DIR$/main2.0.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/temp/19232  1PVO.pdb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/temp/file_21.pdb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/temp/file_22.pdb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/temp/file_23.pdb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/temp/file_24.pdb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/temp/file_26.pdb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/temp/file_27.pdb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/temp/file_28.pdb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/temp/file_29 10366.pdb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/temp/file_30.pdb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/thread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ysera2.0/ysera_pandas.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ysera_pandas.py" beforeDir="false" afterPath="$PROJECT_DIR$/ysera_pandas.py" afterDir="false" />
+    <list default="true" id="5f4f9766-4ab8-4886-b7f0-39d6ddff5e64" name="Default Changelist" comment="tirei a pasta ysera2.0 que tava atrapalhando">
+      <change beforePath="$PROJECT_DIR$/main2.0.py" beforeDir="false" afterPath="$PROJECT_DIR$/main2.0.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/ysera_1.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/ysera_2.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/ysera_3.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/ysera_4.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/thread.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +34,12 @@
     "last_opened_file_path": "/home/kdunorat/PycharmProjects/Ysera"
   }
 }]]></component>
-  <component name="RunManager" selected="Python.ysera_pandas (1)">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.main2.0 (1)">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="yseraCalculate" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -57,6 +53,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="D:\TCC\BackUP\yseraCalculate\main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main2.0 (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="yseraCalculate" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main2.0.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -130,6 +147,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.main2.0 (1)" />
         <item itemvalue="Python.ysera_pandas (1)" />
         <item itemvalue="Python.main2.0" />
         <item itemvalue="Python.ysera_pandas" />
@@ -160,7 +178,21 @@
       <option name="project" value="LOCAL" />
       <updated>1668554291901</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="tirei a pasta ysera2.0 que tava atrapalhando">
+      <created>1668554808298</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1668554808298</updated>
+    </task>
+    <task id="LOCAL-00004" summary="tirei a pasta ysera2.0 que tava atrapalhando">
+      <created>1668554993002</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1668554993002</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -177,6 +209,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add o arquivo da maurotoxina e da outra do tcc" />
     <MESSAGE value="Implementa a junção de todos os arquivos em um só" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implementa a junção de todos os arquivos em um só" />
+    <MESSAGE value="tirei a pasta ysera2.0 que tava atrapalhando" />
+    <option name="LAST_COMMIT_MESSAGE" value="tirei a pasta ysera2.0 que tava atrapalhando" />
   </component>
 </project>
