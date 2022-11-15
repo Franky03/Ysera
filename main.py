@@ -3,6 +3,7 @@ import os
 import numpy as np
 import time
 import asyncio
+from multiprocessing import Pool
 
 if __name__ == '__main__':
 
@@ -11,7 +12,7 @@ if __name__ == '__main__':
 
 
     PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
-    name = 'file_24.pdb'
+    name = 'file_27.pdb'
     params = {}
     string = ""
     string2 = ""
@@ -37,7 +38,6 @@ if __name__ == '__main__':
         loop.close()
 
         print(Result)
-
     except Exception as e:
         print(e)
 

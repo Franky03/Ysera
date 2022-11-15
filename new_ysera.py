@@ -1,18 +1,12 @@
 import pandas as pd
 import numpy as np
-import math
 import os
 import asyncio
 from os import listdir
 from os.path import isfile, join
 from sklearn.metrics.pairwise import euclidean_distances
 import time
-import threading
-import _thread
-import gzip
-import json
-import concurrent.futures
-from multiprocessing import set_start_method, Pool, Manager
+from multiprocessing import  Manager
 
 PROJECT_HOME= os.path.dirname(os.path.realpath(__file__)) #Pega a pasta em que o arquivo atual está
 
@@ -27,7 +21,7 @@ AASPI_DEFAULT = 5.3
 AACTN_BEG_DEFAULT = 3.4
 AACTN_END_DEFAULT = 4.0
 
-COLUMNS= ["Interaction", "Atom1", "AA1", "Chaincode1", "Atom2", "AA2", "Chaincode2", "Distance"]
+COLUMNS= ["Interaction", "Atom1", "AA1", "Chaincode1", "Atom2", "AA2", "Chaincode2", "Distance"] #Colunas usadas para saída do texto
 
 hb=0 #Hydrogen Bond
 
@@ -92,11 +86,6 @@ exitFlag = 0
 #Estava acontecendo um erro no Manager
 
 #É preciso colocar essa condição para não dar erro
-if __name__== '__main__':
-    manager = Manager()
-    #manager.start()
-    d = manager.dict()
-    n = manager.dict()
 
 def myfunction(filename, params):
     string1= ""
@@ -200,7 +189,7 @@ async def mythread(New, params, i, a, filename, string2):
 
     print(f"Started mythread{filename[7]}")
 
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.1)
     
     while i< a:
         for j in range(i + 1, len(New)):
@@ -357,7 +346,6 @@ async def mythread(New, params, i, a, filename, string2):
 
     except Exception as e:
         print(e)
-        print(f"String 2: {string2}")
         with open('output/' + filename + '.txt', 'a') as f:
             f.write(string2)
             print("File closed!")
