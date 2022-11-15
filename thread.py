@@ -17,7 +17,7 @@ class Thread:
             'Hydrogen_Bond': [3.1, 0],
             'Salt_Bridge': [4.0, 0],
             'Dissulfide_Bond': [2.2, 0],
-            'Van_der_Waals': [5.5, 0],
+            'Van_der_Waals': [3.2, 0],
             'Pi_Stacking': [7.2, 0],
             'Sulfur_Aryl': [7.2, 0],
             'Cation_Aryl': [6, 0],
@@ -280,11 +280,13 @@ class Thread:
             self._vanderwaals()
             self._pi_stacking()
             self._cation_aryl()
-            # self._anion_aryl()
             # self._sulfur_aryl()
+            # self._anion_aryl()
         f = open('output2.0/' + name + ".txt", "w")
         f.write(self.text)
         f.close()
-        items = list(self.params.items())
-        for j in items[0:5]:
-            print(f'{j[0]}: {j[1][1]}')
+        print(f'Hydrogen_Bond: {self.params["Hydrogen_Bond"][1]}; '
+              f'Salt_Bridge: {self.params["Salt_Bridge"][1]}; Dissulfide_Bond: {self.params["Dissulfide_Bond"][1]}; '
+              f'Van_der_Waals: {self.params["Van_der_Waals"][1]}; Pi_Stacking: {self.params["Pi_Stacking"][1]}; '
+              f'Cation_Aryl: {self.params["Cation_Aryl"][1]}; '
+              f'Sulfur_Aryl: {self.params["Sulfur_Aryl"][1]}; Anion_Aryl: {self.params["Anion_Aryl"][1]}')

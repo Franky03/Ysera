@@ -2,11 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5f4f9766-4ab8-4886-b7f0-39d6ddff5e64" name="Default Changelist" comment="tirei a pasta ysera2.0 que tava atrapalhando">
-      <change beforePath="$PROJECT_DIR$/main2.0.py" beforeDir="false" afterPath="$PROJECT_DIR$/main2.0.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/ysera_1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/ysera_2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/ysera_3.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/ysera_4.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/thread.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -192,7 +187,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668554993002</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="tirei a pasta ysera2.0 que tava atrapalhando">
+      <created>1668555175048</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1668555175048</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
