@@ -10,8 +10,8 @@ class AromaticsFormat:
     também gera o aromatic arrays e o aromatic normals"""
     def __init__(self, filename):
         self.filename = filename
-        project_home = os.path.dirname(os.path.realpath(__file__))
-        self.path = project_home + '/temp/' + self.filename
+        self.project_home = os.path.dirname(os.path.realpath(__file__))
+        self.path = self.project_home + '/temp/' + self.filename
         self.aromatic_pos = []
         self.aromatic_points = []
         self.invalids = []
@@ -25,8 +25,17 @@ class AromaticsFormat:
     def _formata_arquivo(self, path):
         """Formata o dataframe inicial usando o biopandas, cria um dataframe só com os aminoácidos
         e os átomos necessários"""
+        file = open(self.path, 'r')
+        new_name = f'{self.filename}new.pdb'
+        with open(new_name, 'w') as f:
+            for line in file:
+                if "ENDMDL" in line:
+                    break
+                else:
+                    f.write(line)
         ppdb = PandasPdb()
         ppdb.read_pdb(path)
+        os.remove(self.project_home + '/' + new_name)
         atom = ppdb.df['ATOM']
         hetatm = ppdb.df['HETATM']
         # Cria um dataframe apenas com ATOM E HETATM
