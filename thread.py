@@ -285,3 +285,6 @@ class Thread:
         f = open('output/' + name + ".txt", "w")
         f.write(self.text)
         f.close()
+        items = list(self.params.items())
+        for j in items[0:5]:
+            print(f'{j[0]}: {j[1][1]}')
