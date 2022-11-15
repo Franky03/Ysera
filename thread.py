@@ -285,7 +285,7 @@ class Thread:
         f = open('output2.0/' + name + ".txt", "w")
         f.write(self.text)
         f.close()
-        print(f'Hydrogen_Bond: {self.params["Hydrogen_Bond"][1]}; '
+        print(f'{name} : Hydrogen_Bond: {self.params["Hydrogen_Bond"][1]}; '
               f'Salt_Bridge: {self.params["Salt_Bridge"][1]}; Dissulfide_Bond: {self.params["Dissulfide_Bond"][1]}; '
               f'Van_der_Waals: {self.params["Van_der_Waals"][1]}; Pi_Stacking: {self.params["Pi_Stacking"][1]}; '
               f'Cation_Aryl: {self.params["Cation_Aryl"][1]}; '
