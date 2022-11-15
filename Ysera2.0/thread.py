@@ -131,10 +131,10 @@ class Thread:
         bond = 'Dissulfide_Bond'
         atom_1, aa_1, amin_1, dist_line, dist_value = self._atom_info(bond)
         if dist_value != 0:
-            if atom_1 == 'O':
+            if atom_1 == 'SG':
                 for i, j in zip(dist_line, dist_value):
 
-                    if self.total.iloc[i]['atom_name'] == 'O':
+                    if self.total.iloc[i]['atom_name'] == 'SG':
                         atom_2 = self.total.iloc[i]['atom_name']
                         aa_2 = self.total.iloc[i]['residue_name']
                         amin_2 = self.total.iloc[i]['amin']
@@ -282,6 +282,6 @@ class Thread:
             self._cation_aryl()
             self._anion_aryl()
             self._sulfur_aryl()
-            f = open('output/' + name + ".txt", "w")
-            f.write(self.text)
-            f.close()
+        f = open('output/' + name + ".txt", "w")
+        f.write(self.text)
+        f.close()
