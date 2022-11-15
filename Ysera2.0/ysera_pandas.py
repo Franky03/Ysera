@@ -34,7 +34,7 @@ class AromaticsFormat:
                 else:
                     f.write(line)
         ppdb = PandasPdb()
-        ppdb.read_pdb(path)
+        ppdb.read_pdb(new_name)
         os.remove(self.project_home + '/' + new_name)
         atom = ppdb.df['ATOM']
         hetatm = ppdb.df['HETATM']
