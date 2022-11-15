@@ -22,7 +22,7 @@ class AromaticsFormat:
         self.arom_phe_tyr = ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ']
         self.arom_trp = ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2']
 
-    def _formata_arquivo(self, path):
+    def _formata_arquivo(self):
         """Formata o dataframe inicial usando o biopandas, cria um dataframe só com os aminoácidos
         e os átomos necessários"""
         file = open(self.path, 'r')
@@ -93,7 +93,7 @@ class AromaticsFormat:
     def get_data(self):
         """Roda os métodos da classe e retorna o dataframe final com todas as distâncias
         além do aromatic array e aromatic normals"""
-        self._formata_arquivo(self.path)
+        self._formata_arquivo()
         amin_list = list(dict.fromkeys(self.aminos['amin'].values))
         for i in amin_list:
             self._calcula_array(i)
