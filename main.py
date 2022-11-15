@@ -1,24 +1,18 @@
-import logging
-import multiprocessing
 from new_ysera import myfunction, mythread, lerDados
 import os
 import numpy as np
 import time
-from multiprocessing import Process,freeze_support, set_start_method,Pool,Manager
-import sys
-import multiprocessing as mp
+import asyncio
+from multiprocessing import Pool
 
 if __name__ == '__main__':
-    # try:
-    #     set_start_method('spawn')
-    # except RuntimeError:
-    #     pass
+
     start_time = time.time()
     print(np.__version__)
 
 
     PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
-    name = 'file_30.pdb'
+    name = 'file_27.pdb'
     params = {}
     string = ""
     string2 = ""
@@ -29,20 +23,23 @@ if __name__ == '__main__':
     print(f"New: {New}")
     print(f"Params: {params}")
 
-    mythread(New, params, 0, 3515, "arquivo1", string)
-    mythread(New, params, 3516, 7031, "arquivo2", string2)
-    mythread(New, params, 7031, 10545, "arquivo3", string3)
-    mythread(New, params, 10547, 14060, "arquivo4", string4)
+    try:
+        loop= asyncio.get_event_loop()
 
-    # pool = Pool(processes=4)
+        r1= mythread(New, params, 0, 3515, f"arquivo1_{name[5:7]}", string)
+        r2= mythread(New, params, 3516, 7031, f"arquivo2_{name[5:7]}", string2)
+        r3= mythread(New, params, 7031, 10545, f"arquivo3_{name[5:7]}", string3)
+        r4= mythread(New, params, 10547, 14060, f"arquivo4_{name[5:7]}", string4)
 
-    # r1 = pool.apply_async(mythread, args= (New, params, 0, 3515, "arquivo1", string))
-    # r2 = pool.apply_async(mythread, args= (New, params, 3516, 7031, "arquivo2", string2))
-    # r3 = pool.apply_async(mythread, args= (New, params, 7031, 10545, "arquivo3", string3))
-    # r4 = pool.apply_async(mythread, args= (New, params, 10547, 14060, "arquivo4", string4))
+        all_rs= asyncio.gather(r1,r2,r3,r4)
 
-    # pool.close()
-    # pool.join()
+        Result= loop.run_until_complete(all_rs)
+
+        loop.close()
+
+        print(Result)
+    except Exception as e:
+        print(e)
 
     print("---%s seconds ---" % (time.time() - start_time))
 

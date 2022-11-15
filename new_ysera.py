@@ -1,18 +1,12 @@
 import pandas as pd
 import numpy as np
-import math
 import os
 import asyncio
 from os import listdir
 from os.path import isfile, join
 from sklearn.metrics.pairwise import euclidean_distances
 import time
-import threading
-import _thread
-import gzip
-import json
-import concurrent.futures
-from multiprocessing import set_start_method, Pool, Manager
+from multiprocessing import  Manager
 
 PROJECT_HOME= os.path.dirname(os.path.realpath(__file__)) #Pega a pasta em que o arquivo atual está
 
@@ -26,6 +20,8 @@ AAAN_END_DEFAULT = 3.0
 AASPI_DEFAULT = 5.3
 AACTN_BEG_DEFAULT = 3.4
 AACTN_END_DEFAULT = 4.0
+
+COLUMNS= ["Interaction", "Atom1", "AA1", "Chaincode1", "Atom2", "AA2", "Chaincode2", "Distance"] #Colunas usadas para saída do texto
 
 hb=0 #Hydrogen Bond
 
@@ -90,11 +86,6 @@ exitFlag = 0
 #Estava acontecendo um erro no Manager
 
 #É preciso colocar essa condição para não dar erro
-if __name__== '__main__':
-    manager = Manager()
-    #manager.start()
-    d = manager.dict()
-    n = manager.dict()
 
 def myfunction(filename, params):
     string1= ""
@@ -192,10 +183,14 @@ def myfunction(filename, params):
     return New #Retornará um dataset que irá para a função mythread
 
 
-def mythread(New, params, i, a, filename, string2):
+async def mythread(New, params, i, a, filename, string2):
     d= AromaticArray.copy()
     n= AromaticNormals.copy()
-    f= open('output/' + filename + '.txt', 'w') #arquivo de saída
+
+    print(f"Started mythread{filename[7]}")
+
+    await asyncio.sleep(0.1)
+    
     while i< a:
         for j in range(i + 1, len(New)):
             distance= New[j].iloc[i]
@@ -342,8 +337,19 @@ def mythread(New, params, i, a, filename, string2):
                         Exclusions.append([chaincode1, chaincode2])
         i += 1
     print("Teste Aqui !")
-    f.write(string2)
-    f.close()
+
+    #Formatando a string para a saída desejada
+
+    try:
+        final= pd.DataFrame([x.split('\t\t') for x in string2.split('\n')], columns= COLUMNS)
+        final.to_csv(('output/' + filename + '.txt'), sep='\t', index=False)
+
+    except Exception as e:
+        print(e)
+        with open('output/' + filename + '.txt', 'a') as f:
+            f.write(string2)
+            print("File closed!")
+        
     string1= {
         "filename": filename,
         "hb": hb,
@@ -359,6 +365,8 @@ def mythread(New, params, i, a, filename, string2):
         "spi": spi
     }
     print(string1) #printando o total de cada tipo de ligação
+
+    return True
     
 
 def ysera(filename, params):
