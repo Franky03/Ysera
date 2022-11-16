@@ -47,7 +47,7 @@ def run_ysera(file):
         tr.run(0, len(total), 'Ysera2.0')
 
 
-filename = '1txm.pdb'
+filename = 'file_30.pdb'
 if __name__ == '__main__':
     start = time.time()
     run_ysera(filename)

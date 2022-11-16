@@ -10,7 +10,7 @@ if __name__ == '__main__':
     print(np.__version__)
  
     PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
-    name = '1txm.pdb'
+    name = 'file_30.pdb'
     params = {}
     string = ""
     string2 = ""
