@@ -11,7 +11,6 @@ def run_ysera(file):
     af = AromaticsFormat(filename=file)
     aromatic_array, aromatic_normals, invalids, \
         total, total_dist = af.get_data()
-    print(total_dist)
     print('Data Loaded')
     tr = Thread(aromatic_array, aromatic_normals, invalids, total, total_dist)
     size = len(total)
@@ -33,21 +32,21 @@ def run_ysera(file):
         pool.apply_async(tr.run, (parts[2], parts[3], 'ysera_4'))
         pool.close()
         pool.join()
-        read_files = glob.glob("output2.0/*.txt")
-        with open("output/Ysera2.0.txt", "wb") as outfile:
+        read_files = glob.glob("outputTOTAL/*.txt")
+        with open("output2TOTAL/arquito_TOTAL.txt", "wb") as outfile:
             for f in read_files:
                 with open(f, "rb") as infile:
                     outfile.write(infile.read())
         path = os.path.dirname(os.path.realpath(__file__))
-        os.remove(path + '/output2.0/ysera_1.txt')
-        os.remove(path + '/output2.0/ysera_2.txt')
-        os.remove(path + '/output2.0/ysera_3.txt')
-        os.remove(path + '/output2.0/ysera_4.txt')
+        os.remove(path + '/outputTOTAL/ysera_1.txt')
+        os.remove(path + '/outputTOTAL/ysera_2.txt')
+        os.remove(path + '/outputTOTAL/ysera_3.txt')
+        os.remove(path + '/outputTOTAL/ysera_4.txt')
     else:
         tr.run(0, len(total), 'Ysera2.0')
 
 
-filename = '1txm.pdb'
+filename = 'file_30.pdb'
 if __name__ == '__main__':
     start = time.time()
     run_ysera(filename)

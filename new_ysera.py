@@ -89,7 +89,7 @@ def myfunction(filename, params):
     string1= ""
     string2= ""
     path= PROJECT_HOME + '/temp/' + filename
-    pathoutput = PROJECT_HOME + '/output/' + filename
+    pathoutput = PROJECT_HOME + '/outputTOTAL/' + filename
 
     #Aromático dos aminoácidos:
     AROMTRP = ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2'] # Triptofano
@@ -340,11 +340,11 @@ async def mythread(New, params, i, a, filename, string2):
 
     try:
         final= pd.DataFrame([x.split('\t\t') for x in string2.split('\n')], columns= COLUMNS)
-        final.to_csv(('output/' + filename + '.txt'), sep='\t', index=False)
+        final.to_csv(('outputTOTAL/' + filename + '.txt'), sep='\t', index=False)
 
     except Exception as e:
         print(e)
-        with open('output/' + filename + '.txt', 'a') as f:
+        with open('outputTOTAL/' + filename + '.txt', 'a') as f:
             f.write(string2)
             print("File closed!")
         

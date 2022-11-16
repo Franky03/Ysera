@@ -10,7 +10,7 @@ if __name__ == '__main__':
     print(np.__version__)
  
     PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
-    name = '1txm.pdb'
+    name = 'file_30.pdb'
     params = {}
     string = ""
     string2 = ""
@@ -34,7 +34,15 @@ if __name__ == '__main__':
         Result= loop.run_until_complete(all_rs)
 
         loop.close()
-
+        with open("output2.0/Ysera2.0.txt", "wb") as outfile:
+            for f in read_files:
+                with open(f, "rb") as infile:
+                    outfile.write(infile.read())
+        path = os.path.dirname(os.path.realpath(__file__))
+        os.remove(path + '/output2.0/ysera_1.txt')
+        os.remove(path + '/output2.0/ysera_2.txt')
+        os.remove(path + '/output2.0/ysera_3.txt')
+        os.remove(path + '/output2.0/ysera_4.txt')
         print(Result)
     except Exception as e:
         print(e)
