@@ -10,8 +10,8 @@ class AromaticsFormat:
     também gera o aromatic arrays e o aromatic normals"""
     def __init__(self, filename):
         self.filename = filename
-        project_home = os.path.dirname(os.path.realpath(__file__))
-        self.path = project_home + '/temp/' + self.filename
+        self.project_home = os.path.dirname(os.path.realpath(__file__))
+        self.path = self.project_home + '/temp/' + self.filename
         self.aromatic_pos = []
         self.aromatic_points = []
         self.invalids = []
@@ -22,11 +22,20 @@ class AromaticsFormat:
         self.arom_phe_tyr = ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ']
         self.arom_trp = ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2']
 
-    def _formata_arquivo(self, path):
+    def _formata_arquivo(self):
         """Formata o dataframe inicial usando o biopandas, cria um dataframe só com os aminoácidos
         e os átomos necessários"""
+        file = open(self.path, 'r')
+        new_name = f'{self.filename}new.pdb'
+        with open(new_name, 'w') as f:
+            for line in file:
+                if "ENDMDL" in line:
+                    break
+                else:
+                    f.write(line)
         ppdb = PandasPdb()
-        ppdb.read_pdb(path)
+        ppdb.read_pdb(new_name)
+        os.remove(self.project_home + '/' + new_name)
         atom = ppdb.df['ATOM']
         hetatm = ppdb.df['HETATM']
         # Cria um dataframe apenas com ATOM E HETATM
@@ -84,7 +93,7 @@ class AromaticsFormat:
     def get_data(self):
         """Roda os métodos da classe e retorna o dataframe final com todas as distâncias
         além do aromatic array e aromatic normals"""
-        self._formata_arquivo(self.path)
+        self._formata_arquivo()
         amin_list = list(dict.fromkeys(self.aminos['amin'].values))
         for i in amin_list:
             self._calcula_array(i)
@@ -95,3 +104,4 @@ class AromaticsFormat:
 if __name__ == '__main__':
     af = AromaticsFormat('file_30.pdb')
     array, normals, invalids,  total, total_dist = af.get_data()
+    print(total)

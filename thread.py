@@ -17,7 +17,7 @@ class Thread:
             'Hydrogen_Bond': [3.1, 0],
             'Salt_Bridge': [4.0, 0],
             'Dissulfide_Bond': [2.2, 0],
-            'Van_der_Waals': [5.5, 0],
+            'Van_der_Waals': [3.2, 0],
             'Pi_Stacking': [7.2, 0],
             'Sulfur_Aryl': [7.2, 0],
             'Cation_Aryl': [6, 0],
@@ -131,10 +131,10 @@ class Thread:
         bond = 'Dissulfide_Bond'
         atom_1, aa_1, amin_1, dist_line, dist_value = self._atom_info(bond)
         if dist_value != 0:
-            if atom_1 == 'O':
+            if atom_1 == 'SG':
                 for i, j in zip(dist_line, dist_value):
 
-                    if self.total.iloc[i]['atom_name'] == 'O':
+                    if self.total.iloc[i]['atom_name'] == 'SG':
                         atom_2 = self.total.iloc[i]['atom_name']
                         aa_2 = self.total.iloc[i]['residue_name']
                         amin_2 = self.total.iloc[i]['amin']
@@ -280,8 +280,21 @@ class Thread:
             self._vanderwaals()
             self._pi_stacking()
             self._cation_aryl()
+<<<<<<< HEAD:Ysera2.0/thread.py
             self._anion_aryl()
             self._sulfur_aryl()
         f = open('output/' + name + ".txt", "w")
         f.write(self.text)
         f.close()
+=======
+            # self._sulfur_aryl()
+            # self._anion_aryl()
+        f = open('output2.0/' + name + ".txt", "w")
+        f.write(self.text)
+        f.close()
+        print(f'{name} : Hydrogen_Bond: {self.params["Hydrogen_Bond"][1]}; '
+              f'Salt_Bridge: {self.params["Salt_Bridge"][1]}; Dissulfide_Bond: {self.params["Dissulfide_Bond"][1]}; '
+              f'Van_der_Waals: {self.params["Van_der_Waals"][1]}; Pi_Stacking: {self.params["Pi_Stacking"][1]}; '
+              f'Cation_Aryl: {self.params["Cation_Aryl"][1]}; '
+              f'Sulfur_Aryl: {self.params["Sulfur_Aryl"][1]}; Anion_Aryl: {self.params["Anion_Aryl"][1]}')
+>>>>>>> ff23f6b9ff0b9a575231473b03e1f9e5dbf57913:thread.py
