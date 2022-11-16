@@ -11,6 +11,7 @@ def run_ysera(file):
     af = AromaticsFormat(filename=file)
     aromatic_array, aromatic_normals, invalids, \
         total, total_dist = af.get_data()
+    print(total_dist)
     print('Data Loaded')
     tr = Thread(aromatic_array, aromatic_normals, invalids, total, total_dist)
     size = len(total)
