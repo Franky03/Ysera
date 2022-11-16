@@ -32,16 +32,16 @@ def run_ysera(file):
         pool.apply_async(tr.run, (parts[2], parts[3], 'ysera_4'))
         pool.close()
         pool.join()
-        read_files = glob.glob("outputTOTAL/*.txt")
-        with open("output2TOTAL/arquito_TOTAL.txt", "wb") as outfile:
+        read_files = glob.glob("output2.0/*.txt")
+        with open("output2.0/arquito_TOTAL.txt", "wb") as outfile:
             for f in read_files:
                 with open(f, "rb") as infile:
                     outfile.write(infile.read())
         path = os.path.dirname(os.path.realpath(__file__))
-        os.remove(path + '/outputTOTAL/ysera_1.txt')
-        os.remove(path + '/outputTOTAL/ysera_2.txt')
-        os.remove(path + '/outputTOTAL/ysera_3.txt')
-        os.remove(path + '/outputTOTAL/ysera_4.txt')
+        os.remove(path + '/output2.0/ysera_1.txt')
+        os.remove(path + '/output2.0/ysera_2.txt')
+        os.remove(path + '/output2.0/ysera_3.txt')
+        os.remove(path + '/output2.0/ysera_4.txt')
     else:
         tr.run(0, len(total), 'Ysera2.0')
 

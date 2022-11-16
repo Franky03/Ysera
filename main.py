@@ -36,15 +36,16 @@ if __name__ == '__main__':
 
         loop.close()
         read_files = glob.glob("outputTOTAL/*.txt")
-        with open("output2.0/Ysera2.0.txt", "wb") as outfile:
+        with open("output2TOTAL/arquito_TOTAL.txt", "wb") as outfile:
             for f in read_files:
                 with open(f, "rb") as infile:
                     outfile.write(infile.read())
         path = os.path.dirname(os.path.realpath(__file__))
-        os.remove(path + '/output2.0/ysera_1.txt')
-        os.remove(path + '/output2.0/ysera_2.txt')
-        os.remove(path + '/output2.0/ysera_3.txt')
-        os.remove(path + '/output2.0/ysera_4.txt')
+        os.remove(path + '/outputTOTAL/ysera_1.txt')
+        os.remove(path + '/outputTOTAL/ysera_2.txt')
+        os.remove(path + '/outputTOTAL/ysera_3.txt')
+        os.remove(path + '/outputTOTAL/ysera_4.txt')
+
         print(Result)
     except Exception as e:
         print(e)
