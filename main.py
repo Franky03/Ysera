@@ -3,6 +3,7 @@ import os
 import numpy as np
 import time
 import asyncio
+import glob
 
 if __name__ == '__main__':
 
@@ -34,6 +35,7 @@ if __name__ == '__main__':
         Result= loop.run_until_complete(all_rs)
 
         loop.close()
+        read_files = glob.glob("outputTOTAL/*.txt")
         with open("output2.0/Ysera2.0.txt", "wb") as outfile:
             for f in read_files:
                 with open(f, "rb") as infile:
