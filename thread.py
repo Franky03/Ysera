@@ -1,10 +1,9 @@
 import numpy as np
 import pandas as pd
-from multiprocessing import Manager
 
 
 class Thread:
-    def __init__(self, aromatic_array, aromatic_normals, invalids, total, total_dist):
+    def __init__(self, aromatic_array, aromatic_normals, invalids, total, total_dist, exclusions, dist_old):
         self.aromatic_array = aromatic_array
         self.aromatic_normals = aromatic_normals
         self.invalids = invalids
@@ -12,9 +11,8 @@ class Thread:
         self.total_dist = total_dist
         self.line = pd.Series(dtype='float64')
         self.text = ''
-        manager = Manager()
-        self.dist_old = manager.list()
-        self.exclusions = manager.list()
+        self.dist_old = dist_old
+        self.exclusions = exclusions
         self.params = {
             'Hydrogen_Bond': [3.1, 0],
             'Salt_Bridge': [4.0, 0],
@@ -276,12 +274,12 @@ class Thread:
     def run(self, beg, end, name):
         for i in range(beg, end):
             self.line = self._format_line(i)
-            #self._hydrogen_bond()
+            self._hydrogen_bond()
             self._salt_bridge()
-            #self._dissulfide_bond()
-            #self._vanderwaals()
-            #self._pi_stacking()
-            #self._cation_aryl()
+            self._dissulfide_bond()
+            self._vanderwaals()
+            self._pi_stacking()
+            self._cation_aryl()
             # self._sulfur_aryl()
             # self._anion_aryl()
         f = open('output2.0/' + name + ".txt", "w")

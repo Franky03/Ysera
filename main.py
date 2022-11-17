@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
         loop.close()
         read_files = glob.glob("outputTOTAL/*.txt")
-        with open("output2TOTAL/arquito_TOTAL.txt", "wb") as outfile:
+        with open("output2TOTAL/arquivo_TOTAL.txt", "wb") as outfile:
             for f in read_files:
                 with open(f, "rb") as infile:
                     outfile.write(infile.read())
