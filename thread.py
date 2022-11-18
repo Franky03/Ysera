@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-class Thread:
+class ThreadYsera:
     def __init__(self, aromatic_array, aromatic_normals, invalids, total, total_dist, exclusions, dist_old):
         self.aromatic_array = aromatic_array
         self.aromatic_normals = aromatic_normals
@@ -10,6 +10,7 @@ class Thread:
         self.total = total
         self.total_dist = total_dist
         self.line = pd.Series(dtype='float64')
+        self.new_df = pd.DataFrame()
         self.text = ''
         self.dist_old = dist_old
         self.exclusions = exclusions

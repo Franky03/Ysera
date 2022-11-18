@@ -1,6 +1,6 @@
 from ysera_pandas import AromaticsFormat
-from thread import Thread
-from multiprocessing import Pool, Manager
+from thread import ThreadYsera
+from multiprocessing import Pool,  Manager
 import time
 import glob
 import os
@@ -15,25 +15,26 @@ def run_ysera(file):
     manager = Manager()
     exclusions = manager.list()
     dist_old = manager.list()
-    tr = Thread(aromatic_array, aromatic_normals, invalids, total, total_dist, exclusions, dist_old)
+    tr = ThreadYsera(aromatic_array, aromatic_normals, invalids, total, total_dist, exclusions, dist_old)
     size = len(total)
     print('Calculating Bonds...')
     if size > 3000:
-        p = int(size/4)
-        r = size % 4
+        p = int(size/3)
+        r = size % 3
         d = 0
         parts = []
-        for i in range(4):
+        for i in range(3):
             parts.append(p + d)
             d += p
-        parts[3] = parts[3] + r
-        pool = Pool(processes=4)
+        parts[2] = parts[2] + r
+
+        pool = Pool(processes=3)
         pool.apply_async(tr.run, (0, parts[0], 'ysera1'))
         pool.apply_async(tr.run, (parts[0], parts[1], 'ysera2'))
         pool.apply_async(tr.run, (parts[1], parts[2], 'ysera3'))
-        pool.apply_async(tr.run, (parts[2], parts[3], 'ysera4'))
         pool.close()
         pool.join()
+
         read_files = sorted(glob.glob("output2.0/*.txt"))
         with open("output2.0/Ysera2.0.txt", "wb") as outfile:
             for f in read_files:
@@ -43,7 +44,6 @@ def run_ysera(file):
         os.remove(path + '/output2.0/ysera1.txt')
         os.remove(path + '/output2.0/ysera2.txt')
         os.remove(path + '/output2.0/ysera3.txt')
-        os.remove(path + '/output2.0/ysera4.txt')
     else:
         tr.run(0, len(total), 'Ysera2.0')
 
