@@ -282,7 +282,7 @@ class Thread:
             self._cation_aryl()
             # self._sulfur_aryl()
             # self._anion_aryl()
-        f = open('output2.0/' + name + ".txt", "w")
+        f = open('output/' + name + ".txt", "w")
         f.write(self.text)
         f.close()
         print(f'{name} : Hydrogen_Bond: {self.params["Hydrogen_Bond"][1]}; '
