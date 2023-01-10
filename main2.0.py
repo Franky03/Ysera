@@ -38,16 +38,16 @@ def run_ysera(file):
             for f in read_files:
                 with open(f, "rb") as infile:
                     outfile.write(infile.read())
-        path = os.path.dirname(os.path.realpath(__file__))
-        os.remove(path + '/output/ysera_1.txt')
-        os.remove(path + '/output/ysera_2.txt')
-        os.remove(path + '/output/ysera_3.txt')
-        os.remove(path + '/output/ysera_4.txt')
+        # path = os.path.dirname(os.path.realpath(__file__))
+        # os.remove(path + '/output/ysera_1.txt')
+        # os.remove(path + '/output/ysera_2.txt')
+        # os.remove(path + '/output/ysera_3.txt')
+        # os.remove(path + '/output/ysera_4.txt')
     else:
         tr.run(0, len(total), 'Ysera2.0')
 
 
-filename = 'file_30.pdb'
+filename = '3og7.pdb'
 if __name__ == '__main__':
     start = time.time()
     run_ysera(filename)
