@@ -1,9 +1,0 @@
-{
-    "configurations": [
-        {
-            "type": "python",
-            "name": "main2.0",
-            "arguments": ["main2.0.py"],
-        }
-    ]
-}
