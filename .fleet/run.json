@@ -3,7 +3,8 @@
         {
             "type": "python",
             "name": "main2.0",
-            "arguments": ["src/main2.0.py"],
+            "workingDir": "$PROJECT_DIR$/src",
+            "arguments": ["main2.0.py"],
         }
     ]
 }
