@@ -25,7 +25,7 @@ class AromaticsFormat:
     def _formata_arquivo(self):
         """Formata o dataframe inicial usando o biopandas, cria um dataframe só com os aminoácidos
         e os átomos necessários"""
-        file = open(self.path, 'r')
+        file = open(f'{self.path}', 'r')
         new_name = f'{self.filename}new.pdb'
         with open(new_name, 'w') as f:
             for line in file:

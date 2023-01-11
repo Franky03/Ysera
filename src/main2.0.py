@@ -33,23 +33,23 @@ def run_ysera(file):
         pool.apply_async(tr.run, (parts[2], parts[3], 'ysera_4'))
         pool.close()
         pool.join()
-        read_files = glob.glob("output_2.0/*.txt")
-        with open("output_2.0/Ysera2.0.txt", "wb") as outfile:
+        read_files = glob.glob("output/*.txt")
+        with open("output/Ysera2.0.txt", "wb") as outfile:
             for f in read_files:
                 with open(f, "rb") as infile:
                     outfile.write(infile.read())
         path = os.path.dirname(os.path.realpath(__file__))
-        os.remove(path + '/output_2.0/ysera_1.txt')
+        os.remove(path + '/output/ysera_1.txt')
         try:
-            os.remove(path + '/output_2.0/ysera_2.txt')
+            os.remove(path + '/output/ysera_2.txt')
         except IOError:
             pass
         try:
-            os.remove(path + '/output_2.0/ysera_3.txt')
+            os.remove(path + '/output/ysera_3.txt')
         except IOError:
             pass
         try:
-            os.remove(path + '/output_2.0/ysera_4.txt')
+            os.remove(path + '/output/ysera_4.txt')
         except IOError:
             pass
     else:
