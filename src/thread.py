@@ -271,7 +271,7 @@ class Thread:
                                               amin_1, atom_2, aa_2, amin_2, aromatic_distance)
                             self.exclusions.append([amin_1, amin_2])
 
-    def run(self, beg, end, name):
+    def run(self, beg, end, name, output_dict):
         for i in range(beg, end):
             self.line = self._format_line(i)
             self._hydrogen_bond()
@@ -282,9 +282,8 @@ class Thread:
             self._cation_aryl()
             # self._sulfur_aryl()
             # self._anion_aryl()
-        f = open('output/' + name + ".txt", "w")
-        f.write(self.text)
-        f.close()
+        output_dict[name] = self.text
+
         print(f'{name} : Hydrogen_Bond: {self.params["Hydrogen_Bond"][1]}; '
               f'Salt_Bridge: {self.params["Salt_Bridge"][1]}; Dissulfide_Bond: {self.params["Dissulfide_Bond"][1]}; '
               f'Van_der_Waals: {self.params["Van_der_Waals"][1]}; Pi_Stacking: {self.params["Pi_Stacking"][1]}; '
