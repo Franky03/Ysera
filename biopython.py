@@ -194,227 +194,227 @@ class Edges(Nodes):
         # verificar se o par já foi analisado
         
         #achar como calcular o angulo entre os átomos
-        for model in self.structure:
-            for chain in model:
-                for residue in chain:
-                    if residue.resname in ['032', 'HOH']:
-                        continue
-                    for atom in residue:
-                        atom_name= atom.get_name()
-                        is_vdw = False
+        for chain in self.structure.get_chains():
+            for residue in chain:
+                if residue.resname in ['032', 'HOH']:
+                    continue
+                for atom in residue:
+                    atom_name= atom.get_name()
+                    is_vdw = False
 
-                        # Looking for HBOND
-                        if atom.fullname[1] in ['N', 'O'] or (atom_name == 'SG' and residue.resname == 'CYS'):
-                            neighbors= self.ns.search(atom.coord, 5.5)
-                            for neighbor in neighbors:
-                                
-                                neig_name= neighbor.get_name()
-                                neig_res= neighbor.get_parent()
-                                if neig_res.resname in ['HOH', '032']:
-                                    continue 
-                                if neig_res.id[1] == residue.id[1] or neig_name[0] == atom_name[0]:
-                                    continue
+                    # Looking for HBOND
+                    if atom.fullname[1] in ['N', 'O'] or (atom_name == 'SG' and residue.resname == 'CYS'):
+                        neighbors= self.ns.search(atom.coord, 5.5)
+                        for neighbor in neighbors:
+                            
+                            neig_name= neighbor.get_name()
+                            neig_res= neighbor.get_parent()
+                            if neig_res.resname in ['HOH', '032']:
+                                continue 
+                            if neig_res.id[1] == residue.id[1] or neig_name[0] == atom_name[0]:
+                                continue
 
-                                pair = (int(residue.id[1]), int(neig_res.id[1]))
+                            pair = (int(residue.id[1]), int(neig_res.id[1]))
 
-                                if pair in self.analyzed_pairs:
-                                    continue
-                                else:
-                                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                            if pair in self.analyzed_pairs:
+                                continue
+                            else:
+                                self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
 
 
-                                if neighbor.fullname[1] in ['N', 'O'] or (neighbor.get_name() == 'SG' and neig_res.resname == 'CYS'):
-                                    distance= np.linalg.norm(atom.coord - neighbor.coord)
-                                    #Verificando quem é doador
-                                    if (atom_name[0] == 'N' or (atom_name in ['OG', 'OH', 'OG1', 'SG'] and residue.resname in list(self.lighbdonor.keys()))) and (neig_name[0] == 'O' or (neig_name in ['SD', 'ND1'] and neig_res.resname in list(self.lighbac.keys()))):
-                                        # Aqui o doador vai ser o atomo principal
-                                        n_or_o_donor = atom
-                                        h_list = [a for a in residue if a.element == 'H']
-                                        h_distances= {}
-                                        for h_atom in h_list:
-                                            h_dist = np.linalg.norm(atom.coord - h_atom.coord)
-                                            h_distances[h_dist] = h_atom
-                                        min_h = min(list(h_distances.keys()))
-                                        h_donor = h_distances[min_h]
-                                        
-
-                                    elif (neig_name[0] == 'N' or (neig_name in ['OG', 'OH', 'OG1', 'SG'] and neig_res.resname in list(self.lighbdonor.keys()))) and (atom_name[0] == 'O' or (atom_name in ['SD', 'ND1'] and residue.resname in list(self.lighbac.keys()))):
-                                        # Aqui o doador vai ser o atomo vizinho
-                                        n_or_o_donor = neighbor
-                                        h_list = [a for a in neig_res if a.element == 'H']
-                                        h_distances= {}
-                                        for h_atom in h_list:
-                                            h_dist = np.linalg.norm(neighbor.coord - h_atom.coord)
-                                            h_distances[h_dist] = h_atom
-                                        min_h = min(list(h_distances.keys()))
-                                        h_donor = h_distances[min_h]
-                                        
-                                    terceiro_vetor= h_donor.get_vector()
-                                    neighbor_vector= neighbor.get_vector()
-                                    a_vector = atom.get_vector()
-
-                                    angle = 0.0
-                                    if n_or_o_donor == atom:
-                                        angle = np.degrees(calc_angle(terceiro_vetor,a_vector, neighbor_vector))
-                                    else:
-                                        angle = np.degrees(calc_angle(terceiro_vetor, neighbor_vector, a_vector))
-
-                                    if 2.5 < distance <= 3.5 and angle <= 63.0:
-                                        
-                                        #Verificando se é a cadeia principal ou lateral 
-                                        if atom.name in ["N", "O"]:
-                                            chain1 = 'MC'
-                                        else:
-                                            chain1 = 'SC'
-                                        
-                                        if neighbor.name in ['N', 'O']:
-                                            chain2 = 'MC'
-                                        else:
-                                            chain2 = 'SC'
-                                        
-                                        self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
-                                        self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
-                                        self.bonds.append(f"HBOND:{chain1}_{chain2}")
-                                        self.distances.append(f"{distance:.3f}")
-                                        self.angles.append(f"{angle:.3f}")
-                                        self.atom1.append(atom_name)
-                                        self.atom2.append(neig_name)
-                                        self.donors.append(f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}")
-
-                        #Looking for VDW
-                        elif atom.fullname[1] in ['C', 'S', 'O', 'N']:
-                            neighbors= self.ns.search(atom.coord, 3.9)
-                            for neighbor in neighbors:
-                                
-                                is_vdw = False
-
-                                neig_name= neighbor.get_name()
-                                neig_res= neighbor.get_parent()
+                            if neighbor.fullname[1] in ['N', 'O'] or (neighbor.get_name() == 'SG' and neig_res.resname == 'CYS'):
                                 distance= np.linalg.norm(atom.coord - neighbor.coord)
-                                if neig_res.id[1] == residue.id[1] or neig_name in ["CA", "CH2"] or atom_name in ["CA", "CH2"]  or (atom_name=='C' and neig_name=='C'):
-                                    continue
-
-                                if neig_res.resname in ['HOH', '032']:
-                                    continue
-
-                                pair = (int(residue.id[1]), int(neig_res.id[1]))
-                                
-                                if pair in self.analyzed_pairs:
-                                    continue
-                                else:
-                                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
-
-                                if neighbor.fullname[1] in ['C', 'S', 'O', 'N'] :
+                                #Verificando quem é doador
+                                if (atom_name[0] == 'N' or (atom_name in ['OG', 'OH', 'OG1', 'SG'] and residue.resname in list(self.lighbdonor.keys()))) and (neig_name[0] == 'O' or (neig_name in ['SD', 'ND1'] and neig_res.resname in list(self.lighbac.keys()))):
+                                    # Aqui o doador vai ser o atomo principal
+                                    n_or_o_donor = atom
+                                    h_list = [a for a in residue if a.element == 'H']
+                                    h_distances= {}
+                                    for h_atom in h_list:
+                                        h_dist = np.linalg.norm(atom.coord - h_atom.coord)
+                                        h_distances[h_dist] = h_atom
+                                    min_h = min(list(h_distances.keys()))
+                                    h_donor = h_distances[min_h]
                                     
-                                    if atom.name in ["C", "S"]:
+
+                                elif (neig_name[0] == 'N' or (neig_name in ['OG', 'OH', 'OG1', 'SG'] and neig_res.resname in list(self.lighbdonor.keys()))) and (atom_name[0] == 'O' or (atom_name in ['SD', 'ND1'] and residue.resname in list(self.lighbac.keys()))):
+                                    # Aqui o doador vai ser o atomo vizinho
+                                    n_or_o_donor = neighbor
+                                    h_list = [a for a in neig_res if a.element == 'H']
+                                    h_distances= {}
+                                    for h_atom in h_list:
+                                        h_dist = np.linalg.norm(neighbor.coord - h_atom.coord)
+                                        h_distances[h_dist] = h_atom
+                                    min_h = min(list(h_distances.keys()))
+                                    h_donor = h_distances[min_h]
+                                    
+                                terceiro_vetor= h_donor.get_vector()
+                                neighbor_vector= neighbor.get_vector()
+                                a_vector = atom.get_vector()
+
+                                angle = 0.0
+                                if n_or_o_donor == atom:
+                                    angle = np.degrees(calc_angle(terceiro_vetor,a_vector, neighbor_vector))
+                                else:
+                                    angle = np.degrees(calc_angle(terceiro_vetor, neighbor_vector, a_vector))
+
+                                if 2.5 < distance <= 3.5 and angle <= 63.0:
+                                    
+                                    #Verificando se é a cadeia principal ou lateral 
+                                    if atom.name in ["N", "O"]:
                                         chain1 = 'MC'
                                     else:
                                         chain1 = 'SC'
                                     
-                                    if neighbor.name in ['C', 'S']:
+                                    if neighbor.name in ['N', 'O']:
                                         chain2 = 'MC'
                                     else:
                                         chain2 = 'SC'
+                                    
+                                    self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
+                                    self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
+                                    self.bonds.append(f"HBOND:{chain1}_{chain2}")
+                                    self.distances.append(f"{distance:.3f}")
+                                    self.angles.append(f"{angle:.3f}")
+                                    self.atom1.append(atom_name)
+                                    self.atom2.append(neig_name)
+                                    self.donors.append(f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}")
 
-                                    if (atom.fullname[1] == "C" and neighbor.fullname[1]  == "C") or (atom.fullname[1]  == "C" and neighbor.fullname[1]  == "S") or (atom.fullname[1]  == "S" and neighbor.fullname[1]  == "C"):
-                                        is_vdw = True
+                    #Looking for VDW
+                    elif atom.fullname[1] in ['C', 'S', 'O', 'N']:
+                        neighbors= self.ns.search(atom.coord, 3.9)
+                        for neighbor in neighbors:
+                            
+                            is_vdw = False
+
+                            neig_name= neighbor.get_name()
+                            neig_res= neighbor.get_parent()
+                            distance= np.linalg.norm(atom.coord - neighbor.coord)
+                            if neig_res.id[1] == residue.id[1] or neig_name in ["CA", "CH2"] or atom_name in ["CA", "CH2"]  or (atom_name=='C' and neig_name=='C'):
+                                continue
+
+                            if neig_res.resname in ['HOH', '032']:
+                                continue
+
+                            pair = (int(residue.id[1]), int(neig_res.id[1]))
+                            
+                            if pair in self.analyzed_pairs:
+                                continue
+                            else:
+                                self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+
+                            if neighbor.fullname[1] in ['C', 'S', 'O', 'N'] :
                                 
-                                    elif (atom_name[0] == "N" or atom_name[0] == "O" ) and neig_name[0] == "C":
-                                        if (residue.resname == 'GLN' and (atom_name == "OE1" or atom_name == "NE2")) or (
-                                            residue.resname == 'ASN' and (atom_name == "OD1" or atom_name == "ND2")):
-                                            
-                                            is_vdw = True
-                                            
-                                    elif (neig_name[0] == "N" or neig_name[0] == "O" ) and atom_name[0] == "C":
-                                        if (neig_res.resname == 'GLN' and (neighbor.name == "OE1" or neighbor.name == "NE2")) or (
-                                            neig_res.resname == 'ASN' and (neighbor.name == "OD1" or neighbor.name == "ND2")):
-                                           
-                                             is_vdw = True
-                                            
-                                if is_vdw:
-                                    check_dist= distance - vdw_radii[atom.name[0]] - vdw_radii[neighbor.name[0]]
-                                        
-                                    if check_dist <= 0.5:
-                                        self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
-                                        self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
-                                        self.donors.append("NaN")
-                                        self.angles.append("NaN")
-                                        self.bonds.append(f"VDW:{chain1}_{chain2}")
-                                        self.distances.append(f"{distance:.3f}")
-                                        self.atom1.append(atom_name)
-                                        self.atom2.append(neig_name)
-                        # Looking for SBOND
-                        if atom_name[0] == 'S':
-                            neighbors= self.ns.search(atom.coord, 3.5)
-                            for neighbor in neighbors:
-                                
-                                if pair in self.analyzed_pairs:
-                                        continue
+                                if atom.name in ["C", "S"]:
+                                    chain1 = 'MC'
                                 else:
-                                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                                    chain1 = 'SC'
+                                
+                                if neighbor.name in ['C', 'S']:
+                                    chain2 = 'MC'
+                                else:
+                                    chain2 = 'SC'
+
+                                if (atom.fullname[1] == "C" and neighbor.fullname[1]  == "C") or (atom.fullname[1]  == "C" and neighbor.fullname[1]  == "S") or (atom.fullname[1]  == "S" and neighbor.fullname[1]  == "C"):
+                                    is_vdw = True
+                            
+                                elif (atom_name[0] == "N" or atom_name[0] == "O" ) and neig_name[0] == "C":
+                                    if (residue.resname == 'GLN' and (atom_name == "OE1" or atom_name == "NE2")) or (
+                                        residue.resname == 'ASN' and (atom_name == "OD1" or atom_name == "ND2")):
                                         
-                                neig_name= neighbor.get_name()
-                                neig_res= neighbor.get_parent()
-                                distance= np.linalg.norm(atom.coord - neighbor.coord)
-                                if neig_name[0] == 'S' and distance<=2.5:
+                                        is_vdw = True
+                                        
+                                elif (neig_name[0] == "N" or neig_name[0] == "O" ) and atom_name[0] == "C":
+                                    if (neig_res.resname == 'GLN' and (neighbor.name == "OE1" or neighbor.name == "NE2")) or (
+                                        neig_res.resname == 'ASN' and (neighbor.name == "OD1" or neighbor.name == "ND2")):
+                                        
+                                            is_vdw = True
+                                        
+                            if is_vdw:
+                                check_dist= distance - vdw_radii[atom.name[0]] - vdw_radii[neighbor.name[0]]
+                                    
+                                if check_dist <= 0.5:
                                     self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
                                     self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
                                     self.donors.append("NaN")
                                     self.angles.append("NaN")
-                                    self.bonds.append(f"SBOND:{chain1}_{chain2}")
+                                    self.bonds.append(f"VDW:{chain1}_{chain2}")
                                     self.distances.append(f"{distance:.3f}")
                                     self.atom1.append(atom_name)
                                     self.atom2.append(neig_name)
-                        # Salt Bridges
-                        
-                        if residue.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
-                            analyzed_ionic= set()
-                            neighbors= self.ns.search(atom.coord, 8)
-                            for neighbor in neighbors:
-                                neig_res= neighbor.get_parent()
-                                neig_name= neighbor.get_name()
-                                if neig_res.id[1] == residue.id[1]:
+                    # Looking for SBOND
+                    if atom_name[0] == 'S':
+                        neighbors= self.ns.search(atom.coord, 3.5)
+                        for neighbor in neighbors:
+                            
+                            if pair in self.analyzed_pairs:
                                     continue
-                                if atom_name in ['CZ', 'NZ'] or neig_res in ['CZ', 'NZ']:
-                                    pair = (int(residue.id[1]), int(neig_res.id[1]))
+                            else:
+                                self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
                                     
-                                    if pair in self.analyzed_pairs or pair in analyzed_ionic:
-                                        continue
-                                    else:
-                                        self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
-                                        analyzed_ionic.add(pair)
+                            neig_name= neighbor.get_name()
+                            neig_res= neighbor.get_parent()
+                            distance= np.linalg.norm(atom.coord - neighbor.coord)
+                            if neig_name[0] == 'S' and distance<=2.5:
+                                self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
+                                self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
+                                self.donors.append("NaN")
+                                self.angles.append("NaN")
+                                self.bonds.append(f"SBOND:{chain1}_{chain2}")
+                                self.distances.append(f"{distance:.3f}")
+                                self.atom1.append(atom_name)
+                                self.atom2.append(neig_name)
+                    # Salt Bridges
+                    
+                    if residue.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
+                        analyzed_ionic= set()
+                        neighbors= self.ns.search(atom.coord, 8)
+                        for neighbor in neighbors:
+                            neig_res= neighbor.get_parent()
+                            neig_name= neighbor.get_name()
+                            if neig_res.id[1] == residue.id[1]:
+                                continue
+                            if atom_name in ['CZ', 'NZ'] or neig_res in ['CZ', 'NZ']:
+                                pair = (int(residue.id[1]), int(neig_res.id[1]))
+                                
+                                if pair in self.analyzed_pairs or pair in analyzed_ionic:
+                                    continue
+                                else:
+                                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                                    analyzed_ionic.add(pair)
 
-                                    if neig_res.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
-                                        
-                                        
-                                        if residue.resname in ['ARG', 'LYS', 'HIS'] and neig_res.resname in ['ASP', 'GLU']:
-                                            # aqui o átomo vai ser o doador 
-                                            ionic_donor= atom
+                                if neig_res.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
+                                    
+                                    
+                                    if residue.resname in ['ARG', 'LYS', 'HIS'] and neig_res.resname in ['ASP', 'GLU']:
+                                        # aqui o átomo vai ser o doador 
+                                        ionic_donor= atom
 
-                                        elif neig_res.resname in ['ARG', 'LYS', 'HIS'] and residue.resname in ['ASP', 'GLU']:
-                                            # aqui o neighbor vai ser o doador
-                                            ionic_donor = neighbor
-                                            
-                                        chain1= 'MC' if len(atom_name)==1 else 'SC'
-                                        chain2= 'MC' if len(neig_name)==1 else 'SC'
-                                            
-                                        distance = np.linalg.norm(atom.coord - neighbor.coord)
-                                        # angle = np.degrees(calc_angle())
+                                    elif neig_res.resname in ['ARG', 'LYS', 'HIS'] and residue.resname in ['ASP', 'GLU']:
+                                        # aqui o neighbor vai ser o doador
+                                        ionic_donor = neighbor
                                         
-                                        if distance <= 4.0:
-                                            self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
-                                            self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
-                                            self.bonds.append(f"IONIC:{chain1}_{chain2}")
-                                            self.distances.append(f"{distance:.3f}")
-                                            self.angles.append(f"NAN")
-                                            if atom_name in ['CZ', 'NZ']:
-                                                self.atom1.append(atom_name)
-                                                self.atom2.append(neighbor.get_coord())
-                                            elif atom_name not in ['CZ', 'NZ'] and neig_name in ['CZ', 'NZ']:
-                                                self.atom1.append(atom.get_coord())
-                                                self.atom2.append(neig_name)
+                                    chain1= 'MC' if len(atom_name)==1 else 'SC'
+                                    chain2= 'MC' if len(neig_name)==1 else 'SC'
+                                        
+                                    distance = np.linalg.norm(atom.coord - neighbor.coord)
+                                    # angle = np.degrees(calc_angle())
+                                    
+                                    if distance <= 4.0:
+                                        self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
+                                        self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
+                                        self.bonds.append(f"IONIC:{chain1}_{chain2}")
+                                        self.distances.append(f"{distance:.3f}")
+                                        self.angles.append(f"NAN")
+                                        if atom_name in ['CZ', 'NZ']:
+                                            self.atom1.append(atom_name)
+                                            self.atom2.append(neighbor.get_coord())
+                                        elif atom_name not in ['CZ', 'NZ'] and neig_name in ['CZ', 'NZ']:
+                                            self.atom1.append(atom.get_coord())
+                                            self.atom2.append(neig_name)
 
-                                            self.donors.append(f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}")
+                                        self.donors.append(f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}")
+                                        
     def to_file(self):
         self.Bonds()
 
@@ -453,7 +453,7 @@ def run(name_= False, file= None):
     # time.sleep(2)
 
     edges= Edges(name_, './temp/input_file.pdb')
-    edges.to_file()
+    edges.print_output()
     
 
     print(f"---{(time.time() - start)} seconds ---")
