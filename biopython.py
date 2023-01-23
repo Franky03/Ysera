@@ -160,6 +160,7 @@ class Edges(Nodes):
         self.distances, self.donors, self.angles= [], [], []
         self.atom1, self.atom2 = [], []
         self.analyzed_pairs = set()
+        self.energies = []
         
         
 
@@ -276,6 +277,7 @@ class Edges(Nodes):
                                     self.bonds.append(f"HBOND:{chain1}_{chain2}")
                                     self.distances.append(f"{distance:.3f}")
                                     self.angles.append(f"{angle:.3f}")
+                                    self.energies.append("NaN")
                                     self.atom1.append(atom_name)
                                     self.atom2.append(neig_name)
                                     self.donors.append(f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}")
@@ -338,6 +340,7 @@ class Edges(Nodes):
                                     self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
                                     self.donors.append("NaN")
                                     self.angles.append("NaN")
+                                    self.energies.append(f"{6.000:.3f}")
                                     self.bonds.append(f"VDW:{chain1}_{chain2}")
                                     self.distances.append(f"{distance:.3f}")
                                     self.atom1.append(atom_name)
@@ -346,9 +349,12 @@ class Edges(Nodes):
                     if atom_name[0] == 'S':
                         neighbors= self.ns.search(atom.coord, 3.5)
                         for neighbor in neighbors:
-                            
+                            neig_res = neighbor.get_parent()
+
+                            if neig_res.id[1] == residue.id[1]:
+                                continue
                             if pair in self.analyzed_pairs:
-                                    continue
+                                continue
                             else:
                                 self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
                                     
@@ -360,6 +366,7 @@ class Edges(Nodes):
                                 self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
                                 self.donors.append("NaN")
                                 self.angles.append("NaN")
+                                self.energies.append(f"{167.000:.3f}")
                                 self.bonds.append(f"SBOND:{chain1}_{chain2}")
                                 self.distances.append(f"{distance:.3f}")
                                 self.atom1.append(atom_name)
@@ -406,6 +413,7 @@ class Edges(Nodes):
                                         self.bonds.append(f"IONIC:{chain1}_{chain2}")
                                         self.distances.append(f"{distance:.3f}")
                                         self.angles.append(f"NAN")
+                                        self.energies.append(f"{20.000:.3f}")
                                         if atom_name in ['CZ', 'NZ']:
                                             self.atom1.append(atom_name)
                                             self.atom2.append(neighbor.get_coord())
@@ -418,10 +426,10 @@ class Edges(Nodes):
     def to_file(self):
         self.Bonds()
 
-        colunas= ["NodeId1", "Interaction"	,"NodeId2",	"Distance",	"Angle", "Atom1", "Atom2", "Donor"]
+        colunas= ["NodeId1", "Interaction"	,"NodeId2",	"Distance",	"Angle","Energy", "Atom1", "Atom2", "Donor"]
 
         data= pd.DataFrame(list(zip(self.nodes_id1, self.bonds, self.nodes_id2, self.distances, 
-                                    self.angles, self.atom1, self.atom2, self.donors)), columns= colunas)
+                                    self.angles,self.energies, self.atom1, self.atom2, self.donors)), columns= colunas)
         
         data.to_csv(f'./{self.name}_edges.csv', sep='\t', index=False)
         
@@ -433,11 +441,11 @@ class Edges(Nodes):
         time.sleep(2)
         for n in range(len(self.nodes_id1)):
             try:
-                print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
+                print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
                 # time.sleep(0.01)
             except Exception as e:
                 print(e)
-                print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
+                print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
     
 
 
@@ -464,3 +472,4 @@ run('3og7', './temp/3og7.pdb')
 # Como diminuir o número de ligações de van der walls
 # Pontos especificos que podem ajudar na análise
 # Percebi que cadeias podem fazer ligações entre si, ex: A:475 e B:715
+# As energias são sempre as mesmas 
