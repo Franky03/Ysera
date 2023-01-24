@@ -114,9 +114,17 @@ class Nodes:
         self.search_nodes()
 
         colunas= ["NodeId", "Chain","Position",	"Residue",	"Dssp",	"Degree", "Bfactor_CA", "x", "y", "z", "pdbFileName", "Model"]
-        x = [f"{x_c[0]:.3f}" for x_c in self.coords]
-        y = [f"{y_c[1]:.3f}" for y_c in self.coords]
-        z = [f"{z_c[2]:.3f}" for z_c in self.coords]
+        
+        x, y, z = [], [], []
+        for coord in self.coords:
+            if coord[0] != 'NaN':
+                x.append(f"{coord[0]:.3f}")
+                y.append(f"{coord[1]:.3f}")
+                z.append(f"{coord[2]:.3f}")
+            else:
+                x.append(coord[0])
+                y.append(coord[1])
+                z.append(coord[2])
 
         data= pd.DataFrame(list(zip(self.nodes_id, self.chains, self.positions, self.residues, 
                                     self.all_dssps, self.degrees, self.bfactors, x, y, z, self.pdb_filename, self.models
@@ -392,7 +400,6 @@ class Edges(Nodes):
 
                                 if neig_res.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
                                     
-                                    
                                     if residue.resname in ['ARG', 'LYS', 'HIS'] and neig_res.resname in ['ASP', 'GLU']:
                                         # aqui o átomo vai ser o doador 
                                         ionic_donor= atom
@@ -433,7 +440,6 @@ class Edges(Nodes):
         
         data.to_csv(f'./{self.name}_edges.csv', sep='\t', index=False)
         
-
     #Quase todos os átomos do RINGs sai aqui, mas raras ocasiões não aparece, por exemplo o B:696-B:710
     def print_output(self):
         self.Bonds()
@@ -446,8 +452,6 @@ class Edges(Nodes):
             except Exception as e:
                 print(e)
                 print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
-    
-
 
 def run(name_= False, file= None):
     start= time.time()
@@ -460,8 +464,8 @@ def run(name_= False, file= None):
     # pymol.cmd.save('./temp/input_file.pdb')
     # time.sleep(2)
 
-    edges= Edges(name_, './temp/input_file.pdb')
-    edges.print_output()
+    edges= Nodes(name_, './temp/input_file.pdb')
+    edges.to_file()
     
 
     print(f"---{(time.time() - start)} seconds ---")
