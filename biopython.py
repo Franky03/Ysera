@@ -285,7 +285,12 @@ class Edges(Nodes):
                                     self.bonds.append(f"HBOND:{chain1}_{chain2}")
                                     self.distances.append(f"{distance:.3f}")
                                     self.angles.append(f"{angle:.3f}")
-                                    self.energies.append("NaN")
+                                    if distance <= 1.5:
+                                        self.energies.append(f"{115.000:.3f}")
+                                    elif distance >= 2.2:
+                                        self.energies.append(f"{17.000:.3f}")
+                                    else:
+                                        self.energies.append(f"{40.000:.3f}")
                                     self.atom1.append(atom_name)
                                     self.atom2.append(neig_name)
                                     self.donors.append(f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}")
@@ -464,8 +469,8 @@ def run(name_= False, file= None):
     # pymol.cmd.save('./temp/input_file.pdb')
     # time.sleep(2)
 
-    edges= Nodes(name_, './temp/input_file.pdb')
-    edges.to_file()
+    edges= Edges(name_, './temp/input_file.pdb')
+    edges.print_output()
     
 
     print(f"---{(time.time() - start)} seconds ---")
