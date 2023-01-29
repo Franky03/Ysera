@@ -6,6 +6,7 @@ import time
 import pymol
 import mdtraj as md
 
+
 class Nodes:
     def __init__(self, name_=None,file_=False):
         self.name= name_
@@ -136,7 +137,7 @@ class Nodes:
 
 
 class Edges(Nodes):
-    def __init__(self, name, file_pdb):
+    def __init__(self, name, file_pdb, multiple=False):
         Nodes.__init__(self ,name_=name, file_= file_pdb)
         self.edges = []
         self.res= [res for res in self.structure.get_residues()]
@@ -164,12 +165,13 @@ class Edges(Nodes):
                          'TYR': ['OH']
                          }
         self.ligvdw = ['C','CB', 'CG1', 'CG2', 'CD1', 'CD2', 'CE']
+        self.ligpipi = ['HIS', 'TYR', 'TRP', 'PHE']
         self.nodes_id1, self.nodes_id2, self.bonds= [], [], []
         self.distances, self.donors, self.angles= [], [], []
         self.atom1, self.atom2 = [], []
         self.analyzed_pairs = set()
-        self.energies = []
-        
+        self.energies = [] 
+        self.multiple= multiple
         
 
     def Iac(self):
@@ -190,6 +192,11 @@ class Edges(Nodes):
                             #verificando se o átomo vizinho é de outro resíduo
                             if neighbor_pair != residue:
                                 print(residue.resname, neighbor_pair.resname, neighbor_pair.id[1], distance)
+    
+    def search_H(self):
+        for atom in self.structure.get_atoms():
+            if atom.fullname[1] == 'H':
+                print(atom)
     
     def Bonds(self):
         chain1= ''
@@ -237,6 +244,7 @@ class Edges(Nodes):
                                 if (atom_name[0] == 'N' or (atom_name in ['OG', 'OH', 'OG1', 'SG'] and residue.resname in list(self.lighbdonor.keys()))) and (neig_name[0] == 'O' or (neig_name in ['SD', 'ND1'] and neig_res.resname in list(self.lighbac.keys()))):
                                     # Aqui o doador vai ser o atomo principal
                                     n_or_o_donor = atom
+
                                     h_list = [a for a in residue if a.element == 'H']
                                     h_distances= {}
                                     for h_atom in h_list:
@@ -249,7 +257,9 @@ class Edges(Nodes):
                                 elif (neig_name[0] == 'N' or (neig_name in ['OG', 'OH', 'OG1', 'SG'] and neig_res.resname in list(self.lighbdonor.keys()))) and (atom_name[0] == 'O' or (atom_name in ['SD', 'ND1'] and residue.resname in list(self.lighbac.keys()))):
                                     # Aqui o doador vai ser o atomo vizinho
                                     n_or_o_donor = neighbor
+
                                     h_list = [a for a in neig_res if a.element == 'H']
+
                                     h_distances= {}
                                     for h_atom in h_list:
                                         h_dist = np.linalg.norm(neighbor.coord - h_atom.coord)
@@ -297,9 +307,8 @@ class Edges(Nodes):
 
                     #Looking for VDW
                     elif atom.fullname[1] in ['C', 'S', 'O', 'N']:
-                        neighbors= self.ns.search(atom.coord, 3.9)
+                        neighbors= self.ns.search(atom.coord,3.9)
                         for neighbor in neighbors:
-                            
                             is_vdw = False
 
                             neig_name= neighbor.get_name()
@@ -428,13 +437,26 @@ class Edges(Nodes):
                                         self.energies.append(f"{20.000:.3f}")
                                         if atom_name in ['CZ', 'NZ']:
                                             self.atom1.append(atom_name)
-                                            self.atom2.append(neighbor.get_coord())
+                                            self.atom2.append(f"{neighbor.get_coord()[0]:.3f},{neighbor.get_coord()[1]:.3f},{neighbor.get_coord()[2]:.3f}")
                                         elif atom_name not in ['CZ', 'NZ'] and neig_name in ['CZ', 'NZ']:
-                                            self.atom1.append(atom.get_coord())
+                                            self.atom1.append(f"{atom.get_coord()[0]:.3f},{atom.get_coord()[1]:.3f},{atom.get_coord()[2]:.3f}")
                                             self.atom2.append(neig_name)
 
                                         self.donors.append(f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}")
-                                        
+                    # Pi-Pi Stack
+                    # if residue.resname in self.ligpipi:
+                    #     neighbors = self.ns.search(atom.coord, 8)
+                    #     for neighbor in neighbors:
+                    #         neig_res= neighbor.get_parent()
+                    #         neig_name= neighbor.get_name()
+
+                    #         if neig_res.id[1] == residue.id[1]:
+                    #             continue
+
+                    #         if neig_res.resname in self.ligpipi:
+                    #             pass
+
+
     def to_file(self):
         self.Bonds()
 
@@ -469,7 +491,7 @@ def run(name_= False, file= None):
     # pymol.cmd.save('./temp/input_file.pdb')
     # time.sleep(2)
 
-    edges= Edges(name_, './temp/input_file.pdb')
+    edges= Edges(name_, './temp/input_file.pdb', multiple=True)
     edges.print_output()
     
 
