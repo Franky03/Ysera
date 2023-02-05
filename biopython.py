@@ -291,7 +291,7 @@ class Edges(Nodes):
                                         chain2 = 'SC'
                                     
                                     if self.multiple:
-                                        hbond_check.add((atom, neighbor, distance, angle))
+                                        hbond_check.add(((residue.id[1], neig_res.id[1]),atom, neighbor, distance, angle))
                                     
                                     else:
                                         self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
@@ -453,6 +453,14 @@ class Edges(Nodes):
                                                 self.atom2.append(neig_name)
 
                                             self.donors.append(f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}")
+                    
+                #check the multiple interactions 
+                if self.multiple:
+                    pass
+                        
+                
+           
+
 
     def to_file(self):
         self.Bonds()
@@ -472,7 +480,7 @@ class Edges(Nodes):
         for n in range(len(self.nodes_id1)):
             try:
                 print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
-                time.sleep(0.01)
+                
             except Exception as e:
                 print(e)
                 print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
