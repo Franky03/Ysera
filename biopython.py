@@ -542,3 +542,5 @@ def run(name_= False, file= None):
     print(f"---{(time.time() - start)} seconds ---")
 
 run('3og7', './temp/3og7.pdb')
+
+# Colocar um trycatch nas ligações com Hidrogenio 
