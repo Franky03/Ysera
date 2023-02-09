@@ -14,11 +14,16 @@ def run_software(name_= False, file= None, hydrogenate = False):
         pymol.cmd.save('./temp/input_file.pdb')
         time.sleep(2)
 
-    edges= Edges(name_, './temp/input_file.pdb', multiple= True)
+    edges= Edges(name_, './temp/input_file.pdb')
     edges.print_output()
     
+    finish = (time.time() - start)
 
-    print(f"---{(time.time() - start)} seconds ---")
+    print(f"---{finish} seconds ---")
 
-if __name__ == "__main__":
-    run_software('3og7', './temp/3og7.pdb', hydrogenate= True)
+    with open("time_log.txt", "a") as file:
+        file.write(f"---{finish} seconds ---\n")
+
+
+run_software('3og7', './temp/3og7.pdb', hydrogenate= True)
+

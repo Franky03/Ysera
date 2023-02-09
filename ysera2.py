@@ -25,9 +25,8 @@ class Nodes:
         self.cut_dist= 8.0 # definir um limite de distância de corte (escolhido com base na literatura)
         #B-Factor, coords and filenames
         self.bfactors, self.coords, self.pdb_filename =[], [], []
-        self.models= []
+        self.rapdfs = []
         
-    
     def dssp_test(self):
         self.search_nodes()
         for residue in self.dssp:
@@ -83,7 +82,20 @@ class Nodes:
                         #pdb filenames
 
                         self.pdb_filename.append(f"input_file.cif#{str(residue.id[1])}.{str(chain.id)}")
-                        self.models.append(model.id + 1)
+
+                        #Rapdf
+                        sum_of_dis = 0
+                        rapdf_count = 0
+                        for residue_2 in Selection.unfold_entities(model, 'R'):
+                            if 'CA' in residue and 'CA' in residue_2 and residue_2.id[1] != residue.id[1]:
+                                sum_of_dis += np.linalg.norm(residue["CA"].coord - residue_2["CA"].coord)
+                                rapdf_count += 1
+                        if rapdf_count != 0:
+                            rapdf = sum_of_dis/rapdf_count
+                            self.rapdfs.append(rapdf)
+                        else:
+                            self.rapdfs.append(0.0)
+
 
         # Pegando o DSSP 
         for i in range(len(self.dssp_md[0])):
@@ -102,12 +114,12 @@ class Nodes:
             try:
                 print(f"{self.nodes_id[n]}\t{self.chains[n]}\t\t{self.positions[n]}\t\t{self.residues[n]}\t{self.all_dssps[n]}\t" +
                         f"{self.degrees[n]}\t{self.bfactors[n]:.3f}\t{self.coords[n][0]:.3f}\t{self.coords[n][1]:.3f}\t{self.coords[n][2]:.3f}\t" +
-                        f"{self.pdb_filename[n]}\t{self.models[n]}"
+                        f"{self.pdb_filename[n]}\t{self.rapdfs[n]}"
                 )
             except Exception as e:
                 print(f"{self.nodes_id[n]}\t{self.chains[n]}\t\t{self.positions[n]}\t\t{self.residues[n]}\t{self.all_dssps[n]}\t" +
                         f"{self.degrees[n]}\t{self.bfactors[n]}\t{self.coords[n][0]}\t{self.coords[n][1]}\t{self.coords[n][2]}\t" +
-                        f"{self.pdb_filename[n]}\t{self.models[n]}"
+                        f"{self.pdb_filename[n]}\t{self.rapdfs[n]}"
                 )
 
     def to_file(self):
@@ -134,7 +146,7 @@ class Nodes:
  
  
 class Edges(Nodes):
-    def __init__(self, name, file_pdb, multiple=False):
+    def __init__(self, name, file_pdb, multiple=True):
         Nodes.__init__(self ,name_=name, file_= file_pdb)
         self.edges = []
         self.res= [res for res in self.structure.get_residues()]
@@ -476,6 +488,7 @@ class Edges(Nodes):
                 if residue.resname in ['032', 'HOH']:
                     continue
                 for atom in residue:
+                
                     atom_name= atom.get_name()
                     is_vdw = False
 
@@ -537,8 +550,8 @@ class Edges(Nodes):
         if self.multiple:
             self.multiple_mode()
 
-        print(len(self.nodes_id1), len(self.donors))
-        time.sleep(2)
+        # print(len(self.nodes_id1), len(self.donors))
+        # time.sleep(2)
         for n in range(len(self.nodes_id1)):
             try:
                 print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
