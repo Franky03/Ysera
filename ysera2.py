@@ -3,7 +3,6 @@ from Bio.PDB.vectors import calc_angle
 import numpy as np
 import pandas as pd
 import time
-import pymol
 import mdtraj as md
 
 
@@ -133,9 +132,7 @@ class Nodes:
         
         data.to_csv(f'./{self.name}_nodes.csv', sep='\t', index=False)
  
-
-
-
+ 
 class Edges(Nodes):
     def __init__(self, name, file_pdb, multiple=False):
         Nodes.__init__(self ,name_=name, file_= file_pdb)
@@ -228,28 +225,33 @@ class Edges(Nodes):
                     if (atom_name[0] == 'N' or (atom_name in ['OG', 'OH', 'OG1', 'SG'] and residue.resname in list(self.lighbdonor.keys()))) and (neig_name[0] == 'O' or (neig_name in ['SD', 'ND1'] and neig_res.resname in list(self.lighbac.keys()))):
                         # Aqui o doador vai ser o atomo principal
                         n_or_o_donor = atom
-
-                        h_list = [a for a in residue if a.element == 'H']
-                        h_distances= {}
-                        for h_atom in h_list:
-                            h_dist = np.linalg.norm(atom.coord - h_atom.coord)
-                            h_distances[h_dist] = h_atom
-                        min_h = min(list(h_distances.keys()))
-                        h_donor = h_distances[min_h]
+                        try:
+                            h_list = [a for a in residue if a.element == 'H']
+                            h_distances= {}
+                            for h_atom in h_list:
+                                h_dist = np.linalg.norm(atom.coord - h_atom.coord)
+                                h_distances[h_dist] = h_atom
+                            min_h = min(list(h_distances.keys()))
+                            h_donor = h_distances[min_h]
+                        except:
+                            raise Exception("Hydrogens not found, hydrogenate the pdb file first!")
                         
 
                     elif (neig_name[0] == 'N' or (neig_name in ['OG', 'OH', 'OG1', 'SG'] and neig_res.resname in list(self.lighbdonor.keys()))) and (atom_name[0] == 'O' or (atom_name in ['SD', 'ND1'] and residue.resname in list(self.lighbac.keys()))):
                         # Aqui o doador vai ser o atomo vizinho
                         n_or_o_donor = neighbor
+                        try:
 
-                        h_list = [a for a in neig_res if a.element == 'H']
+                            h_list = [a for a in neig_res if a.element == 'H']
 
-                        h_distances= {}
-                        for h_atom in h_list:
-                            h_dist = np.linalg.norm(neighbor.coord - h_atom.coord)
-                            h_distances[h_dist] = h_atom
-                        min_h = min(list(h_distances.keys()))
-                        h_donor = h_distances[min_h]
+                            h_distances= {}
+                            for h_atom in h_list:
+                                h_dist = np.linalg.norm(neighbor.coord - h_atom.coord)
+                                h_distances[h_dist] = h_atom
+                            min_h = min(list(h_distances.keys()))
+                            h_donor = h_distances[min_h]
+                        except:
+                            raise Exception("Hydrogens not found, hydrogenate the pdb file first!")
                         
                     terceiro_vetor= h_donor.get_vector()
                     neighbor_vector= neighbor.get_vector()
@@ -486,7 +488,7 @@ class Edges(Nodes):
                     # Salt Bridges
                     self._salt_bridge(chain, residue, atom)
                     
-                    
+
     def analyse(self, bond, lig):
         for pair in self.bonds_check:
             pair_dist, pair_idx = [], []
@@ -545,25 +547,3 @@ class Edges(Nodes):
                 print(e)
                 print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
         print(self.ligands)
-
-
-def run(name_= False, file= None):
-    start= time.time()
-
-    if file is None:
-        raise Exception("Load File")
-
-    # pymol.cmd.load(file, 'myprotein')
-    # pymol.cmd.h_add()
-    # pymol.cmd.save('./temp/input_file.pdb')
-    # time.sleep(2)
-
-    edges= Edges(name_, './temp/input_file.pdb', multiple= True)
-    edges.print_output()
-    
-
-    print(f"---{(time.time() - start)} seconds ---")
-
-run('3og7', './temp/3og7.pdb')
-
-# Colocar um trycatch nas ligações com Hidrogenio 
