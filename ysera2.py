@@ -3,7 +3,7 @@ from Bio.PDB.vectors import calc_angle
 import numpy as np
 import pandas as pd
 import time
-import mdtraj as md
+# import mdtraj as md
 
 
 class Nodes:
@@ -13,8 +13,8 @@ class Nodes:
         self.structure= self.parser.get_structure(name_, file_)
         self.ns= NeighborSearch(list(self.structure.get_atoms()))
         #mdtraj
-        self.pdb = md.load_pdb(file_)
-        self.dssp_md = md.compute_dssp(self.pdb, simplified=False)
+        # self.pdb = md.load_pdb(file_)
+        # self.dssp_md = md.compute_dssp(self.pdb, simplified=False)
         
         self.model= self.structure[0]
         #self.dssp = DSSP(self.model, './Codes/3og7.pdb', file_type='PDB', dssp='dssp')
@@ -96,7 +96,7 @@ class Nodes:
                         else:
                             self.rapdfs.append(0.0)
 
-
+        """
         # Pegando o DSSP 
         for i in range(len(self.dssp_md[0])):
             if i>0:
@@ -107,7 +107,7 @@ class Nodes:
             else:
                 
                 self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] not in ['C', 'NA'] else '\t')  
-
+        """
     def print_output(self):
         self.search_nodes()
         for n in range(len(self.nodes_id)):
@@ -480,6 +480,19 @@ class Edges(Nodes):
                             self.donors.append(f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}")
                             self.ligands["ionic"] += 1
 
+    def pi_stacking(self, chain, residue, atom):
+        neighbors= self.ns.search(atom.coord, 7.2)
+        for neighbor in neighbors:
+            neig_res = neighbor.get_parent()
+            neig_chain = neig_res.get_parent().id
+            neig_amin = f'{neig_chain} {neig_res.id[1]}'
+            if residue.get_resname() in ['TYR', 'PHE', 'TRP'] and neig_res.get_resname() in ['TYR', 'PHE', 'TRP']:
+                if (amin not in invalids and neig_amin not in invalids) &\
+                   ([amin, neig_amin] not in exclusions and [neig_amin, amin] not in exclusions):
+                    
+
+
+
     def Bonds(self):
         
         for chain in self.structure.get_chains():
@@ -493,7 +506,7 @@ class Edges(Nodes):
                     is_vdw = False
 
                     # Looking for HBOND
-                    self._hydrogen_bond(chain,residue, atom)
+                    # self._hydrogen_bond(chain,residue, atom)
                     #Looking for VDW
                     self._vanderwaals(chain, residue, atom)
                     # Looking for SBOND

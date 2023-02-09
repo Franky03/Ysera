@@ -1,5 +1,5 @@
 from ysera2 import Nodes, Edges
-import pymol
+# import pymol
 import time
 
 def run_software(name_= False, file= None, hydrogenate = False):
@@ -7,14 +7,14 @@ def run_software(name_= False, file= None, hydrogenate = False):
 
     if file is None:
         raise Exception("Load File")
-    
+    """
     if not hydrogenate:
         pymol.cmd.load(file, 'myprotein')
         pymol.cmd.h_add()
         pymol.cmd.save('./temp/input_file.pdb')
         time.sleep(2)
-
-    edges= Edges(name_, './temp/input_file.pdb')
+    """
+    edges= Edges(name_, './temp/3og7.pdb')
     edges.print_output()
     
     finish = (time.time() - start)
@@ -26,4 +26,3 @@ def run_software(name_= False, file= None, hydrogenate = False):
 
 
 run_software('3og7', './temp/3og7.pdb', hydrogenate= True)
-
