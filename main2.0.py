@@ -2,8 +2,9 @@ from ysera2 import Nodes, Edges
 # import pymol
 import time
 
-def run_software(name_= False, file= None, hydrogenate = False):
-    start= time.time()
+
+def run_software(name_=False, file=None, hydrogenate=False):
+    start = time.time()
 
     if file is None:
         raise Exception("Load File")
@@ -14,9 +15,9 @@ def run_software(name_= False, file= None, hydrogenate = False):
         pymol.cmd.save('./temp/input_file.pdb')
         time.sleep(2)
     """
-    edges= Edges(name_, './temp/3og7.pdb')
+    edges = Edges(name_, './temp/3og7.pdb')
     edges.print_output()
-    
+
     finish = (time.time() - start)
 
     print(f"---{finish} seconds ---")
@@ -25,4 +26,4 @@ def run_software(name_= False, file= None, hydrogenate = False):
         file.write(f"---{finish} seconds ---\n")
 
 
-run_software('3og7', './temp/3og7.pdb', hydrogenate= True)
+run_software('3og7', './temp/3og7.pdb', hydrogenate=True)
