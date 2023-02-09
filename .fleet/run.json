@@ -4,7 +4,11 @@
             "type": "python",
             "name": "main",
             "arguments": ["main2.0.py"]
+        },
+        {
+            "type": "python",
+            "name": "aromatics",
+            "arguments": ["aromatics.py"]
         }
-
     ]
 }

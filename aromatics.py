@@ -91,6 +91,6 @@ class AromaticsFormat:
 
 
 if __name__ == '__main__':
-    af = AromaticsFormat('file_30.pdb')
+    af = AromaticsFormat('3og7.pdb')
     array, normals, invalids = af.get_data()
-    print(total)
+    print(array)

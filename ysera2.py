@@ -3,6 +3,7 @@ from Bio.PDB.vectors import calc_angle
 import numpy as np
 import pandas as pd
 import time
+from aromatics import AromaticsFormat
 # import mdtraj as md
 
 
@@ -147,8 +148,11 @@ class Nodes:
  
 class Edges(Nodes):
     def __init__(self, name, file_pdb, multiple=True):
+        af = AromaticsFormat('3og7.pdb')
+        self.array, self.normals, self.invalids = af.get_data()
         Nodes.__init__(self ,name_=name, file_= file_pdb)
         self.edges = []
+        self.exclusions
         self.res= [res for res in self.structure.get_residues()]
         self.mc = ['O', 'N']
         self.lighbdonor = {'ARG': ['NE', 'NH1', 'NH2'], 
@@ -482,13 +486,30 @@ class Edges(Nodes):
 
     def pi_stacking(self, chain, residue, atom):
         neighbors= self.ns.search(atom.coord, 7.2)
+        # tem que ver se chain
+        amin = f'{chain.id} {residue.id[1]}'
         for neighbor in neighbors:
             neig_res = neighbor.get_parent()
             neig_chain = neig_res.get_parent().id
             neig_amin = f'{neig_chain} {neig_res.id[1]}'
             if residue.get_resname() in ['TYR', 'PHE', 'TRP'] and neig_res.get_resname() in ['TYR', 'PHE', 'TRP']:
-                if (amin not in invalids and neig_amin not in invalids) &\
-                   ([amin, neig_amin] not in exclusions and [neig_amin, amin] not in exclusions):
+                if (amin not in self.invalids and neig_amin not in self.invalids) &\
+                    ([amin, neig_amin] not in self.exclusions and [neig_amin, amin] not in self.exclusions):
+                    coord_1 = np.array(aromatic_array[amin])
+                    coord_2 = np.array(aromatic_array[neig_amin])
+                    aromatic_distance = np.linalg.norm(coord_1 - coord_2)
+                    if aromatic_distance < 5.5 and amin != neig_amin:
+                        normal_1 = aromatic_normals[amin] / np.linalg.norm(aromatic_normals[amin])
+                        normal_2 = aromatic_normals[neig_amin] / np.linalg.norm(aromatic_normals[neig_amin])
+                        angle = np.arccos(np.clip(np.dot(normal_1, normal_2), -1.0, 1.0))
+                        if angle > 50:
+                            print('a linha completa com coord 1 e coord 2 no lugar de atom 1 e atom 2 e Tshaped ')
+                        elif 30 < angle < 50:
+                            print(' mesma coisa e inter')
+                        elif angle < 30:
+                            print('mesma coisa e paralel')
+
+                        exclusions.append([amin, neig_amin])
                     
 
 
