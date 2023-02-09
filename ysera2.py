@@ -2,11 +2,10 @@ from Bio.PDB import PDBParser, Selection, NeighborSearch
 from Bio.PDB.vectors import calc_angle
 import numpy as np
 import pandas as pd
-import time
 from aromatics import AromaticsFormat
 
 
-# import mdtraj as md
+import mdtraj as md
 
 
 class Nodes:
@@ -16,8 +15,8 @@ class Nodes:
         self.structure = self.parser.get_structure(name_, file_)
         self.ns = NeighborSearch(list(self.structure.get_atoms()))
         # mdtraj
-        # self.pdb = md.load_pdb(file_)
-        # self.dssp_md = md.compute_dssp(self.pdb, simplified=False)
+        self.pdb = md.load_pdb(file_)
+        self.dssp_md = md.compute_dssp(self.pdb, simplified=False)
 
         self.model = self.structure[0]
         # self.dssp = DSSP(self.model, './Codes/3og7.pdb', file_type='PDB', dssp='dssp')
@@ -99,7 +98,7 @@ class Nodes:
                         else:
                             self.rapdfs.append(0.0)
 
-        """
+
         # Pegando o DSSP 
         for i in range(len(self.dssp_md[0])):
             if i>0:
@@ -110,7 +109,7 @@ class Nodes:
             else:
                 
                 self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] not in ['C', 'NA'] else '\t')  
-        """
+
 
     def print_output(self):
         self.search_nodes()
@@ -228,17 +227,18 @@ class Edges(Nodes):
 
                 neig_name = neighbor.get_name()
                 neig_res = neighbor.get_parent()
+
                 if neig_res.resname in ['HOH', '032']:
                     continue
                 if neig_res.id[1] == residue.id[1] or neig_name[0] == atom_name[0]:
                     continue
 
-                pair = (int(residue.id[1]), int(neig_res.id[1]))
+                pair = (residue, neig_res)
 
                 if pair in self.analyzed_pairs:
                     continue
                 else:
-                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                    self.analyzed_pairs.add((neig_res, residue))
 
                 if neighbor.fullname[1] in ['N', 'O'] or (neighbor.get_name() == 'SG' and neig_res.resname == 'CYS'):
                     distance = np.linalg.norm(atom.coord - neighbor.coord)
@@ -277,7 +277,7 @@ class Edges(Nodes):
                             min_h = min(list(h_distances.keys()))
                             h_donor = h_distances[min_h]
                         except:
-                            raise Exception("Hydrogens not found, hydrogenate the pdb file first!")
+                            raise Exception("Hydrogen's not found, hydrogenate the pdb file first!")
 
                     terceiro_vetor = h_donor.get_vector()
                     neighbor_vector = neighbor.get_vector()
@@ -329,7 +329,6 @@ class Edges(Nodes):
 
         vdw_radii = {'C': 1.77, 'S': 1.89, 'N': 1.8, 'O': 1.4}
         is_vdw = False
-
         atom_name = atom.get_name()
         if atom.fullname[1] in ['C', 'S', 'O', 'N']:
             neighbors = self.ns.search(atom.coord, 3.9)
@@ -346,12 +345,12 @@ class Edges(Nodes):
                 if neig_res.resname in ['HOH', '032']:
                     continue
 
-                pair = (int(residue.id[1]), int(neig_res.id[1]))
+                pair = (residue, neig_res)
 
                 if pair in self.analyzed_pairs:
                     continue
                 else:
-                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                    self.analyzed_pairs.add((neig_res, residue))
 
                 if neighbor.fullname[1] in ['C', 'S', 'O', 'N']:
 
@@ -405,23 +404,23 @@ class Edges(Nodes):
         chain2 = ''
 
         atom_name = atom.get_name()
-
         if atom_name[0] == 'S':
             neighbors = self.ns.search(atom.coord, 3.5)
             for neighbor in neighbors:
                 neig_res = neighbor.get_parent()
 
-                pair = (int(residue.id[1]), int(neig_res.id[1]))
+                pair = (residue, neig_res)
 
-                if neig_res.id[1] == residue.id[1]:
+                if neig_res == residue:
                     continue
                 if pair in self.analyzed_pairs:
                     continue
                 else:
-                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                    self.analyzed_pairs.add((neig_res, residue))
 
                 neig_name = neighbor.get_name()
                 neig_res = neighbor.get_parent()
+
                 distance = np.linalg.norm(atom.coord - neighbor.coord)
                 if neig_name[0] == 'S' and distance <= 2.5:
                     self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
@@ -439,7 +438,6 @@ class Edges(Nodes):
         global ionic_donor
         chain1 = ''
         chain2 = ''
-
         atom_name = atom.get_name()
         if residue.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
             analyzed_ionic = set()
@@ -447,15 +445,15 @@ class Edges(Nodes):
             for neighbor in neighbors:
                 neig_res = neighbor.get_parent()
                 neig_name = neighbor.get_name()
-                if neig_res.id[1] == residue.id[1]:
+                if neig_res == residue:
                     continue
                 if atom_name in ['CZ', 'NZ'] or neig_res in ['CZ', 'NZ']:
-                    pair = (int(residue.id[1]), int(neig_res.id[1]))
+                    pair = (residue, neig_res)
 
                     if pair in self.analyzed_pairs or pair in analyzed_ionic:
                         continue
                     else:
-                        self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                        self.analyzed_pairs.add((neig_res, residue))
                         analyzed_ionic.add(pair)
 
                     if neig_res.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
@@ -507,13 +505,23 @@ class Edges(Nodes):
             neig_res = neighbor.get_parent()
             neig_chain = neig_res.get_parent().id
             neig_amin = f'{neig_chain} {neig_res.id[1]}'
+
+            if neig_res == residue:
+                continue
+
             if residue.get_resname() in ['TYR', 'PHE', 'TRP'] and neig_res.get_resname() in ['TYR', 'PHE', 'TRP']:
                 if (amin not in self.invalids and neig_amin not in self.invalids) & \
                         ([amin, neig_amin] not in self.exclusions and [neig_amin, amin] not in self.exclusions):
+
                     coord_1 = np.array(self.aromatic_array[amin])
                     coord_2 = np.array(self.aromatic_array[neig_amin])
                     aromatic_distance = np.linalg.norm(coord_1 - coord_2)
                     if aromatic_distance < 5.5 and amin != neig_amin:
+                        pair = (amin, neig_amin)
+
+                        if pair in self.analyzed_pairs:
+                            continue
+
                         normal_1 = self.aromatic_normals[amin] / np.linalg.norm(self.aromatic_normals[amin])
                         normal_2 = self.aromatic_normals[neig_amin] / np.linalg.norm(self.aromatic_normals[neig_amin])
                         angle = np.arccos(np.clip(np.dot(normal_1, normal_2), -1.0, 1.0))
@@ -527,7 +535,6 @@ class Edges(Nodes):
                         self.exclusions.append([amin, neig_amin])
 
     def Bonds(self):
-
         for chain in self.structure.get_chains():
             for residue in chain:
 
