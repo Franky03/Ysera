@@ -191,7 +191,7 @@ class Edges(Nodes):
         self.analyzed_pairs = set()
         self.energies = []
         self.multiple = multiple
-        self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0}
+        self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0, 'pi_stacking': 0}
 
     def Iac(self):
 
@@ -526,14 +526,34 @@ class Edges(Nodes):
                         normal_2 = self.aromatic_normals[neig_amin] / np.linalg.norm(self.aromatic_normals[neig_amin])
                         angle = np.arccos(np.clip(np.dot(normal_1, normal_2), -1.0, 1.0))
                         if angle > 50:
-                            print('a linha completa com coord 1 e coord 2 no lugar de atom 1 e atom 2 e Tshaped ')
+                            # Tshaped
+                            pass
                         elif 30 < angle < 50:
-                            print(' mesma coisa e inter')
+                            # inter
+                            pass
                         elif angle < 30:
-                            print('mesma coisa e paralel')
+                            # paralel
+                            pass
+                        chain1 = 'MC' if len(atom.get_name()) == 1 else 'SC'
+                        chain2 = 'MC' if len(neighbor.get_name()) == 1 else 'SC'
+                        coord_1 = f'{coord_1[0]},{coord_1[1]},{coord_1[2]}'
+                        coord_2 = f'{coord_2[0]},{coord_2[1]},{coord_2[2]}'
+
+                        if self.multiple:
+                            self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
+                                                     f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
+                            self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
+                            self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
+                            self.bonds.append(f"PIPISTACK:{chain1}_{chain2}")
+                            self.distances.append(f"{aromatic_distance:.3f}")
+                            self.angles.append(angle)
+                            self.energies.append(f"{20.000:.3f}")
+                            self.atom1.append(coord_1)
+                            self.atom2.append(coord_2)
+                            self.donors.append("NaN")
 
                         self.exclusions.append([amin, neig_amin])
-
+                        self.ligands["pi_stacking"] += 1
     def Bonds(self):
         for chain in self.structure.get_chains():
             for residue in chain:
@@ -602,9 +622,10 @@ class Edges(Nodes):
 
         if self.multiple:
             self.multiple_mode()
-
+            # self.to_file()
         # print(len(self.nodes_id1), len(self.donors))
         # time.sleep(2)
+
         for n in range(len(self.nodes_id1)):
             try:
                 print(
@@ -614,4 +635,5 @@ class Edges(Nodes):
                 print(e)
                 print(
                     f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
+
         print(self.ligands)
