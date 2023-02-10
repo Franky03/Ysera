@@ -22,7 +22,7 @@ class Nodes:
         # self.dssp = DSSP(self.model, './Codes/3og7.pdb', file_type='PDB', dssp='dssp')
         self.all_dssps = []
         self.nodes_id, self.chains, self.positions, self.residues = [], [], [], []
-        # Degrees não está com uma precisão boa, é preciso saber como pode ser feito igual o do RINGs
+        # Degrees não está com uma precisão boa, é preciso saber como pode ser feito igual o do RING
         self.degrees = []
         self.cut_dist = 8.0  # definir um limite de distância de corte (escolhido com base na literatura)
         # B-Factor, coords and filenames
@@ -158,7 +158,6 @@ class Edges(Nodes):
         self.aromatic_array, self.aromatic_normals, self.invalids = af.get_data()
         Nodes.__init__(self, name_=name, file_=file_pdb)
         self.edges = []
-        self.exclusions = []
         self.res = [res for res in self.structure.get_residues()]
         self.mc = ['O', 'N']
         self.lighbdonor = {'ARG': ['NE', 'NH1', 'NH2'],
@@ -187,11 +186,11 @@ class Edges(Nodes):
         self.nodes_id1, self.nodes_id2, self.bonds = [], [], []
         self.distances, self.donors, self.angles = [], [], []
         self.atom1, self.atom2 = [], []
-        self.bonds_check = []
+        self.exclusions = []
         self.analyzed_pairs = set()
-        self.energies = []
         self.multiple = multiple
         self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0, 'pi_stacking': 0}
+        self.bonds_check, self.energies, self.orientation = [], [], []
 
     def Iac(self):
 
@@ -321,6 +320,7 @@ class Edges(Nodes):
                         self.atom2.append(neig_name)
                         self.donors.append(
                             f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}")
+                        self.orientation.append(f"NaN")
                         self.ligands["hb"] += 1
 
     def _vanderwaals(self, chain, residue, atom):
@@ -396,6 +396,7 @@ class Edges(Nodes):
                         self.distances.append(f"{distance:.3f}")
                         self.atom1.append(atom_name)
                         self.atom2.append(neig_name)
+                        self.orientation.append(f"NaN")
                         self.ligands["vdw"] += 1
 
     def _dissulfide_bond(self, chain, residue, atom):
@@ -432,6 +433,7 @@ class Edges(Nodes):
                     self.distances.append(f"{distance:.3f}")
                     self.atom1.append(atom_name)
                     self.atom2.append(neig_name)
+                    self.orientation.append(f"NaN")
                     self.ligands['sbond'] += 1
 
     def _salt_bridge(self, chain, residue, atom):
@@ -482,7 +484,7 @@ class Edges(Nodes):
                             self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
                             self.bonds.append(f"IONIC:{chain1}_{chain2}")
                             self.distances.append(f"{distance:.3f}")
-                            self.angles.append(f"NAN")
+                            self.angles.append(f"NaN")
                             self.energies.append(f"{20.000:.3f}")
                             if atom_name in ['CZ', 'NZ']:
                                 self.atom1.append(atom_name)
@@ -495,12 +497,14 @@ class Edges(Nodes):
 
                             self.donors.append(
                                 f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}")
+                            self.orientation.append(f"NaN")
                             self.ligands["ionic"] += 1
 
     def _pi_stacking(self, chain, residue, atom):
         neighbors = self.ns.search(atom.coord, 7.2)
         # tem que ver se chain
         amin = f'{chain.id} {residue.id[1]}'
+        orient_type = ''
         for neighbor in neighbors:
             neig_res = neighbor.get_parent()
             neig_chain = neig_res.get_parent().id
@@ -527,18 +531,17 @@ class Edges(Nodes):
                         angle = np.arccos(np.clip(np.dot(normal_1, normal_2), -1.0, 1.0))
                         if angle > 50:
                             # Tshaped
-                            pass
+                            self.orientation.append("T")
                         elif 30 < angle < 50:
-                            # inter
-                            pass
+                            # Inter (stacked no parallel)
+                            self.orientation.append("I")
                         elif angle < 30:
-                            # paralel
-                            pass
+                            # Parallel
+                            self.orientation.append("P")
                         chain1 = 'MC' if len(atom.get_name()) == 1 else 'SC'
                         chain2 = 'MC' if len(neighbor.get_name()) == 1 else 'SC'
-                        coord_1 = f'{coord_1[0]},{coord_1[1]},{coord_1[2]}'
-                        coord_2 = f'{coord_2[0]},{coord_2[1]},{coord_2[2]}'
-
+                        coord_1 = f'{coord_1[0]:.3f},{coord_1[1]:.3f},{coord_1[2]:.3f}'
+                        coord_2 = f'{coord_2[0]:.3f},{coord_2[1]:.3f},{coord_2[2]:.3f}'
                         if self.multiple:
                             self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
                                                      f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
@@ -546,14 +549,14 @@ class Edges(Nodes):
                             self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
                             self.bonds.append(f"PIPISTACK:{chain1}_{chain2}")
                             self.distances.append(f"{aromatic_distance:.3f}")
-                            self.angles.append(angle)
+                            self.angles.append(f"{angle:.3f}")
                             self.energies.append(f"{20.000:.3f}")
                             self.atom1.append(coord_1)
                             self.atom2.append(coord_2)
                             self.donors.append("NaN")
-
                         self.exclusions.append([amin, neig_amin])
                         self.ligands["pi_stacking"] += 1
+
     def Bonds(self):
         for chain in self.structure.get_chains():
             for residue in chain:
@@ -581,7 +584,7 @@ class Edges(Nodes):
 
             for line in range(len(self.nodes_id1)):
 
-                if (pair == (self.nodes_id1[line], self.nodes_id2[line]) and (bond in self.bonds[line])):
+                if pair == (self.nodes_id1[line], self.nodes_id2[line]) and (bond in self.bonds[line]):
                     pair_dist.append(self.distances[line])
                     pair_idx.append(line)
 
@@ -599,6 +602,7 @@ class Edges(Nodes):
                         self.distances.pop(i)
                         self.atom1.pop(i)
                         self.atom2.pop(i)
+                        self.orientation.pop(i)
                         self.ligands[lig] -= 1
 
     def multiple_mode(self):
@@ -610,10 +614,12 @@ class Edges(Nodes):
         self.Bonds()
         if self.multiple:
             self.multiple_mode()
-        colunas = ["NodeId1", "Interaction", "NodeId2", "Distance", "Angle", "Energy", "Atom1", "Atom2", "Donor"]
+        colunas = ["NodeId1", "Interaction", "NodeId2", "Distance", "Angle",
+                   "Energy", "Atom1", "Atom2", "Donor", "Orientation"]
 
         data = pd.DataFrame(list(zip(self.nodes_id1, self.bonds, self.nodes_id2, self.distances,
-                                     self.angles, self.energies, self.atom1, self.atom2, self.donors)), columns=colunas)
+                                     self.angles, self.energies, self.atom1, self.atom2, self.donors,
+                                     self.orientation)), columns=colunas)
 
         data.to_csv(f'./{self.name}_edges.csv', sep='\t', index=False)
 
@@ -622,18 +628,20 @@ class Edges(Nodes):
 
         if self.multiple:
             self.multiple_mode()
-            # self.to_file()
+            self.to_file()
         # print(len(self.nodes_id1), len(self.donors))
         # time.sleep(2)
 
         for n in range(len(self.nodes_id1)):
             try:
                 print(
-                    f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
+                    f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}"
+                    f"\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}\t{self.orientation[n]}")
 
             except Exception as e:
                 print(e)
                 print(
-                    f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
+                    f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}"
+                    f"\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}\t{self.orientation[n]}")
 
         print(self.ligands)
