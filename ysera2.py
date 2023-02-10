@@ -201,7 +201,35 @@ class Edges(Nodes):
                             #verificando se o átomo vizinho é de outro resíduo
                             if neighbor_pair != residue:
                                 print(residue.resname, neighbor_pair.resname, neighbor_pair.id[1], distance)
-    
+
+    def add_bond(self, config, ligand):
+        """
+        config's params: chain, residue, neighbor residue,
+                        bond, distance, angle, energie, 
+                        atom1, atom2, donor.
+        ligand: hb, vdw, ionic... 
+        """
+        
+        self.nodes_id1.append(f"{config[0].id}:{str(config[1].id[1])}:_:{str(config[1].resname)}")
+        self.nodes_id2.append(f"{config[2].get_parent().id}:{str(config[2].id[1])}:_:{str(config[2].resname)}")
+        self.bonds.append(config[3])
+        self.distances.append(config[4])
+        self.angles.append(config[5])
+        if ligand == 'hb':
+            if float(config[4]) <= 1.5:
+                self.energies.append(config[6][0])
+            elif float(config[4]) >= 2.2:
+                self.energies.append(config[6][1])
+            else:
+                self.energies.append(config[6][1])
+        else:
+            self.energies.append(config[6])
+        
+        self.atom1.append(config[7])
+        self.atom2.append(config[8])
+        self.donors.append(config[9])
+        self.ligands[ligand] += 1
+
     def _hydrogen_bond(self, chain, residue, atom):
         chain1= ''
         chain2= ''
@@ -290,24 +318,19 @@ class Edges(Nodes):
                         
                         if self.multiple:
                             self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}", 
-                                                f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
-                        
-                        self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
-                        self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
-                        self.bonds.append(f"HBOND:{chain1}_{chain2}")
-                        self.distances.append(f"{distance:.3f}")
-                        self.angles.append(f"{angle:.3f}")
-                        if distance <= 1.5:
-                            self.energies.append(f"{115.000:.3f}")
-                        elif distance >= 2.2:
-                            self.energies.append(f"{17.000:.3f}")
-                        else:
-                            self.energies.append(f"{40.000:.3f}")
-                        self.atom1.append(atom_name)
-                        self.atom2.append(neig_name)
-                        self.donors.append(f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}")
-                        self.ligands["hb"] += 1
-        
+                                                f"{neig_res.get_parent().id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
+                            
+                        self.add_bond([
+                            chain, residue, neig_res,
+                            f"HBOND:{chain1}_{chain2}",
+                            f"{distance:.3f}",
+                            f"{angle:.3f}",
+                            (f"{115.000:.3f}", f"{17.000:.3f}", f"{40.000:.3f}"),
+                            atom_name,
+                            neig_name,
+                            f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}"
+                        ], 'hb')
+                           
     def _vanderwaals(self, chain, residue, atom):
         chain1= ''
         chain2= ''
@@ -370,18 +393,18 @@ class Edges(Nodes):
                     if check_dist <= 0.5:
                         if self.multiple:
                             self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}", 
-                                                f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
-            
-                        self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
-                        self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
-                        self.donors.append("NaN")
-                        self.angles.append("NaN")
-                        self.energies.append(f"{6.000:.3f}")
-                        self.bonds.append(f"VDW:{chain1}_{chain2}")
-                        self.distances.append(f"{distance:.3f}")
-                        self.atom1.append(atom_name)
-                        self.atom2.append(neig_name)
-                        self.ligands["vdw"] += 1
+                                                f"{neig_res.get_parent().id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
+
+                        self.add_bond([
+                            chain, residue, neig_res,
+                            f"VDW:{chain1}_{chain2}",
+                            f"{distance:.3f}",
+                            "NaN",
+                            f"{6.000:.3f}",
+                            atom_name,
+                            neig_name,
+                            "NaN"
+                        ], 'vdw')
     
     def _dissulfide_bond(self, chain, residue, atom):
         #identificar as cadeias na ligação dissufide
@@ -408,16 +431,21 @@ class Edges(Nodes):
                 neig_res= neighbor.get_parent()
                 distance= np.linalg.norm(atom.coord - neighbor.coord)
                 if neig_name[0] == 'S' and distance<=2.5:
-                    self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
-                    self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
-                    self.donors.append("NaN")
-                    self.angles.append("NaN")
-                    self.energies.append(f"{167.000:.3f}")
-                    self.bonds.append(f"SBOND:{chain1}_{chain2}")
-                    self.distances.append(f"{distance:.3f}")
-                    self.atom1.append(atom_name)
-                    self.atom2.append(neig_name)
-                    self.ligands['sbond'] += 1
+
+                    if self.multiple:
+                        self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}", 
+                                                f"{neig_res.get_parent().id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
+
+                    self.add_bond([
+                            chain, residue, neig_res,
+                            f"SBOND:{chain1}_{chain2}",
+                            f"{distance:.3f}",
+                            "NaN",
+                            f"{167.000:.3f}",
+                            atom_name,
+                            neig_name,
+                            "NaN"
+                        ], 'sbond')
     
     def _salt_bridge(self, chain, residue, atom):
         global ionic_donor
@@ -461,25 +489,36 @@ class Edges(Nodes):
                         if distance <= 4.0:
                             if self.multiple:
                                 self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}", 
-                                                f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
+                                                f"{neig_res.get_parent().id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
                                 #ionic_check.add(((residue.id[1], neig_res.id[1]),atom, neighbor, distance))
                             
-                            self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
-                            self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
-                            self.bonds.append(f"IONIC:{chain1}_{chain2}")
-                            self.distances.append(f"{distance:.3f}")
-                            self.angles.append(f"NAN")
-                            self.energies.append(f"{20.000:.3f}")
+                            
                             if atom_name in ['CZ', 'NZ']:
-                                self.atom1.append(atom_name)
-                                self.atom2.append(f"{neighbor.get_coord()[0]:.3f},{neighbor.get_coord()[1]:.3f},{neighbor.get_coord()[2]:.3f}")
+                                
+                                self.add_bond([
+                                    chain, residue, neig_res,
+                                    f"IONIC:{chain1}_{chain2}",
+                                    f"{distance:.3f}",
+                                    "NaN",
+                                    f"{20.000:.3f}",
+                                    atom_name,
+                                    f"{neighbor.get_coord()[0]:.3f},{neighbor.get_coord()[1]:.3f},{neighbor.get_coord()[2]:.3f}",
+                                    f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}"
+                                ], 'ionic')
+
                             elif atom_name not in ['CZ', 'NZ'] and neig_name in ['CZ', 'NZ']:
-                                self.atom1.append(f"{atom.get_coord()[0]:.3f},{atom.get_coord()[1]:.3f},{atom.get_coord()[2]:.3f}")
-                                self.atom2.append(neig_name)
-
-                            self.donors.append(f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}")
-                            self.ligands["ionic"] += 1
-
+                                
+                                self.add_bond([
+                                    chain, residue, neig_res,
+                                    f"IONIC:{chain1}_{chain2}",
+                                    f"{distance:.3f}",
+                                    "NaN",
+                                    f"{20.000:.3f}",
+                                    f"{atom.get_coord()[0]:.3f},{atom.get_coord()[1]:.3f},{atom.get_coord()[2]:.3f}",
+                                    neig_name,
+                                    f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}"
+                                ], 'ionic')
+                                        
     def Bonds(self):
         
         for chain in self.structure.get_chains():
@@ -550,12 +589,12 @@ class Edges(Nodes):
         if self.multiple:
             self.multiple_mode()
 
-        # print(len(self.nodes_id1), len(self.donors))
-        # time.sleep(2)
+        print(len(self.nodes_id1), len(self.donors))
+        time.sleep(2)
         for n in range(len(self.nodes_id1)):
             try:
                 print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
-                
+                time.sleep(0.01)
             except Exception as e:
                 print(e)
                 print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
