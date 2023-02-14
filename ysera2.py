@@ -148,9 +148,6 @@ class Nodes:
 class Edges(Nodes):
     def __init__(self, name, file_pdb, multiple=True):
         Nodes.__init__(self ,name_=name, file_= file_pdb)
-        self.edges = []
-        self.res= [res for res in self.structure.get_residues()]
-        self.mc = ['O', 'N']
         self.lighbdonor = {'ARG': ['NE', 'NH1', 'NH2'], 
                             'ASN':['ND2'], 
                             'HIS': ['NE2', 'ND1'], 
@@ -594,7 +591,6 @@ class Edges(Nodes):
         for n in range(len(self.nodes_id1)):
             try:
                 print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
-                time.sleep(0.01)
             except Exception as e:
                 print(e)
                 print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
