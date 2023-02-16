@@ -183,7 +183,7 @@ class Edges(Nodes):
         self.bonds_check, self.energies, self.orientation = [], [], []
         self.analyzed_pairs = set()
         self.multiple = multiple
-        self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0, 'pi_stacking': 0}
+        self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0, 'pi_stacking': 0, 'pi_cation': 0}
         self.exclusions = []
 
     def Iac(self):
@@ -588,6 +588,83 @@ class Edges(Nodes):
                             ], 'pi_stacking')
                         self.exclusions.append([amin, neig_amin])
 
+    def _pi_cation(self, chain, residue, atom):
+        neighbors = self.ns.search(atom.coord, 7.2)
+        ligctn = ['MG', 'CU', 'K', 'FE2', 'FE', 'NI', 'NA', 'MO1', 'MO3', 'MO4', 'MO5', 'MO6', 'MO7', 'MO8', 'MO9',
+                  'NZ', 'NH2', 'NH1']
+        # tem que ver se chain
+        amin = f'{chain.id} {residue.id[1]}'
+        orient_type = ''
+        for neighbor in neighbors:
+
+            neig_res = neighbor.get_parent()
+            neig_chain = neig_res.get_parent().id
+            neig_amin = f'{neig_chain} {neig_res.id[1]}'
+
+            if residue.get_resname() in ['TYR', 'PHE', 'TRP'] and neighbor.get_name() in ligctn:
+                if (amin not in self.invalids and neig_amin not in self.invalids) & \
+                        ([amin, neig_amin] not in self.exclusions and [neig_amin, amin] not in self.exclusions):
+
+                    coord_1 = np.array(self.aromatic_array[amin])
+                    coord_2 = neighbor.get_coord()
+                    aromatic_distance = np.linalg.norm(coord_1 - coord_2)
+                    if 3.4 < aromatic_distance < 4.5 and amin != neig_amin:
+                        pair = (residue, neig_res)
+                        if pair in self.analyzed_pairs:
+                            continue
+                        else:
+                            self.analyzed_pairs.add((neig_res, residue))
+                        chain1 = 'MC' if len(atom.get_name()) == 1 else 'SC'
+                        chain2 = 'MC' if len(neighbor.get_name()) == 1 else 'SC'
+                        coord_1 = f'{coord_1[0]:.3f},{coord_1[1]:.3f},{coord_1[2]:.3f}'
+                        coord_2 = f'{coord_2[0]:.3f},{coord_2[1]:.3f},{coord_2[2]:.3f}'
+                        if self.multiple:
+                            self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
+                                                     f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
+                            self.add_bond([
+                                chain, residue, neig_res,
+                                f"PICATION:{chain1}_{chain2}",
+                                f"{aromatic_distance:.3f}",
+                                "NaN",
+                                f"{9.6:.3f}",
+                                coord_1,
+                                coord_2,
+                                "NaN",
+                                "NaN"
+                            ], 'pi_stacking')
+                            self.exclusions.append([amin, neig_amin])
+            elif neig_res.get_resname() in ['TYR', 'PHE', 'TRP'] and atom.get_name in ligctn:
+                if (amin not in self.invalids and neig_amin not in self.invalids) & \
+                        ([amin, neig_amin] not in self.exclusions and [neig_amin, amin] not in self.exclusions):
+
+                    coord_1 = neighbor.get_coord()
+                    coord_2 = np.array(self.aromatic_array[amin])
+                    aromatic_distance = np.linalg.norm(coord_1 - coord_2)
+                    if 3.4 < aromatic_distance < 4.5 and amin != neig_amin:
+                        pair = (residue, neig_res)
+                        if pair in self.analyzed_pairs:
+                            continue
+                        else:
+                            self.analyzed_pairs.add((neig_res, residue))
+                        chain1 = 'MC' if len(atom.get_name()) == 1 else 'SC'
+                        chain2 = 'MC' if len(neighbor.get_name()) == 1 else 'SC'
+                        coord_1 = f'{coord_1[0]:.3f},{coord_1[1]:.3f},{coord_1[2]:.3f}'
+                        coord_2 = f'{coord_2[0]:.3f},{coord_2[1]:.3f},{coord_2[2]:.3f}'
+                        if self.multiple:
+                            self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
+                                                     f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
+                            self.add_bond([
+                                chain, residue, neig_res,
+                                f"PICATION:{chain1}_{chain2}",
+                                f"{aromatic_distance:.3f}",
+                                "NaN",
+                                f"{9.6:.3f}",
+                                coord_1,
+                                coord_2,
+                                "NaN",
+                                "NaN"
+                            ], 'pi_stacking')
+                            self.exclusions.append([amin, neig_amin])
     def Bonds(self):
 
         for chain in self.structure.get_chains():
@@ -639,7 +716,7 @@ class Edges(Nodes):
 
     def multiple_mode(self):
         bonds = [("HBOND", "hb"), ("VDW", "vdw"), ("SBOND", "sbond"), ("IONIC", "ionic"),
-                 ("PIPISTACK", "pi_stacking")]
+                 ("PIPISTACK", "pi_stacking"), ("PICATION", "pi_cation")]
         for b in bonds:
             self.analyse(b[0], b[1])
 
