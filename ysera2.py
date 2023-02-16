@@ -586,6 +586,7 @@ class Edges(Nodes):
                                 "NaN",
                                 f"{orient_type}"
                             ], 'pi_stacking')
+                        self.exclusions.append([amin, neig_amin])
 
     def Bonds(self):
 
@@ -637,7 +638,7 @@ class Edges(Nodes):
                         self.ligands[lig] -= 1
 
     def multiple_mode(self):
-        bonds = [("HBOND", "hb"), ("VDW", "vdw"),
+        bonds = [("HBOND", "hb"), ("VDW", "vdw"), ("SBOND", "sbond"), ("IONIC", "ionic"),
                  ("PIPISTACK", "pi_stacking")]
         for b in bonds:
             self.analyse(b[0], b[1])
