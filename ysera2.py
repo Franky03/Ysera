@@ -183,7 +183,7 @@ class Edges(Nodes):
         self.bonds_check, self.energies, self.orientation = [], [], []
         self.analyzed_pairs = set()
         self.multiple = multiple
-        self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0, 'pi_stacking': 0, 'pi_cation': 0}
+        self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0, 'pi_stacking': 0}
         self.exclusions = []
 
     def Iac(self):
@@ -527,7 +527,8 @@ class Edges(Nodes):
                                     f"{20.000:.3f}",
                                     f"{atom.get_coord()[0]:.3f},{atom.get_coord()[1]:.3f},{atom.get_coord()[2]:.3f}",
                                     neig_name,
-                                    f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}"
+                                    f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}",
+                                    "NaN"
                                 ], 'ionic')
 
     def _pi_stacking(self, chain, residue, atom):
