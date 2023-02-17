@@ -154,7 +154,7 @@ class Nodes:
 
 class Edges(Nodes):
     def __init__(self, name, file_pdb, multiple=True):
-        af = AromaticsFormat('3og7.pdb')
+        af = AromaticsFormat(file_pdb)
         self.aromatic_array, self.aromatic_normals, self.invalids = af.get_data()
         Nodes.__init__(self, name_=name, file_=file_pdb)
         self.edges = []
