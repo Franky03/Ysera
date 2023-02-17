@@ -55,26 +55,9 @@ class Nodes:
                         self.positions.append(residue.id[1])
                         if str(residue.resname) == '032':
                             # Se o resíduo for o 032 então ele não terá um Bfactor-CA nem coordenadas
-                            self.bfactors.append('NaN')
-                            self.coords.append(np.array(['NaN', 'NaN', 'NaN']))
+                            self.bfactors.append('  ')
+                            self.coords.append(np.array(['  ', '   ', '    ']))
                         self.residues.append(str(residue.resname))
-
-                        # Degree -> número de residuos diretamente conectados
-
-                        # degree = 0
-
-                        # if 'CA' in residue:
-                        #     # R ->  list of residues list of modules
-                        #     for residue_2 in self.ns.search(residue["CA"].get_coord(), radius= self.cut_dist, level="R"):
-                        #         if (residue_2.get_id()[1] != residue.get_id()[1]):
-                        #             # CA -> Carbono Alfa (mais preciso que outros átomos)
-                        #             # Calcular a distancia euclidiana das coordenadas desse carbono alfa
-                        #             if 'CA' in residue_2:
-                        #                 distance = np.linalg.norm(residue["CA"].coord - residue_2["CA"].coord)
-                        #                 if (distance < self.cut_dist):
-                        #                     degree += 1
-
-                        # self.degrees.append(degree)
 
                         # Bfactor_CA
                         b_factor = 0
@@ -146,7 +129,7 @@ class Nodes:
 
         x, y, z = [], [], []
         for coord in self.coords:
-            if coord[0] != 'NaN':
+            if coord[0] != '    ':
                 x.append(f"{coord[0]:.3f}")
                 y.append(f"{coord[1]:.3f}")
                 z.append(f"{coord[2]:.3f}")
@@ -199,6 +182,7 @@ class Edges(Nodes):
         self.multiple = multiple
         self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0, 'pi_stacking': 0, 'pi_cation': 0}
         self.exclusions = []
+        self.positives, self.cations = [], []
 
     def Iac(self):
 
@@ -246,6 +230,8 @@ class Edges(Nodes):
         self.atom2.append(config[8])
         self.donors.append(config[9])
         self.orientation.append(config[10])
+        self.positives.append(config[11])
+        self.cations.append(config[12])
         self.ligands[ligand] += 1
 
     def _hydrogen_bond(self, chain, residue, atom):
@@ -268,12 +254,12 @@ class Edges(Nodes):
                 if neig_res.id[1] == residue.id[1] or neig_name[0] == atom_name[0]:
                     continue
 
-                pair = (int(residue.id[1]), int(neig_res.id[1]))
+                pair = (residue, neig_res)
 
                 if pair in self.analyzed_pairs:
                     continue
                 else:
-                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                    self.analyzed_pairs.add((neig_res, residue))
 
                 if neighbor.fullname[1] in ['N', 'O'] or (neighbor.get_name() == 'SG' and neig_res.resname == 'CYS'):
                     distance = np.linalg.norm(atom.coord - neighbor.coord)
@@ -350,7 +336,9 @@ class Edges(Nodes):
                             atom_name,
                             neig_name,
                             f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}",
-                            "NaN"
+                            "   ",
+                            "   ",
+                            "   "
                         ], 'hb')
 
     def _vanderwaals(self, chain, residue, atom):
@@ -376,12 +364,12 @@ class Edges(Nodes):
                 if neig_res.resname in ['HOH', '032']:
                     continue
 
-                pair = (int(residue.id[1]), int(neig_res.id[1]))
+                pair = (residue, neig_res)
 
                 if pair in self.analyzed_pairs:
                     continue
                 else:
-                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                    self.analyzed_pairs.add((neig_res, residue))
 
                 if neighbor.fullname[1] in ['C', 'S', 'O', 'N']:
 
@@ -422,12 +410,14 @@ class Edges(Nodes):
                             chain, residue, neig_res,
                             f"VDW:{chain1}_{chain2}",
                             f"{distance:.3f}",
-                            "NaN",
+                            "   ",
                             f"{6.000:.3f}",
                             atom_name,
                             neig_name,
-                            "NaN",
-                            "NaN"
+                            "   ",
+                            "   ",
+                            "   ",
+                            "   "
                         ], 'vdw')
 
     def _dissulfide_bond(self, chain, residue, atom):
@@ -442,14 +432,15 @@ class Edges(Nodes):
             for neighbor in neighbors:
                 neig_res = neighbor.get_parent()
 
-                pair = (int(residue.id[1]), int(neig_res.id[1]))
-
                 if neig_res.id[1] == residue.id[1]:
                     continue
+
+                pair = (residue, neig_res)
+
                 if pair in self.analyzed_pairs:
                     continue
                 else:
-                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                    self.analyzed_pairs.add((neig_res, residue))
 
                 neig_name = neighbor.get_name()
                 neig_res = neighbor.get_parent()
@@ -464,12 +455,14 @@ class Edges(Nodes):
                         chain, residue, neig_res,
                         f"SBOND:{chain1}_{chain2}",
                         f"{distance:.3f}",
-                        "NaN",
+                        "   ",
                         f"{167.000:.3f}",
                         atom_name,
                         neig_name,
-                        "NaN",
-                        "NaN"
+                        "   ",
+                        "   ",
+                        "   ",
+                        "   "
                     ], 'sbond')
 
     def _salt_bridge(self, chain, residue, atom):
@@ -487,12 +480,12 @@ class Edges(Nodes):
                 if neig_res.id[1] == residue.id[1]:
                     continue
                 if atom_name in ['CZ', 'NZ'] or neig_res in ['CZ', 'NZ']:
-                    pair = (int(residue.id[1]), int(neig_res.id[1]))
+                    pair = (residue, neig_res)
 
                     if pair in self.analyzed_pairs or pair in analyzed_ionic:
                         continue
                     else:
-                        self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                        self.analyzed_pairs.add((neig_res, residue))
                         analyzed_ionic.add(pair)
 
                     if neig_res.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
@@ -523,12 +516,14 @@ class Edges(Nodes):
                                     chain, residue, neig_res,
                                     f"IONIC:{chain1}_{chain2}",
                                     f"{distance:.3f}",
-                                    "NaN",
+                                    "   ",
                                     f"{20.000:.3f}",
                                     atom_name,
                                     f"{neighbor.get_coord()[0]:.3f},{neighbor.get_coord()[1]:.3f},{neighbor.get_coord()[2]:.3f}",
+                                    "  ",
                                     f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}",
-                                    "NaN"
+                                    "   ",
+                                    "   "
                                 ], 'ionic')
 
                             elif atom_name not in ['CZ', 'NZ'] and neig_name in ['CZ', 'NZ']:
@@ -537,12 +532,14 @@ class Edges(Nodes):
                                     chain, residue, neig_res,
                                     f"IONIC:{chain1}_{chain2}",
                                     f"{distance:.3f}",
-                                    "NaN",
+                                    "   ",
                                     f"{20.000:.3f}",
                                     f"{atom.get_coord()[0]:.3f},{atom.get_coord()[1]:.3f},{atom.get_coord()[2]:.3f}",
                                     neig_name,
+                                    "  ",
                                     f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}",
-                                    "NaN"
+                                    "   ",
+                                    "   "
                                 ], 'ionic')
 
     def _pi_stacking(self, chain, residue, atom):
@@ -563,12 +560,12 @@ class Edges(Nodes):
                     coord_2 = np.array(self.aromatic_array[neig_amin])
                     aromatic_distance = np.linalg.norm(coord_1 - coord_2)
                     if aromatic_distance < 5.5 and amin != neig_amin:
-                        pair = (int(residue.id[1]), int(neig_res.id[1]))
+                        pair = (residue, neig_res)
 
                         if pair in self.analyzed_pairs:
                             continue
                         else:
-                            self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                            self.analyzed_pairs.add((neig_res, residue))
 
                         normal_1 = self.aromatic_normals[amin] / np.linalg.norm(self.aromatic_normals[amin])
                         normal_2 = self.aromatic_normals[neig_amin] / np.linalg.norm(self.aromatic_normals[neig_amin])
@@ -597,8 +594,10 @@ class Edges(Nodes):
                                 f"{9.4:.3f}",
                                 coord_1,
                                 coord_2,
-                                "NaN",
-                                f"{orient_type}"
+                                "   ",
+                                f"{orient_type}",
+                                "   ",
+                                "   "
                             ], 'pi_stacking')
                         self.exclusions.append([amin, neig_amin])
 
@@ -630,8 +629,7 @@ class Edges(Nodes):
                             self.analyzed_pairs.add((neig_res, residue))
                         chain1 = 'MC' if len(atom.get_name()) == 1 else 'SC'
                         chain2 = 'MC' if len(neighbor.get_name()) == 1 else 'SC'
-                        coord_1 = f'{coord_1[0]:.3f},{coord_1[1]:.3f},{coord_1[2]:.3f}'
-                        coord_2 = f'{coord_2[0]:.3f},{coord_2[1]:.3f},{coord_2[2]:.3f}'
+                        
                         if self.multiple:
                             self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
                                                      f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
@@ -639,12 +637,14 @@ class Edges(Nodes):
                                 chain, residue, neig_res,
                                 f"PICATION:{chain1}_{chain2}",
                                 f"{aromatic_distance:.3f}",
-                                "NaN",
+                                "   ",
                                 f"{9.6:.3f}",
-                                coord_1,
-                                coord_2,
-                                "NaN",
-                                "NaN"
+                                atom.get_name(),
+                                neighbor.get_name(),
+                                "   ",
+                                "P",
+                                "   ",
+                                "   "
                             ], 'pi_cation')
                             self.exclusions.append([amin, neig_amin])
             elif neig_res.get_resname() in ['TYR', 'PHE', 'TRP'] and atom.get_name in ligctn:
@@ -662,8 +662,7 @@ class Edges(Nodes):
                             self.analyzed_pairs.add((neig_res, residue))
                         chain1 = 'MC' if len(atom.get_name()) == 1 else 'SC'
                         chain2 = 'MC' if len(neighbor.get_name()) == 1 else 'SC'
-                        coord_1 = f'{coord_1[0]:.3f},{coord_1[1]:.3f},{coord_1[2]:.3f}'
-                        coord_2 = f'{coord_2[0]:.3f},{coord_2[1]:.3f},{coord_2[2]:.3f}'
+                        
                         if self.multiple:
                             self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
                                                      f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
@@ -671,17 +670,20 @@ class Edges(Nodes):
                                 chain, residue, neig_res,
                                 f"PICATION:{chain1}_{chain2}",
                                 f"{aromatic_distance:.3f}",
-                                "NaN",
+                                "   ",
                                 f"{9.6:.3f}",
-                                coord_1,
-                                coord_2,
-                                "NaN",
-                                "NaN"
+                                atom.get_name(),
+                                neighbor.get_name(),
+                                "   ",
+                                "P",
+                                "   ",
+                                "   "
                             ], 'pi_cation')
                             self.exclusions.append([amin, neig_amin])
     def Bonds(self):
 
         for chain in self.structure.get_chains():
+            #self.analyzed_pairs = set()
             for residue in chain:
 
                 if residue.resname in ['032', 'HOH']:
@@ -740,10 +742,10 @@ class Edges(Nodes):
         self.Bonds()
         if self.multiple:
             self.multiple_mode()
-        colunas = ["NodeId1", "Interaction", "NodeId2", "Distance", "Angle", "Energy", "Atom1", "Atom2", "Donor"]
+        colunas = ["NodeId1", "Interaction", "NodeId2", "Distance", "Angle", "Energy", "Atom1", "Atom2", "Donor", "Positive", "Cation", "Orientation"]
 
         data = pd.DataFrame(list(zip(self.nodes_id1, self.bonds, self.nodes_id2, self.distances,
-                                     self.angles, self.energies, self.atom1, self.atom2, self.donors)), columns=colunas)
+                                     self.angles, self.energies, self.atom1, self.atom2, self.donors, self.positives, self.cations, self.orientation)), columns=colunas)
 
         data.to_csv(f'./{self.name}_edges.csv', sep='\t', index=False)
 
