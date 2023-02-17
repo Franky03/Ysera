@@ -10,6 +10,7 @@ from aromatics import AromaticsFormat
 class Nodes:
     def __init__(self, name_=None, file_=False):
         self.name = name_
+        self.file = file_
         self.parser = PDBParser(PERMISSIVE=1)
         self.structure = self.parser.get_structure(name_, file_)
         self.ns = NeighborSearch(list(self.structure.get_atoms()))
@@ -27,11 +28,21 @@ class Nodes:
         # B-Factor, coords and filenames
         self.bfactors, self.coords, self.pdb_filename = [], [], []
         self.rapdfs = []
+        self.models = []
 
-    def dssp_test(self):
-        self.search_nodes()
-        for residue in self.dssp:
-            print(residue)
+    def get_node_degrees(self):
+        edges = Edges(self.name, self.file, multiple=True)
+        edges.Bonds()
+        if edges.multiple:
+            edges.multiple_mode()
+
+        for node in self.nodes_id:
+            degree = 0
+            degree += edges.nodes_id1.count(node)
+            degree += edges.nodes_id2.count(node)
+
+            self.degrees.append(degree)
+    
 
     def search_nodes(self):
         for model in self.structure:
@@ -50,20 +61,20 @@ class Nodes:
 
                         # Degree -> número de residuos diretamente conectados
 
-                        degree = 0
+                        # degree = 0
 
-                        if 'CA' in residue:
-                            # R ->  list of residues list of modules
-                            for residue_2 in self.ns.search(residue["CA"].get_coord(), radius= self.cut_dist, level="R"):
-                                if (residue_2.get_id()[1] != residue.get_id()[1]):
-                                    # CA -> Carbono Alfa (mais preciso que outros átomos)
-                                    # Calcular a distancia euclidiana das coordenadas desse carbono alfa
-                                    if 'CA' in residue_2:
-                                        distance = np.linalg.norm(residue["CA"].coord - residue_2["CA"].coord)
-                                        if (distance < self.cut_dist):
-                                            degree += 1
+                        # if 'CA' in residue:
+                        #     # R ->  list of residues list of modules
+                        #     for residue_2 in self.ns.search(residue["CA"].get_coord(), radius= self.cut_dist, level="R"):
+                        #         if (residue_2.get_id()[1] != residue.get_id()[1]):
+                        #             # CA -> Carbono Alfa (mais preciso que outros átomos)
+                        #             # Calcular a distancia euclidiana das coordenadas desse carbono alfa
+                        #             if 'CA' in residue_2:
+                        #                 distance = np.linalg.norm(residue["CA"].coord - residue_2["CA"].coord)
+                        #                 if (distance < self.cut_dist):
+                        #                     degree += 1
 
-                        self.degrees.append(degree)
+                        # self.degrees.append(degree)
 
                         # Bfactor_CA
                         b_factor = 0
@@ -83,7 +94,7 @@ class Nodes:
                         # pdb filenames
 
                         self.pdb_filename.append(f"input_file.cif#{str(residue.id[1])}.{str(chain.id)}")
-
+                        self.models.append(model.id + 1)
                         # Rapdf
                         sum_of_dis = 0
                         rapdf_count = 0
@@ -107,6 +118,9 @@ class Nodes:
             else:
 
                 self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] not in ['C', 'NA'] else '\t')
+
+        self.get_node_degrees()
+
 
     def print_output(self):
         self.search_nodes()
@@ -733,7 +747,7 @@ class Edges(Nodes):
 
         data.to_csv(f'./{self.name}_edges.csv', sep='\t', index=False)
 
-    def print_output(self):
+    def print_output(self, slow=False):
         self.Bonds()
 
         if self.multiple:
@@ -746,6 +760,8 @@ class Edges(Nodes):
                 print(
                     f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}"
                     f"\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}\t{self.orientation[n]}")
+                if slow:
+                    time.sleep(0.01)
             except Exception as e:
                 print(e)
                 print(
