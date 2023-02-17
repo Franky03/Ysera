@@ -56,7 +56,7 @@ class Nodes:
                         if str(residue.resname) == '032':
                             # Se o resíduo for o 032 então ele não terá um Bfactor-CA nem coordenadas
                             self.bfactors.append('  ')
-                            self.coords.append(np.array(['  ', '   ', '    ']))
+                            self.coords.append(np.array(['    ', '    ', '    ']))
                         self.residues.append(str(residue.resname))
 
                         # Bfactor_CA
@@ -97,10 +97,10 @@ class Nodes:
                 if self.dssp_md[0][i] == 'NA':
                     pass
                 else:
-                    self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] != 'C' else '\t')
+                    self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] != 'C' else '    ')
             else:
 
-                self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] not in ['C', 'NA'] else '\t')
+                self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] not in ['C', 'NA'] else '    ')
 
         self.get_node_degrees()
 
@@ -143,7 +143,7 @@ class Nodes:
                                      self.models
                                      )), columns=colunas)
 
-        data.to_csv(f'./{self.name}_nodes.csv', sep='\t', index=False)
+        data.to_csv(f'./{self.name}_nodes.txt', sep='\t', index=False)
 
 
 class Edges(Nodes):
@@ -229,9 +229,9 @@ class Edges(Nodes):
         self.atom1.append(config[7])
         self.atom2.append(config[8])
         self.donors.append(config[9])
-        self.orientation.append(config[10])
-        self.positives.append(config[11])
-        self.cations.append(config[12])
+        self.positives.append(config[10])
+        self.cations.append(config[11])
+        self.orientation.append(config[12])
         self.ligands[ligand] += 1
 
     def _hydrogen_bond(self, chain, residue, atom):
@@ -523,7 +523,7 @@ class Edges(Nodes):
                                     "  ",
                                     f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}",
                                     "   ",
-                                    "   "
+                                    "   ",
                                 ], 'ionic')
 
                             elif atom_name not in ['CZ', 'NZ'] and neig_name in ['CZ', 'NZ']:
@@ -595,9 +595,9 @@ class Edges(Nodes):
                                 coord_1,
                                 coord_2,
                                 "   ",
-                                f"{orient_type}",
                                 "   ",
-                                "   "
+                                "   ",
+                                f"{orient_type}"
                             ], 'pi_stacking')
                         self.exclusions.append([amin, neig_amin])
 
@@ -642,9 +642,9 @@ class Edges(Nodes):
                                 atom.get_name(),
                                 neighbor.get_name(),
                                 "   ",
-                                "P",
                                 "   ",
-                                "   "
+                                f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}",
+                                "P"
                             ], 'pi_cation')
                             self.exclusions.append([amin, neig_amin])
             elif neig_res.get_resname() in ['TYR', 'PHE', 'TRP'] and atom.get_name in ligctn:
@@ -675,9 +675,9 @@ class Edges(Nodes):
                                 atom.get_name(),
                                 neighbor.get_name(),
                                 "   ",
-                                "P",
                                 "   ",
-                                "   "
+                                f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
+                                "P"
                             ], 'pi_cation')
                             self.exclusions.append([amin, neig_amin])
     def Bonds(self):
@@ -729,6 +729,8 @@ class Edges(Nodes):
                         self.distances.pop(i)
                         self.atom1.pop(i)
                         self.atom2.pop(i)
+                        self.positives.pop(i)
+                        self.cations.pop(i)
                         self.orientation.pop(i)
                         self.ligands[lig] -= 1
 
@@ -747,7 +749,7 @@ class Edges(Nodes):
         data = pd.DataFrame(list(zip(self.nodes_id1, self.bonds, self.nodes_id2, self.distances,
                                      self.angles, self.energies, self.atom1, self.atom2, self.donors, self.positives, self.cations, self.orientation)), columns=colunas)
 
-        data.to_csv(f'./{self.name}_edges.csv', sep='\t', index=False)
+        data.to_csv(f'./{self.name}_edges.txt', sep='\t', index=False)
 
     def print_output(self, slow=False):
         self.Bonds()
