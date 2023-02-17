@@ -15,7 +15,7 @@ def run_software(name_=False, file=None, hydrogenate=False):
         pymol.cmd.save('./temp/input_file.pdb')
         time.sleep(2)
     """
-    edges = Edges(name_, './temp/input_file.pdb')
+    edges = Nodes(name_, './temp/input_file.pdb')
     edges.print_output()
 
     finish = (time.time() - start)

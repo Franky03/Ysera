@@ -54,7 +54,7 @@ class Nodes:
 
                         if 'CA' in residue:
                             # R ->  list of residues list of modules
-                            for residue_2 in Selection.unfold_entities(model, 'R'):
+                            for residue_2 in self.ns.search(residue["CA"].get_coord(), radius= self.cut_dist, level="R"):
                                 if (residue_2.get_id()[1] != residue.get_id()[1]):
                                     # CA -> Carbono Alfa (mais preciso que outros átomos)
                                     # Calcular a distancia euclidiana das coordenadas desse carbono alfa
