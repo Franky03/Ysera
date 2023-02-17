@@ -59,23 +59,6 @@ class Nodes:
                             self.coords.append(np.array(['NaN', 'NaN', 'NaN']))
                         self.residues.append(str(residue.resname))
 
-                        # Degree -> número de residuos diretamente conectados
-
-                        # degree = 0
-
-                        # if 'CA' in residue:
-                        #     # R ->  list of residues list of modules
-                        #     for residue_2 in self.ns.search(residue["CA"].get_coord(), radius= self.cut_dist, level="R"):
-                        #         if (residue_2.get_id()[1] != residue.get_id()[1]):
-                        #             # CA -> Carbono Alfa (mais preciso que outros átomos)
-                        #             # Calcular a distancia euclidiana das coordenadas desse carbono alfa
-                        #             if 'CA' in residue_2:
-                        #                 distance = np.linalg.norm(residue["CA"].coord - residue_2["CA"].coord)
-                        #                 if (distance < self.cut_dist):
-                        #                     degree += 1
-
-                        # self.degrees.append(degree)
-
                         # Bfactor_CA
                         b_factor = 0
                         count = 0
