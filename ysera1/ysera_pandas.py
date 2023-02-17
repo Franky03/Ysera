@@ -11,7 +11,7 @@ class AromaticsFormat:
     def __init__(self, filename):
         self.filename = filename
         self.project_home = os.path.dirname(os.path.realpath(__file__))
-        self.path = self.project_home + '/temp/' + self.filename
+        self.path = f'/home/kdunorat/Projetos/Ysera/temp/{filename}'
         self.aromatic_pos = []
         self.aromatic_points = []
         self.invalids = []

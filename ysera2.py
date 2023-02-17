@@ -631,7 +631,7 @@ class Edges(Nodes):
                                 coord_2,
                                 "NaN",
                                 "NaN"
-                            ], 'pi_stacking')
+                            ], 'pi_cation')
                             self.exclusions.append([amin, neig_amin])
             elif neig_res.get_resname() in ['TYR', 'PHE', 'TRP'] and atom.get_name in ligctn:
                 if (amin not in self.invalids and neig_amin not in self.invalids) & \
@@ -663,7 +663,7 @@ class Edges(Nodes):
                                 coord_2,
                                 "NaN",
                                 "NaN"
-                            ], 'pi_stacking')
+                            ], 'pi_cation')
                             self.exclusions.append([amin, neig_amin])
     def Bonds(self):
 
@@ -686,6 +686,8 @@ class Edges(Nodes):
                     self._salt_bridge(chain, residue, atom)
                     # Pi Stacking
                     self._pi_stacking(chain, residue, atom)
+                    # Pi Cation
+                    self._pi_cation(chain, residue, atom)
 
     def analyse(self, bond, lig):
         for pair in self.bonds_check:
@@ -742,9 +744,11 @@ class Edges(Nodes):
         for n in range(len(self.nodes_id1)):
             try:
                 print(
-                    f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}\t{self.orientation[n]}")
+                    f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}"
+                    f"\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}\t{self.orientation[n]}")
             except Exception as e:
                 print(e)
                 print(
-                    f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}\t{self.orientation[n]}")
+                    f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}"
+                    f"\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}\t{self.orientation[n]}")
         print(self.ligands)
