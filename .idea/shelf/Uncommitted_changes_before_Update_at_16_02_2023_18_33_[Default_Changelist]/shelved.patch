@@ -1,0 +1,1174 @@
+Index: ysera2.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from Bio.PDB import PDBParser, Selection, NeighborSearch\nfrom Bio.PDB.vectors import calc_angle\nimport numpy as np\nimport pandas as pd\nimport time\nimport mdtraj as md\n\n\nclass Nodes:\n    def __init__(self, name_=None,file_=False):\n        self.name= name_\n        self.parser= PDBParser(PERMISSIVE=1)\n        self.structure= self.parser.get_structure(name_, file_)\n        self.ns= NeighborSearch(list(self.structure.get_atoms()))\n        #mdtraj\n        self.pdb = md.load_pdb(file_)\n        self.dssp_md = md.compute_dssp(self.pdb, simplified=False)\n        \n        self.model= self.structure[0]\n        #self.dssp = DSSP(self.model, './Codes/3og7.pdb', file_type='PDB', dssp='dssp')\n        self.all_dssps= []\n        self.nodes_id, self.chains, self.positions, self.residues = [], [], [], []\n        #Degrees não está com uma precisão boa, é preciso saber como pode ser feito igual o do RINGs\n        self.degrees= []\n        self.cut_dist= 8.0 # definir um limite de distância de corte (escolhido com base na literatura)\n        #B-Factor, coords and filenames\n        self.bfactors, self.coords, self.pdb_filename =[], [], []\n        self.rapdfs = []\n        \n    def dssp_test(self):\n        self.search_nodes()\n        for residue in self.dssp:\n            print(residue)\n    \n    def search_nodes(self):\n        for model in self.structure:\n            for chain in model:\n                for residue in chain:\n                    if str(residue.resname) != 'HOH': # ignore solvent\n                        # Node_ID, Chain, Position and Residue\n                        self.nodes_id.append(f\"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}\")\n                        self.chains.append(str(chain.id))\n                        self.positions.append(residue.id[1])\n                        if str(residue.resname) == '032':\n                            #Se o resíduo for o 032 então ele não terá um Bfactor-CA nem coordenadas\n                            self.bfactors.append('NaN')\n                            self.coords.append(np.array(['NaN', 'NaN', 'NaN']))\n                        self.residues.append(str(residue.resname))\n                        \n                        #Degree -> número de residuos diretamente conectados\n\n                        degree= 0\n                        \n                        if 'CA' in residue:\n                            #R ->  list of residues list of modules\n                            for residue_2 in Selection.unfold_entities(model, 'R'):\n                                if ( residue_2.get_id()[1] != residue.get_id()[1] ):\n                                    #CA -> Carbono Alfa (mais preciso que outros átomos)\n                                    #Calcular a distancia euclidiana das coordenadas desse carbono alfa\n                                    if 'CA' in residue_2:\n                                        distance= np.linalg.norm(residue[\"CA\"].coord - residue_2[\"CA\"].coord)\n                                        if ( distance < self.cut_dist ):\n                                            degree += 1 \n                            \n                        self.degrees.append(degree)\n\n                        #Bfactor_CA\n                        b_factor=0\n                        count=0\n                        for atom in residue:\n                            if ( atom.get_name() == 'CA' ):\n                                b_factor += atom.get_bfactor()\n                                count += 1\n\n                                coords= atom.get_coord()\n                                self.coords.append(coords)\n                                \n                        if (count != 0):\n                            bf_average= b_factor/count\n                            self.bfactors.append(f\"{bf_average:.3f}\")\n                        \n                        #pdb filenames\n\n                        self.pdb_filename.append(f\"input_file.cif#{str(residue.id[1])}.{str(chain.id)}\")\n\n                        #Rapdf\n                        sum_of_dis = 0\n                        rapdf_count = 0\n                        for residue_2 in Selection.unfold_entities(model, 'R'):\n                            if 'CA' in residue and 'CA' in residue_2 and residue_2.id[1] != residue.id[1]:\n                                sum_of_dis += np.linalg.norm(residue[\"CA\"].coord - residue_2[\"CA\"].coord)\n                                rapdf_count += 1\n                        if rapdf_count != 0:\n                            rapdf = sum_of_dis/rapdf_count\n                            self.rapdfs.append(rapdf)\n                        else:\n                            self.rapdfs.append(0.0)\n\n\n        # Pegando o DSSP \n        for i in range(len(self.dssp_md[0])):\n            if i>0:\n                if self.dssp_md[0][i] == 'NA':\n                    pass\n                else:\n                    self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] != 'C' else '\\t')\n            else:\n                \n                self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] not in ['C', 'NA'] else '\\t')  \n\n    def print_output(self):\n        self.search_nodes()\n        for n in range(len(self.nodes_id)):\n            try:\n                print(f\"{self.nodes_id[n]}\\t{self.chains[n]}\\t\\t{self.positions[n]}\\t\\t{self.residues[n]}\\t{self.all_dssps[n]}\\t\" +\n                        f\"{self.degrees[n]}\\t{self.bfactors[n]:.3f}\\t{self.coords[n][0]:.3f}\\t{self.coords[n][1]:.3f}\\t{self.coords[n][2]:.3f}\\t\" +\n                        f\"{self.pdb_filename[n]}\\t{self.rapdfs[n]}\"\n                )\n            except Exception as e:\n                print(f\"{self.nodes_id[n]}\\t{self.chains[n]}\\t\\t{self.positions[n]}\\t\\t{self.residues[n]}\\t{self.all_dssps[n]}\\t\" +\n                        f\"{self.degrees[n]}\\t{self.bfactors[n]}\\t{self.coords[n][0]}\\t{self.coords[n][1]}\\t{self.coords[n][2]}\\t\" +\n                        f\"{self.pdb_filename[n]}\\t{self.rapdfs[n]}\"\n                )\n\n    def to_file(self):\n        self.search_nodes()\n\n        colunas= [\"NodeId\", \"Chain\",\"Position\",\t\"Residue\",\t\"Dssp\",\t\"Degree\", \"Bfactor_CA\", \"x\", \"y\", \"z\", \"pdbFileName\", \"Model\"]\n        \n        x, y, z = [], [], []\n        for coord in self.coords:\n            if coord[0] != 'NaN':\n                x.append(f\"{coord[0]:.3f}\")\n                y.append(f\"{coord[1]:.3f}\")\n                z.append(f\"{coord[2]:.3f}\")\n            else:\n                x.append(coord[0])\n                y.append(coord[1])\n                z.append(coord[2])\n\n        data= pd.DataFrame(list(zip(self.nodes_id, self.chains, self.positions, self.residues, \n                                    self.all_dssps, self.degrees, self.bfactors, x, y, z, self.pdb_filename, self.models\n        )), columns= colunas)\n        \n        data.to_csv(f'./{self.name}_nodes.csv', sep='\\t', index=False)\n \n \nclass Edges(Nodes):\n    def __init__(self, name, file_pdb, multiple=True):\n        Nodes.__init__(self ,name_=name, file_= file_pdb)\n        self.edges = []\n        self.res= [res for res in self.structure.get_residues()]\n        self.mc = ['O', 'N']\n        self.lighbdonor = {'ARG': ['NE', 'NH1', 'NH2'], \n                            'ASN':['ND2'], \n                            'HIS': ['NE2', 'ND1'], \n                            'SER': ['OG'], \n                            'TYR': ['OH'], \n                            'CYS': ['SG'],\n                            'THR': ['OG1'], \n                            'GLN': ['NE2'], \n                            'LYS': ['NZ'], \n                            'TRP': ['NE1']\n                            }\n        self.lighbac= {'ASN': ['OD1'], \n                        'GLN': ['OE1'],\n                         'MET': ['SD'], \n                         'ASP': ['OD1', 'OD2'], \n                         'GLU': ['OE1', 'OE2'], \n                         'SER': ['OG'], \n                         'THR': ['OG1'], \n                         'HIS': ['ND1'], \n                         'TYR': ['OH']\n                         }\n        self.ligvdw = ['C','CB', 'CG1', 'CG2', 'CD1', 'CD2', 'CE']\n        self.ligpipi = ['HIS', 'TYR', 'TRP', 'PHE']\n        self.nodes_id1, self.nodes_id2, self.bonds= [], [], []\n        self.distances, self.donors, self.angles= [], [], []\n        self.atom1, self.atom2 = [], []\n        self.bonds_check = []\n        self.analyzed_pairs = set()\n        self.energies = [] \n        self.multiple= multiple\n        self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0}   \n\n    def Iac(self):\n\n        # Eles não calculam mais essas ligações na nova versão \n\n        lig_032 = []\n        for residue in self.structure.get_residues():\n            if str(residue.resname) == \"032\":\n                lig_032.append(residue)\n        \n        for residue in lig_032:\n            for atom in residue:\n                for neighbor_pair in self.ns.search(atom.coord, 6.5, level= 'R'):\n                    for atom2 in neighbor_pair:\n                        if atom2.get_name() == 'CA':\n                            distance = np.linalg.norm(atom.coord - atom2.coord)\n                            #verificando se o átomo vizinho é de outro resíduo\n                            if neighbor_pair != residue:\n                                print(residue.resname, neighbor_pair.resname, neighbor_pair.id[1], distance)\n    \n    def _hydrogen_bond(self, chain, residue, atom):\n        chain1= ''\n        chain2= ''\n\n        global n_or_o_donor\n        global h_donor\n\n        atom_name = atom.get_name()\n\n        if atom.fullname[1] in ['N', 'O'] or (atom_name == 'SG' and residue.resname == 'CYS'):\n            neighbors= self.ns.search(atom.coord, 5.5)\n            for neighbor in neighbors:\n                \n                neig_name= neighbor.get_name()\n                neig_res= neighbor.get_parent()\n                if neig_res.resname in ['HOH', '032']:\n                    continue \n                if neig_res.id[1] == residue.id[1] or neig_name[0] == atom_name[0]:\n                    continue\n\n                pair = (int(residue.id[1]), int(neig_res.id[1]))\n\n                if pair in self.analyzed_pairs:\n                    continue\n                else:\n                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))\n\n\n                if neighbor.fullname[1] in ['N', 'O'] or (neighbor.get_name() == 'SG' and neig_res.resname == 'CYS'):\n                    distance= np.linalg.norm(atom.coord - neighbor.coord)\n                    \n                    #Verificando quem é doador\n                    if (atom_name[0] == 'N' or (atom_name in ['OG', 'OH', 'OG1', 'SG'] and residue.resname in list(self.lighbdonor.keys()))) and (neig_name[0] == 'O' or (neig_name in ['SD', 'ND1'] and neig_res.resname in list(self.lighbac.keys()))):\n                        # Aqui o doador vai ser o atomo principal\n                        n_or_o_donor = atom\n                        try:\n                            h_list = [a for a in residue if a.element == 'H']\n                            h_distances= {}\n                            for h_atom in h_list:\n                                h_dist = np.linalg.norm(atom.coord - h_atom.coord)\n                                h_distances[h_dist] = h_atom\n                            min_h = min(list(h_distances.keys()))\n                            h_donor = h_distances[min_h]\n                        except:\n                            raise Exception(\"Hydrogens not found, hydrogenate the pdb file first!\")\n                        \n\n                    elif (neig_name[0] == 'N' or (neig_name in ['OG', 'OH', 'OG1', 'SG'] and neig_res.resname in list(self.lighbdonor.keys()))) and (atom_name[0] == 'O' or (atom_name in ['SD', 'ND1'] and residue.resname in list(self.lighbac.keys()))):\n                        # Aqui o doador vai ser o atomo vizinho\n                        n_or_o_donor = neighbor\n                        try:\n\n                            h_list = [a for a in neig_res if a.element == 'H']\n\n                            h_distances= {}\n                            for h_atom in h_list:\n                                h_dist = np.linalg.norm(neighbor.coord - h_atom.coord)\n                                h_distances[h_dist] = h_atom\n                            min_h = min(list(h_distances.keys()))\n                            h_donor = h_distances[min_h]\n                        except:\n                            raise Exception(\"Hydrogens not found, hydrogenate the pdb file first!\")\n                        \n                    terceiro_vetor= h_donor.get_vector()\n                    neighbor_vector= neighbor.get_vector()\n                    a_vector = atom.get_vector()\n\n                    angle = 0.0\n                    if n_or_o_donor == atom:\n                        angle = np.degrees(calc_angle(terceiro_vetor,a_vector, neighbor_vector))\n                    else:\n                        angle = np.degrees(calc_angle(terceiro_vetor, neighbor_vector, a_vector))\n\n                    if 2.5 < distance <= 3.5 and angle <= 63.0:\n                        \n                        #Verificando se é a cadeia principal ou lateral \n                        if atom.name in [\"N\", \"O\"]:\n                            chain1 = 'MC'\n                        else:\n                            chain1 = 'SC'\n                        \n                        if neighbor.name in ['N', 'O']:\n                            chain2 = 'MC'\n                        else:\n                            chain2 = 'SC'\n                        \n                        if self.multiple:\n                            self.bonds_check.append((f\"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}\", \n                                                f\"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}\"))\n                        \n                        self.nodes_id1.append(f\"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}\")\n                        self.nodes_id2.append(f\"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}\")\n                        self.bonds.append(f\"HBOND:{chain1}_{chain2}\")\n                        self.distances.append(f\"{distance:.3f}\")\n                        self.angles.append(f\"{angle:.3f}\")\n                        if distance <= 1.5:\n                            self.energies.append(f\"{115.000:.3f}\")\n                        elif distance >= 2.2:\n                            self.energies.append(f\"{17.000:.3f}\")\n                        else:\n                            self.energies.append(f\"{40.000:.3f}\")\n                        self.atom1.append(atom_name)\n                        self.atom2.append(neig_name)\n                        self.donors.append(f\"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}\")\n                        self.ligands[\"hb\"] += 1\n        \n    def _vanderwaals(self, chain, residue, atom):\n        chain1= ''\n        chain2= ''\n\n        vdw_radii = {'C': 1.77, 'S': 1.89, 'N': 1.8, 'O': 1.4}\n        is_vdw = False\n\n        atom_name = atom.get_name()\n        if atom.fullname[1] in ['C', 'S', 'O', 'N']:\n            neighbors= self.ns.search(atom.coord,3.9)\n            for neighbor in neighbors:\n                is_vdw = False\n\n                neig_name= neighbor.get_name()\n                neig_res= neighbor.get_parent()\n                distance= np.linalg.norm(atom.coord - neighbor.coord)\n                if neig_res.id[1] == residue.id[1] or neig_name in [\"CA\", \"CH2\"] or atom_name in [\"CA\", \"CH2\"]  or (atom_name=='C' and neig_name=='C'):\n                    continue\n\n                if neig_res.resname in ['HOH', '032']:\n                    continue\n\n                pair = (int(residue.id[1]), int(neig_res.id[1]))\n                \n                if pair in self.analyzed_pairs:\n                    continue\n                else:\n                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))\n\n                if neighbor.fullname[1] in ['C', 'S', 'O', 'N'] :\n                    \n                    if atom.name in [\"C\", \"S\"]:\n                        chain1 = 'MC'\n                    else:\n                        chain1 = 'SC'\n                    \n                    if neighbor.name in ['C', 'S']:\n                        chain2 = 'MC'\n                    else:\n                        chain2 = 'SC'\n\n                    if (atom.fullname[1] == \"C\" and neighbor.fullname[1]  == \"C\") or (atom.fullname[1]  == \"C\" and neighbor.fullname[1]  == \"S\") or (atom.fullname[1]  == \"S\" and neighbor.fullname[1]  == \"C\"):\n                        is_vdw = True\n                \n                    elif (atom_name[0] == \"N\" or atom_name[0] == \"O\" ) and neig_name[0] == \"C\":\n                        if (residue.resname == 'GLN' and (atom_name == \"OE1\" or atom_name == \"NE2\")) or (\n                            residue.resname == 'ASN' and (atom_name == \"OD1\" or atom_name == \"ND2\")):\n                            \n                            is_vdw = True\n                            \n                    elif (neig_name[0] == \"N\" or neig_name[0] == \"O\" ) and atom_name[0] == \"C\":\n                        if (neig_res.resname == 'GLN' and (neighbor.name == \"OE1\" or neighbor.name == \"NE2\")) or (\n                            neig_res.resname == 'ASN' and (neighbor.name == \"OD1\" or neighbor.name == \"ND2\")):\n                            \n                                is_vdw = True\n                            \n                if is_vdw:\n                    check_dist= distance - vdw_radii[atom.name[0]] - vdw_radii[neighbor.name[0]]\n                        \n                    if check_dist <= 0.5:\n                        if self.multiple:\n                            self.bonds_check.append((f\"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}\", \n                                                f\"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}\"))\n            \n                        self.nodes_id1.append(f\"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}\")\n                        self.nodes_id2.append(f\"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}\")\n                        self.donors.append(\"NaN\")\n                        self.angles.append(\"NaN\")\n                        self.energies.append(f\"{6.000:.3f}\")\n                        self.bonds.append(f\"VDW:{chain1}_{chain2}\")\n                        self.distances.append(f\"{distance:.3f}\")\n                        self.atom1.append(atom_name)\n                        self.atom2.append(neig_name)\n                        self.ligands[\"vdw\"] += 1\n    \n    def _dissulfide_bond(self, chain, residue, atom):\n        #identificar as cadeias na ligação dissufide\n        chain1= ''\n        chain2= ''\n\n        atom_name= atom.get_name()\n\n        if atom_name[0] == 'S':\n            neighbors= self.ns.search(atom.coord, 3.5)\n            for neighbor in neighbors:\n                neig_res = neighbor.get_parent()\n\n                pair = (int(residue.id[1]), int(neig_res.id[1]))\n\n                if neig_res.id[1] == residue.id[1]:\n                    continue\n                if pair in self.analyzed_pairs:\n                    continue\n                else:\n                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))\n                        \n                neig_name= neighbor.get_name()\n                neig_res= neighbor.get_parent()\n                distance= np.linalg.norm(atom.coord - neighbor.coord)\n                if neig_name[0] == 'S' and distance<=2.5:\n                    self.nodes_id1.append(f\"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}\")\n                    self.nodes_id2.append(f\"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}\")\n                    self.donors.append(\"NaN\")\n                    self.angles.append(\"NaN\")\n                    self.energies.append(f\"{167.000:.3f}\")\n                    self.bonds.append(f\"SBOND:{chain1}_{chain2}\")\n                    self.distances.append(f\"{distance:.3f}\")\n                    self.atom1.append(atom_name)\n                    self.atom2.append(neig_name)\n                    self.ligands['sbond'] += 1\n    \n    def _salt_bridge(self, chain, residue, atom):\n        global ionic_donor\n        chain1= ''\n        chain2= ''\n        \n        atom_name = atom.get_name()\n        if residue.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:\n            analyzed_ionic= set()\n            neighbors= self.ns.search(atom.coord, 8)\n            for neighbor in neighbors:\n                neig_res= neighbor.get_parent()\n                neig_name= neighbor.get_name()\n                if neig_res.id[1] == residue.id[1]:\n                    continue\n                if atom_name in ['CZ', 'NZ'] or neig_res in ['CZ', 'NZ']:\n                    pair = (int(residue.id[1]), int(neig_res.id[1]))\n                    \n                    if pair in self.analyzed_pairs or pair in analyzed_ionic:\n                        continue\n                    else:\n                        self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))\n                        analyzed_ionic.add(pair)\n\n                    if neig_res.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:\n                        \n                        if residue.resname in ['ARG', 'LYS', 'HIS'] and neig_res.resname in ['ASP', 'GLU']:\n                            # aqui o átomo vai ser o doador \n                            ionic_donor= atom\n\n                        elif neig_res.resname in ['ARG', 'LYS', 'HIS'] and residue.resname in ['ASP', 'GLU']:\n                            # aqui o neighbor vai ser o doador\n                            ionic_donor = neighbor\n                            \n                        chain1= 'MC' if len(atom_name)==1 else 'SC'\n                        chain2= 'MC' if len(neig_name)==1 else 'SC'\n                            \n                        distance = np.linalg.norm(atom.coord - neighbor.coord)\n                        # angle = np.degrees(calc_angle())\n                        \n                        if distance <= 4.0:\n                            if self.multiple:\n                                self.bonds_check.append((f\"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}\", \n                                                f\"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}\"))\n                                #ionic_check.add(((residue.id[1], neig_res.id[1]),atom, neighbor, distance))\n                            \n                            self.nodes_id1.append(f\"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}\")\n                            self.nodes_id2.append(f\"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}\")\n                            self.bonds.append(f\"IONIC:{chain1}_{chain2}\")\n                            self.distances.append(f\"{distance:.3f}\")\n                            self.angles.append(f\"NAN\")\n                            self.energies.append(f\"{20.000:.3f}\")\n                            if atom_name in ['CZ', 'NZ']:\n                                self.atom1.append(atom_name)\n                                self.atom2.append(f\"{neighbor.get_coord()[0]:.3f},{neighbor.get_coord()[1]:.3f},{neighbor.get_coord()[2]:.3f}\")\n                            elif atom_name not in ['CZ', 'NZ'] and neig_name in ['CZ', 'NZ']:\n                                self.atom1.append(f\"{atom.get_coord()[0]:.3f},{atom.get_coord()[1]:.3f},{atom.get_coord()[2]:.3f}\")\n                                self.atom2.append(neig_name)\n\n                            self.donors.append(f\"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}\")\n                            self.ligands[\"ionic\"] += 1\n\n    def Bonds(self):\n        \n        for chain in self.structure.get_chains():\n            for residue in chain:\n                \n                if residue.resname in ['032', 'HOH']:\n                    continue\n                for atom in residue:\n                \n                    atom_name= atom.get_name()\n                    is_vdw = False\n\n                    # Looking for HBOND\n                    self._hydrogen_bond(chain,residue, atom)\n                    #Looking for VDW\n                    self._vanderwaals(chain, residue, atom)\n                    # Looking for SBOND\n                    self._dissulfide_bond(chain, residue, atom)\n                    # Salt Bridges\n                    self._salt_bridge(chain, residue, atom)\n                    \n\n    def analyse(self, bond, lig):\n        for pair in self.bonds_check:\n            pair_dist, pair_idx = [], []\n            \n            for line in range(len(self.nodes_id1)):\n                \n                if (pair == (self.nodes_id1[line], self.nodes_id2[line]) and (bond in self.bonds[line])):\n                    pair_dist.append(self.distances[line])\n                    pair_idx.append(line)\n            \n            if len(pair_dist) > 1:\n                min_idx = np.argmin(pair_dist)\n                min_pair = pair_idx[min_idx]\n                for i in pair_idx:\n                    if i != min_pair:\n                        self.nodes_id1.pop(i)\n                        self.nodes_id2.pop(i)\n                        self.donors.pop(i)\n                        self.angles.pop(i)\n                        self.energies.pop(i)\n                        self.bonds.pop(i)\n                        self.distances.pop(i)\n                        self.atom1.pop(i)\n                        self.atom2.pop(i)\n                        self.ligands[lig] -= 1\n    \n    def multiple_mode(self):\n        bonds = [(\"HBOND\", \"hb\"), (\"VDW\", \"vdw\")]\n        for b in bonds:\n            self.analyse(b[0], b[1])\n        \n    def to_file(self):\n        self.Bonds()\n        if self.multiple:\n            self.multiple_mode()\n        colunas= [\"NodeId1\", \"Interaction\"\t,\"NodeId2\",\t\"Distance\",\t\"Angle\",\"Energy\", \"Atom1\", \"Atom2\", \"Donor\"]\n\n        data= pd.DataFrame(list(zip(self.nodes_id1, self.bonds, self.nodes_id2, self.distances, \n                                    self.angles,self.energies, self.atom1, self.atom2, self.donors)), columns= colunas)\n        \n        data.to_csv(f'./{self.name}_edges.csv', sep='\\t', index=False)\n        \n    def print_output(self):\n        self.Bonds()\n\n        if self.multiple:\n            self.multiple_mode()\n\n        # print(len(self.nodes_id1), len(self.donors))\n        # time.sleep(2)\n        for n in range(len(self.nodes_id1)):\n            try:\n                print(f\"{self.nodes_id1[n]}\\t{self.bonds[n]}\\t{self.nodes_id2[n]}\\t{self.distances[n]}\\t{self.angles[n]}\\t\\t{self.energies[n]}\\t\\t{self.atom1[n]}\\t{self.atom2[n]}\\t{self.donors[n]}\")\n                \n            except Exception as e:\n                print(e)\n                print(f\"{self.nodes_id1[n]}\\t{self.bonds[n]}\\t{self.nodes_id2[n]}\\t{self.distances[n]}\\t{self.angles[n]}\\t\\t{self.energies[n]}\\t\\t{self.atom1[n]}\\t{self.atom2[n]}\\t{self.donors[n]}\")\n        print(self.ligands)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ysera2.py b/ysera2.py
+--- a/ysera2.py	(revision e08592e771bca1605f51f445614f8d52bd74287c)
++++ b/ysera2.py	(date 1676583002593)
+@@ -4,86 +4,88 @@
+ import pandas as pd
+ import time
+ import mdtraj as md
++from aromatics import AromaticsFormat
+ 
+ 
+ class Nodes:
+-    def __init__(self, name_=None,file_=False):
+-        self.name= name_
+-        self.parser= PDBParser(PERMISSIVE=1)
+-        self.structure= self.parser.get_structure(name_, file_)
+-        self.ns= NeighborSearch(list(self.structure.get_atoms()))
+-        #mdtraj
++    def __init__(self, name_=None, file_=False):
++        self.name = name_
++        self.parser = PDBParser(PERMISSIVE=1)
++        self.structure = self.parser.get_structure(name_, file_)
++        self.ns = NeighborSearch(list(self.structure.get_atoms()))
++        # mdtraj
+         self.pdb = md.load_pdb(file_)
+         self.dssp_md = md.compute_dssp(self.pdb, simplified=False)
+-        
+-        self.model= self.structure[0]
+-        #self.dssp = DSSP(self.model, './Codes/3og7.pdb', file_type='PDB', dssp='dssp')
+-        self.all_dssps= []
++
++        self.model = self.structure[0]
++        # self.dssp = DSSP(self.model, './Codes/3og7.pdb', file_type='PDB', dssp='dssp')
++        self.all_dssps = []
+         self.nodes_id, self.chains, self.positions, self.residues = [], [], [], []
+-        #Degrees não está com uma precisão boa, é preciso saber como pode ser feito igual o do RINGs
+-        self.degrees= []
+-        self.cut_dist= 8.0 # definir um limite de distância de corte (escolhido com base na literatura)
+-        #B-Factor, coords and filenames
+-        self.bfactors, self.coords, self.pdb_filename =[], [], []
++        # Degrees não está com uma precisão boa, é preciso saber como pode ser feito igual o do RINGs
++        self.degrees = []
++        self.cut_dist = 8.0  # definir um limite de distância de corte (escolhido com base na literatura)
++        # B-Factor, coords and filenames
++        self.bfactors, self.coords, self.pdb_filename = [], [], []
+         self.rapdfs = []
+-        
++        self.exclusions = []
++
+     def dssp_test(self):
+         self.search_nodes()
+         for residue in self.dssp:
+             print(residue)
+-    
++
+     def search_nodes(self):
+         for model in self.structure:
+             for chain in model:
+                 for residue in chain:
+-                    if str(residue.resname) != 'HOH': # ignore solvent
++                    if str(residue.resname) != 'HOH':  # ignore solvent
+                         # Node_ID, Chain, Position and Residue
+                         self.nodes_id.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
+                         self.chains.append(str(chain.id))
+                         self.positions.append(residue.id[1])
+                         if str(residue.resname) == '032':
+-                            #Se o resíduo for o 032 então ele não terá um Bfactor-CA nem coordenadas
++                            # Se o resíduo for o 032 então ele não terá um Bfactor-CA nem coordenadas
+                             self.bfactors.append('NaN')
+                             self.coords.append(np.array(['NaN', 'NaN', 'NaN']))
+                         self.residues.append(str(residue.resname))
+-                        
+-                        #Degree -> número de residuos diretamente conectados
++
++                        # Degree -> número de residuos diretamente conectados
+ 
+-                        degree= 0
+-                        
++                        degree = 0
++
+                         if 'CA' in residue:
+-                            #R ->  list of residues list of modules
++                            # R ->  list of residues list of modules
+                             for residue_2 in Selection.unfold_entities(model, 'R'):
+-                                if ( residue_2.get_id()[1] != residue.get_id()[1] ):
+-                                    #CA -> Carbono Alfa (mais preciso que outros átomos)
+-                                    #Calcular a distancia euclidiana das coordenadas desse carbono alfa
++                                if (residue_2.get_id()[1] != residue.get_id()[1]):
++                                    # CA -> Carbono Alfa (mais preciso que outros átomos)
++                                    # Calcular a distancia euclidiana das coordenadas desse carbono alfa
+                                     if 'CA' in residue_2:
+-                                        distance= np.linalg.norm(residue["CA"].coord - residue_2["CA"].coord)
+-                                        if ( distance < self.cut_dist ):
+-                                            degree += 1 
+-                            
++                                        distance = np.linalg.norm(residue["CA"].coord - residue_2["CA"].coord)
++                                        if (distance < self.cut_dist):
++                                            degree += 1
++
+                         self.degrees.append(degree)
+ 
+-                        #Bfactor_CA
+-                        b_factor=0
+-                        count=0
++                        # Bfactor_CA
++                        b_factor = 0
++                        count = 0
+                         for atom in residue:
+-                            if ( atom.get_name() == 'CA' ):
++                            if (atom.get_name() == 'CA'):
+                                 b_factor += atom.get_bfactor()
+                                 count += 1
+ 
+-                                coords= atom.get_coord()
++                                coords = atom.get_coord()
+                                 self.coords.append(coords)
+-                                
++
+                         if (count != 0):
+-                            bf_average= b_factor/count
++                            bf_average = b_factor / count
+                             self.bfactors.append(f"{bf_average:.3f}")
+-                        
+-                        #pdb filenames
++
++                        # pdb filenames
+ 
+                         self.pdb_filename.append(f"input_file.cif#{str(residue.id[1])}.{str(chain.id)}")
+ 
+-                        #Rapdf
++                        # Rapdf
+                         sum_of_dis = 0
+                         rapdf_count = 0
+                         for residue_2 in Selection.unfold_entities(model, 'R'):
+@@ -91,42 +93,44 @@
+                                 sum_of_dis += np.linalg.norm(residue["CA"].coord - residue_2["CA"].coord)
+                                 rapdf_count += 1
+                         if rapdf_count != 0:
+-                            rapdf = sum_of_dis/rapdf_count
++                            rapdf = sum_of_dis / rapdf_count
+                             self.rapdfs.append(rapdf)
+                         else:
+                             self.rapdfs.append(0.0)
+ 
+-
+-        # Pegando o DSSP 
++        # Pegando o DSSP
+         for i in range(len(self.dssp_md[0])):
+-            if i>0:
++            if i > 0:
+                 if self.dssp_md[0][i] == 'NA':
+                     pass
+                 else:
+                     self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] != 'C' else '\t')
+             else:
+-                
+-                self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] not in ['C', 'NA'] else '\t')  
++
++                self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] not in ['C', 'NA'] else '\t')
+ 
+     def print_output(self):
+         self.search_nodes()
+         for n in range(len(self.nodes_id)):
+             try:
+-                print(f"{self.nodes_id[n]}\t{self.chains[n]}\t\t{self.positions[n]}\t\t{self.residues[n]}\t{self.all_dssps[n]}\t" +
+-                        f"{self.degrees[n]}\t{self.bfactors[n]:.3f}\t{self.coords[n][0]:.3f}\t{self.coords[n][1]:.3f}\t{self.coords[n][2]:.3f}\t" +
+-                        f"{self.pdb_filename[n]}\t{self.rapdfs[n]}"
+-                )
++                print(
++                    f"{self.nodes_id[n]}\t{self.chains[n]}\t\t{self.positions[n]}\t\t{self.residues[n]}\t{self.all_dssps[n]}\t" +
++                    f"{self.degrees[n]}\t{self.bfactors[n]:.3f}\t{self.coords[n][0]:.3f}\t{self.coords[n][1]:.3f}\t{self.coords[n][2]:.3f}\t" +
++                    f"{self.pdb_filename[n]}\t{self.rapdfs[n]}"
++                    )
+             except Exception as e:
+-                print(f"{self.nodes_id[n]}\t{self.chains[n]}\t\t{self.positions[n]}\t\t{self.residues[n]}\t{self.all_dssps[n]}\t" +
+-                        f"{self.degrees[n]}\t{self.bfactors[n]}\t{self.coords[n][0]}\t{self.coords[n][1]}\t{self.coords[n][2]}\t" +
+-                        f"{self.pdb_filename[n]}\t{self.rapdfs[n]}"
+-                )
++                print(
++                    f"{self.nodes_id[n]}\t{self.chains[n]}\t\t{self.positions[n]}\t\t{self.residues[n]}\t{self.all_dssps[n]}\t" +
++                    f"{self.degrees[n]}\t{self.bfactors[n]}\t{self.coords[n][0]}\t{self.coords[n][1]}\t{self.coords[n][2]}\t" +
++                    f"{self.pdb_filename[n]}\t{self.rapdfs[n]}"
++                    )
+ 
+     def to_file(self):
+         self.search_nodes()
+ 
+-        colunas= ["NodeId", "Chain","Position",	"Residue",	"Dssp",	"Degree", "Bfactor_CA", "x", "y", "z", "pdbFileName", "Model"]
+-        
++        colunas = ["NodeId", "Chain", "Position", "Residue", "Dssp", "Degree", "Bfactor_CA", "x", "y", "z",
++                   "pdbFileName", "Model"]
++
+         x, y, z = [], [], []
+         for coord in self.coords:
+             if coord[0] != 'NaN':
+@@ -138,50 +142,52 @@
+                 y.append(coord[1])
+                 z.append(coord[2])
+ 
+-        data= pd.DataFrame(list(zip(self.nodes_id, self.chains, self.positions, self.residues, 
+-                                    self.all_dssps, self.degrees, self.bfactors, x, y, z, self.pdb_filename, self.models
+-        )), columns= colunas)
+-        
++        data = pd.DataFrame(list(zip(self.nodes_id, self.chains, self.positions, self.residues,
++                                     self.all_dssps, self.degrees, self.bfactors, x, y, z, self.pdb_filename,
++                                     self.models
++                                     )), columns=colunas)
++
+         data.to_csv(f'./{self.name}_nodes.csv', sep='\t', index=False)
+- 
+- 
++
++
+ class Edges(Nodes):
+     def __init__(self, name, file_pdb, multiple=True):
+-        Nodes.__init__(self ,name_=name, file_= file_pdb)
++        af = AromaticsFormat('3og7.pdb')
++        self.aromatic_array, self.aromatic_normals, self.invalids = af.get_data()
++        Nodes.__init__(self, name_=name, file_=file_pdb)
+         self.edges = []
+-        self.res= [res for res in self.structure.get_residues()]
++        self.res = [res for res in self.structure.get_residues()]
+         self.mc = ['O', 'N']
+-        self.lighbdonor = {'ARG': ['NE', 'NH1', 'NH2'], 
+-                            'ASN':['ND2'], 
+-                            'HIS': ['NE2', 'ND1'], 
+-                            'SER': ['OG'], 
+-                            'TYR': ['OH'], 
+-                            'CYS': ['SG'],
+-                            'THR': ['OG1'], 
+-                            'GLN': ['NE2'], 
+-                            'LYS': ['NZ'], 
+-                            'TRP': ['NE1']
+-                            }
+-        self.lighbac= {'ASN': ['OD1'], 
++        self.lighbdonor = {'ARG': ['NE', 'NH1', 'NH2'],
++                           'ASN': ['ND2'],
++                           'HIS': ['NE2', 'ND1'],
++                           'SER': ['OG'],
++                           'TYR': ['OH'],
++                           'CYS': ['SG'],
++                           'THR': ['OG1'],
++                           'GLN': ['NE2'],
++                           'LYS': ['NZ'],
++                           'TRP': ['NE1']
++                           }
++        self.lighbac = {'ASN': ['OD1'],
+                         'GLN': ['OE1'],
+-                         'MET': ['SD'], 
+-                         'ASP': ['OD1', 'OD2'], 
+-                         'GLU': ['OE1', 'OE2'], 
+-                         'SER': ['OG'], 
+-                         'THR': ['OG1'], 
+-                         'HIS': ['ND1'], 
+-                         'TYR': ['OH']
+-                         }
+-        self.ligvdw = ['C','CB', 'CG1', 'CG2', 'CD1', 'CD2', 'CE']
++                        'MET': ['SD'],
++                        'ASP': ['OD1', 'OD2'],
++                        'GLU': ['OE1', 'OE2'],
++                        'SER': ['OG'],
++                        'THR': ['OG1'],
++                        'HIS': ['ND1'],
++                        'TYR': ['OH']
++                        }
++        self.ligvdw = ['C', 'CB', 'CG1', 'CG2', 'CD1', 'CD2', 'CE']
+         self.ligpipi = ['HIS', 'TYR', 'TRP', 'PHE']
+-        self.nodes_id1, self.nodes_id2, self.bonds= [], [], []
+-        self.distances, self.donors, self.angles= [], [], []
++        self.nodes_id1, self.nodes_id2, self.bonds = [], [], []
++        self.distances, self.donors, self.angles = [], [], []
+         self.atom1, self.atom2 = [], []
+-        self.bonds_check = []
++        self.bonds_check, self.energies, self.orientation = [], [], []
+         self.analyzed_pairs = set()
+-        self.energies = [] 
+-        self.multiple= multiple
+-        self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0}   
++        self.multiple = multiple
++        self.ligands = {'hb': 0, 'vdw': 0, 'ionic': 0, 'sbond': 0, 'pi_stacking': 0, 'pi_cation': 0}
+ 
+     def Iac(self):
+ 
+@@ -191,20 +197,20 @@
+         for residue in self.structure.get_residues():
+             if str(residue.resname) == "032":
+                 lig_032.append(residue)
+-        
++
+         for residue in lig_032:
+             for atom in residue:
+-                for neighbor_pair in self.ns.search(atom.coord, 6.5, level= 'R'):
++                for neighbor_pair in self.ns.search(atom.coord, 6.5, level='R'):
+                     for atom2 in neighbor_pair:
+                         if atom2.get_name() == 'CA':
+                             distance = np.linalg.norm(atom.coord - atom2.coord)
+-                            #verificando se o átomo vizinho é de outro resíduo
++                            # verificando se o átomo vizinho é de outro resíduo
+                             if neighbor_pair != residue:
+                                 print(residue.resname, neighbor_pair.resname, neighbor_pair.id[1], distance)
+-    
++
+     def _hydrogen_bond(self, chain, residue, atom):
+-        chain1= ''
+-        chain2= ''
++        chain1 = ''
++        chain2 = ''
+ 
+         global n_or_o_donor
+         global h_donor
+@@ -212,13 +218,13 @@
+         atom_name = atom.get_name()
+ 
+         if atom.fullname[1] in ['N', 'O'] or (atom_name == 'SG' and residue.resname == 'CYS'):
+-            neighbors= self.ns.search(atom.coord, 5.5)
++            neighbors = self.ns.search(atom.coord, 5.5)
+             for neighbor in neighbors:
+-                
+-                neig_name= neighbor.get_name()
+-                neig_res= neighbor.get_parent()
++
++                neig_name = neighbor.get_name()
++                neig_res = neighbor.get_parent()
+                 if neig_res.resname in ['HOH', '032']:
+-                    continue 
++                    continue
+                 if neig_res.id[1] == residue.id[1] or neig_name[0] == atom_name[0]:
+                     continue
+ 
+@@ -229,17 +235,18 @@
+                 else:
+                     self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+ 
+-
+                 if neighbor.fullname[1] in ['N', 'O'] or (neighbor.get_name() == 'SG' and neig_res.resname == 'CYS'):
+-                    distance= np.linalg.norm(atom.coord - neighbor.coord)
+-                    
+-                    #Verificando quem é doador
+-                    if (atom_name[0] == 'N' or (atom_name in ['OG', 'OH', 'OG1', 'SG'] and residue.resname in list(self.lighbdonor.keys()))) and (neig_name[0] == 'O' or (neig_name in ['SD', 'ND1'] and neig_res.resname in list(self.lighbac.keys()))):
++                    distance = np.linalg.norm(atom.coord - neighbor.coord)
++
++                    # Verificando quem é doador
++                    if (atom_name[0] == 'N' or (atom_name in ['OG', 'OH', 'OG1', 'SG'] and residue.resname in list(
++                            self.lighbdonor.keys()))) and (neig_name[0] == 'O' or (
++                            neig_name in ['SD', 'ND1'] and neig_res.resname in list(self.lighbac.keys()))):
+                         # Aqui o doador vai ser o atomo principal
+                         n_or_o_donor = atom
+                         try:
+                             h_list = [a for a in residue if a.element == 'H']
+-                            h_distances= {}
++                            h_distances = {}
+                             for h_atom in h_list:
+                                 h_dist = np.linalg.norm(atom.coord - h_atom.coord)
+                                 h_distances[h_dist] = h_atom
+@@ -247,16 +254,18 @@
+                             h_donor = h_distances[min_h]
+                         except:
+                             raise Exception("Hydrogens not found, hydrogenate the pdb file first!")
+-                        
++
+ 
+-                    elif (neig_name[0] == 'N' or (neig_name in ['OG', 'OH', 'OG1', 'SG'] and neig_res.resname in list(self.lighbdonor.keys()))) and (atom_name[0] == 'O' or (atom_name in ['SD', 'ND1'] and residue.resname in list(self.lighbac.keys()))):
++                    elif (neig_name[0] == 'N' or (neig_name in ['OG', 'OH', 'OG1', 'SG'] and neig_res.resname in list(
++                            self.lighbdonor.keys()))) and (atom_name[0] == 'O' or (
++                            atom_name in ['SD', 'ND1'] and residue.resname in list(self.lighbac.keys()))):
+                         # Aqui o doador vai ser o atomo vizinho
+                         n_or_o_donor = neighbor
+                         try:
+ 
+                             h_list = [a for a in neig_res if a.element == 'H']
+ 
+-                            h_distances= {}
++                            h_distances = {}
+                             for h_atom in h_list:
+                                 h_dist = np.linalg.norm(neighbor.coord - h_atom.coord)
+                                 h_distances[h_dist] = h_atom
+@@ -264,34 +273,34 @@
+                             h_donor = h_distances[min_h]
+                         except:
+                             raise Exception("Hydrogens not found, hydrogenate the pdb file first!")
+-                        
+-                    terceiro_vetor= h_donor.get_vector()
+-                    neighbor_vector= neighbor.get_vector()
++
++                    terceiro_vetor = h_donor.get_vector()
++                    neighbor_vector = neighbor.get_vector()
+                     a_vector = atom.get_vector()
+ 
+                     angle = 0.0
+                     if n_or_o_donor == atom:
+-                        angle = np.degrees(calc_angle(terceiro_vetor,a_vector, neighbor_vector))
++                        angle = np.degrees(calc_angle(terceiro_vetor, a_vector, neighbor_vector))
+                     else:
+                         angle = np.degrees(calc_angle(terceiro_vetor, neighbor_vector, a_vector))
+ 
+                     if 2.5 < distance <= 3.5 and angle <= 63.0:
+-                        
+-                        #Verificando se é a cadeia principal ou lateral 
++
++                        # Verificando se é a cadeia principal ou lateral
+                         if atom.name in ["N", "O"]:
+                             chain1 = 'MC'
+                         else:
+                             chain1 = 'SC'
+-                        
++
+                         if neighbor.name in ['N', 'O']:
+                             chain2 = 'MC'
+                         else:
+                             chain2 = 'SC'
+-                        
++
+                         if self.multiple:
+-                            self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}", 
+-                                                f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
+-                        
++                            self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
++                                                     f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
++
+                         self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
+                         self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
+                         self.bonds.append(f"HBOND:{chain1}_{chain2}")
+@@ -305,73 +314,75 @@
+                             self.energies.append(f"{40.000:.3f}")
+                         self.atom1.append(atom_name)
+                         self.atom2.append(neig_name)
+-                        self.donors.append(f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}")
++                        self.donors.append(
++                            f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}")
+                         self.ligands["hb"] += 1
+-        
++
+     def _vanderwaals(self, chain, residue, atom):
+-        chain1= ''
+-        chain2= ''
++        chain1 = ''
++        chain2 = ''
+ 
+         vdw_radii = {'C': 1.77, 'S': 1.89, 'N': 1.8, 'O': 1.4}
+         is_vdw = False
+ 
+         atom_name = atom.get_name()
+         if atom.fullname[1] in ['C', 'S', 'O', 'N']:
+-            neighbors= self.ns.search(atom.coord,3.9)
++            neighbors = self.ns.search(atom.coord, 3.9)
+             for neighbor in neighbors:
+                 is_vdw = False
+ 
+-                neig_name= neighbor.get_name()
+-                neig_res= neighbor.get_parent()
+-                distance= np.linalg.norm(atom.coord - neighbor.coord)
+-                if neig_res.id[1] == residue.id[1] or neig_name in ["CA", "CH2"] or atom_name in ["CA", "CH2"]  or (atom_name=='C' and neig_name=='C'):
++                neig_name = neighbor.get_name()
++                neig_res = neighbor.get_parent()
++                distance = np.linalg.norm(atom.coord - neighbor.coord)
++                if neig_res.id[1] == residue.id[1] or neig_name in ["CA", "CH2"] or atom_name in ["CA", "CH2"] or (
++                        atom_name == 'C' and neig_name == 'C'):
+                     continue
+ 
+                 if neig_res.resname in ['HOH', '032']:
+                     continue
+ 
+                 pair = (int(residue.id[1]), int(neig_res.id[1]))
+-                
++
+                 if pair in self.analyzed_pairs:
+                     continue
+                 else:
+                     self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+ 
+-                if neighbor.fullname[1] in ['C', 'S', 'O', 'N'] :
+-                    
++                if neighbor.fullname[1] in ['C', 'S', 'O', 'N']:
++
+                     if atom.name in ["C", "S"]:
+                         chain1 = 'MC'
+                     else:
+                         chain1 = 'SC'
+-                    
++
+                     if neighbor.name in ['C', 'S']:
+                         chain2 = 'MC'
+                     else:
+                         chain2 = 'SC'
+ 
+-                    if (atom.fullname[1] == "C" and neighbor.fullname[1]  == "C") or (atom.fullname[1]  == "C" and neighbor.fullname[1]  == "S") or (atom.fullname[1]  == "S" and neighbor.fullname[1]  == "C"):
++                    if (atom.fullname[1] == "C" and neighbor.fullname[1] == "C") or (
++                            atom.fullname[1] == "C" and neighbor.fullname[1] == "S") or (
++                            atom.fullname[1] == "S" and neighbor.fullname[1] == "C"):
+                         is_vdw = True
+-                
+-                    elif (atom_name[0] == "N" or atom_name[0] == "O" ) and neig_name[0] == "C":
++
++                    elif (atom_name[0] == "N" or atom_name[0] == "O") and neig_name[0] == "C":
+                         if (residue.resname == 'GLN' and (atom_name == "OE1" or atom_name == "NE2")) or (
+-                            residue.resname == 'ASN' and (atom_name == "OD1" or atom_name == "ND2")):
+-                            
++                                residue.resname == 'ASN' and (atom_name == "OD1" or atom_name == "ND2")):
+                             is_vdw = True
+-                            
+-                    elif (neig_name[0] == "N" or neig_name[0] == "O" ) and atom_name[0] == "C":
++
++                    elif (neig_name[0] == "N" or neig_name[0] == "O") and atom_name[0] == "C":
+                         if (neig_res.resname == 'GLN' and (neighbor.name == "OE1" or neighbor.name == "NE2")) or (
+-                            neig_res.resname == 'ASN' and (neighbor.name == "OD1" or neighbor.name == "ND2")):
+-                            
+-                                is_vdw = True
+-                            
++                                neig_res.resname == 'ASN' and (neighbor.name == "OD1" or neighbor.name == "ND2")):
++                            is_vdw = True
++
+                 if is_vdw:
+-                    check_dist= distance - vdw_radii[atom.name[0]] - vdw_radii[neighbor.name[0]]
+-                        
++                    check_dist = distance - vdw_radii[atom.name[0]] - vdw_radii[neighbor.name[0]]
++
+                     if check_dist <= 0.5:
+                         if self.multiple:
+-                            self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}", 
+-                                                f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
+-            
++                            self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
++                                                     f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
++
+                         self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
+                         self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
+                         self.donors.append("NaN")
+@@ -382,16 +393,16 @@
+                         self.atom1.append(atom_name)
+                         self.atom2.append(neig_name)
+                         self.ligands["vdw"] += 1
+-    
++
+     def _dissulfide_bond(self, chain, residue, atom):
+-        #identificar as cadeias na ligação dissufide
+-        chain1= ''
+-        chain2= ''
++        # identificar as cadeias na ligação dissufide
++        chain1 = ''
++        chain2 = ''
+ 
+-        atom_name= atom.get_name()
++        atom_name = atom.get_name()
+ 
+         if atom_name[0] == 'S':
+-            neighbors= self.ns.search(atom.coord, 3.5)
++            neighbors = self.ns.search(atom.coord, 3.5)
+             for neighbor in neighbors:
+                 neig_res = neighbor.get_parent()
+ 
+@@ -403,11 +414,11 @@
+                     continue
+                 else:
+                     self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+-                        
+-                neig_name= neighbor.get_name()
+-                neig_res= neighbor.get_parent()
+-                distance= np.linalg.norm(atom.coord - neighbor.coord)
+-                if neig_name[0] == 'S' and distance<=2.5:
++
++                neig_name = neighbor.get_name()
++                neig_res = neighbor.get_parent()
++                distance = np.linalg.norm(atom.coord - neighbor.coord)
++                if neig_name[0] == 'S' and distance <= 2.5:
+                     self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
+                     self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
+                     self.donors.append("NaN")
+@@ -418,24 +429,24 @@
+                     self.atom1.append(atom_name)
+                     self.atom2.append(neig_name)
+                     self.ligands['sbond'] += 1
+-    
++
+     def _salt_bridge(self, chain, residue, atom):
+         global ionic_donor
+-        chain1= ''
+-        chain2= ''
+-        
++        chain1 = ''
++        chain2 = ''
++
+         atom_name = atom.get_name()
+         if residue.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
+-            analyzed_ionic= set()
+-            neighbors= self.ns.search(atom.coord, 8)
++            analyzed_ionic = set()
++            neighbors = self.ns.search(atom.coord, 8)
+             for neighbor in neighbors:
+-                neig_res= neighbor.get_parent()
+-                neig_name= neighbor.get_name()
++                neig_res = neighbor.get_parent()
++                neig_name = neighbor.get_name()
+                 if neig_res.id[1] == residue.id[1]:
+                     continue
+                 if atom_name in ['CZ', 'NZ'] or neig_res in ['CZ', 'NZ']:
+                     pair = (int(residue.id[1]), int(neig_res.id[1]))
+-                    
++
+                     if pair in self.analyzed_pairs or pair in analyzed_ionic:
+                         continue
+                     else:
+@@ -443,27 +454,27 @@
+                         analyzed_ionic.add(pair)
+ 
+                     if neig_res.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
+-                        
++
+                         if residue.resname in ['ARG', 'LYS', 'HIS'] and neig_res.resname in ['ASP', 'GLU']:
+                             # aqui o átomo vai ser o doador 
+-                            ionic_donor= atom
++                            ionic_donor = atom
+ 
+                         elif neig_res.resname in ['ARG', 'LYS', 'HIS'] and residue.resname in ['ASP', 'GLU']:
+                             # aqui o neighbor vai ser o doador
+                             ionic_donor = neighbor
+-                            
+-                        chain1= 'MC' if len(atom_name)==1 else 'SC'
+-                        chain2= 'MC' if len(neig_name)==1 else 'SC'
+-                            
++
++                        chain1 = 'MC' if len(atom_name) == 1 else 'SC'
++                        chain2 = 'MC' if len(neig_name) == 1 else 'SC'
++
+                         distance = np.linalg.norm(atom.coord - neighbor.coord)
+                         # angle = np.degrees(calc_angle())
+-                        
++
+                         if distance <= 4.0:
+                             if self.multiple:
+-                                self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}", 
+-                                                f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
+-                                #ionic_check.add(((residue.id[1], neig_res.id[1]),atom, neighbor, distance))
+-                            
++                                self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
++                                                         f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
++                                # ionic_check.add(((residue.id[1], neig_res.id[1]),atom, neighbor, distance))
++
+                             self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
+                             self.nodes_id2.append(f"{chain.id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
+                             self.bonds.append(f"IONIC:{chain1}_{chain2}")
+@@ -472,46 +483,154 @@
+                             self.energies.append(f"{20.000:.3f}")
+                             if atom_name in ['CZ', 'NZ']:
+                                 self.atom1.append(atom_name)
+-                                self.atom2.append(f"{neighbor.get_coord()[0]:.3f},{neighbor.get_coord()[1]:.3f},{neighbor.get_coord()[2]:.3f}")
++                                self.atom2.append(
++                                    f"{neighbor.get_coord()[0]:.3f},{neighbor.get_coord()[1]:.3f},{neighbor.get_coord()[2]:.3f}")
+                             elif atom_name not in ['CZ', 'NZ'] and neig_name in ['CZ', 'NZ']:
+-                                self.atom1.append(f"{atom.get_coord()[0]:.3f},{atom.get_coord()[1]:.3f},{atom.get_coord()[2]:.3f}")
++                                self.atom1.append(
++                                    f"{atom.get_coord()[0]:.3f},{atom.get_coord()[1]:.3f},{atom.get_coord()[2]:.3f}")
+                                 self.atom2.append(neig_name)
+ 
+-                            self.donors.append(f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}")
++                            self.donors.append(
++                                f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}")
+                             self.ligands["ionic"] += 1
+ 
++    def _pi_stacking(self, chain, residue, atom):
++        neighbors = self.ns.search(atom.coord, 7.2)
++        # tem que ver se chain
++        amin = f'{chain.id} {residue.id[1]}'
++        orient_type = ''
++        for neighbor in neighbors:
++
++            neig_res = neighbor.get_parent()
++            neig_chain = neig_res.get_parent().id
++            neig_amin = f'{neig_chain} {neig_res.id[1]}'
++
++            if residue.get_resname() in ['TYR', 'PHE', 'TRP'] and neig_res.get_resname() in ['TYR', 'PHE', 'TRP']:
++                if (amin not in self.invalids and neig_amin not in self.invalids) & \
++                        ([amin, neig_amin] not in self.exclusions and [neig_amin, amin] not in self.exclusions):
++
++                    coord_1 = np.array(self.aromatic_array[amin])
++                    coord_2 = np.array(self.aromatic_array[neig_amin])
++                    aromatic_distance = np.linalg.norm(coord_1 - coord_2)
++                    if aromatic_distance < 5.5 and amin != neig_amin:
++                        pair = (amin, neig_amin)
++
++                        if pair in self.analyzed_pairs:
++                            continue
++                        else:
++                            self.analyzed_pairs.add((neig_res, residue))
++
++                        normal_1 = self.aromatic_normals[amin] / np.linalg.norm(self.aromatic_normals[amin])
++                        normal_2 = self.aromatic_normals[neig_amin] / np.linalg.norm(self.aromatic_normals[neig_amin])
++                        angle = np.arccos(np.clip(np.dot(normal_1, normal_2), -1.0, 1.0))
++                        if angle > 50:
++                            # Tshaped
++                            self.orientation.append("T")
++                        elif 30 < angle < 50:
++                            # Inter (stacked no parallel)
++                            self.orientation.append("I")
++                        elif angle < 30:
++                            # Parallel
++                            self.orientation.append("P")
++                        chain1 = 'MC' if len(atom.get_name()) == 1 else 'SC'
++                        chain2 = 'MC' if len(neighbor.get_name()) == 1 else 'SC'
++                        coord_1 = f'{coord_1[0]:.3f},{coord_1[1]:.3f},{coord_1[2]:.3f}'
++                        coord_2 = f'{coord_2[0]:.3f},{coord_2[1]:.3f},{coord_2[2]:.3f}'
++                        if self.multiple:
++                            self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
++                                                     f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
++                            self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
++                            self.nodes_id2.append(f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
++                            self.bonds.append(f"PIPISTACK:{chain1}_{chain2}")
++                            self.distances.append(f"{aromatic_distance:.3f}")
++                            self.angles.append(f"{angle:.3f}")
++                            self.energies.append(f"{20.000:.3f}")
++                            self.atom1.append(coord_1)
++                            self.atom2.append(coord_2)
++                            self.donors.append("NaN")
++                        self.exclusions.append([amin, neig_amin])
++                        self.ligands["pi_stacking"] += 1
++
++    def _pi_cation(self, chain, residue, atom):
++        neighbors = self.ns.search(atom.coord, 7.2)
++        ligctn = ['MG', 'CU', 'K', 'FE2', 'FE', 'NI', 'NA', 'MO1', 'MO3', 'MO4', 'MO5', 'MO6', 'MO7', 'MO8', 'MO9',
++                  'NZ', 'NH2', 'NH1']
++        # tem que ver se chain
++        amin = f'{chain.id} {residue.id[1]}'
++        orient_type = ''
++        for neighbor in neighbors:
++
++            neig_res = neighbor.get_parent()
++            neig_chain = neig_res.get_parent().id
++            neig_amin = f'{neig_chain} {neig_res.id[1]}'
++
++            if residue.get_resname() in ['TYR', 'PHE', 'TRP'] and neighbor.get_name() in ligctn:
++                if (amin not in self.invalids and neig_amin not in self.invalids) & \
++                        ([amin, neig_amin] not in self.exclusions and [neig_amin, amin] not in self.exclusions):
++
++                    coord_1 = np.array(self.aromatic_array[amin])
++                    coord_2 = neighbor.get_coord()
++                    aromatic_distance = np.linalg.norm(coord_1 - coord_2)
++                    if 3.4 < aromatic_distance < 4.5 and amin != neig_amin:
++                        pair = (residue, neig_res)
++                        if pair in self.analyzed_pairs:
++                            continue
++                        else:
++                            self.analyzed_pairs.add((neig_res, residue))
++                        chain1 = 'MC' if len(atom.get_name()) == 1 else 'SC'
++                        chain2 = 'MC' if len(neighbor.get_name()) == 1 else 'SC'
++                        coord_1 = f'{coord_1[0]:.3f},{coord_1[1]:.3f},{coord_1[2]:.3f}'
++                        coord_2 = f'{coord_2[0]:.3f},{coord_2[1]:.3f},{coord_2[2]:.3f}'
++                        if self.multiple:
++                            self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
++                                                     f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
++                            self.nodes_id1.append(f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}")
++                            self.nodes_id2.append(f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}")
++                            self.bonds.append(f"PICATION:{chain1}_{chain2}")
++                            self.distances.append(f"{aromatic_distance:.3f}")
++                            self.angles.append(f"NaN")
++                            self.energies.append(f"{20.000:.3f}")
++                            self.atom1.append(coord_1)
++                            self.atom2.append(coord_2)
++                            self.donors.append("NaN")
++                            self.orientation.append("NaN")
++                        self.exclusions.append([amin, neig_amin])
++                        self.ligands["pi_cation"] += 1
++
+     def Bonds(self):
+-        
++
+         for chain in self.structure.get_chains():
+             for residue in chain:
+-                
++
+                 if residue.resname in ['032', 'HOH']:
+                     continue
+                 for atom in residue:
+-                
+-                    atom_name= atom.get_name()
++                    atom_name = atom.get_name()
+                     is_vdw = False
+ 
+                     # Looking for HBOND
+-                    self._hydrogen_bond(chain,residue, atom)
+-                    #Looking for VDW
++                    self._hydrogen_bond(chain, residue, atom)
++                    # Looking for VDW
+                     self._vanderwaals(chain, residue, atom)
+                     # Looking for SBOND
+                     self._dissulfide_bond(chain, residue, atom)
+                     # Salt Bridges
+                     self._salt_bridge(chain, residue, atom)
+-                    
++                    # Pi Stacking
++                    self._pi_stacking(chain, residue, atom)
++                    # Pi Cation
++                    self._pi_cation(chain, residue, atom)
+ 
+     def analyse(self, bond, lig):
+         for pair in self.bonds_check:
+             pair_dist, pair_idx = [], []
+-            
++
+             for line in range(len(self.nodes_id1)):
+-                
++
+                 if (pair == (self.nodes_id1[line], self.nodes_id2[line]) and (bond in self.bonds[line])):
+                     pair_dist.append(self.distances[line])
+                     pair_idx.append(line)
+-            
++
+             if len(pair_dist) > 1:
+                 min_idx = np.argmin(pair_dist)
+                 min_pair = pair_idx[min_idx]
+@@ -527,23 +646,23 @@
+                         self.atom1.pop(i)
+                         self.atom2.pop(i)
+                         self.ligands[lig] -= 1
+-    
++
+     def multiple_mode(self):
+         bonds = [("HBOND", "hb"), ("VDW", "vdw")]
+         for b in bonds:
+             self.analyse(b[0], b[1])
+-        
++
+     def to_file(self):
+         self.Bonds()
+         if self.multiple:
+             self.multiple_mode()
+-        colunas= ["NodeId1", "Interaction"	,"NodeId2",	"Distance",	"Angle","Energy", "Atom1", "Atom2", "Donor"]
++        colunas = ["NodeId1", "Interaction", "NodeId2", "Distance", "Angle", "Energy", "Atom1", "Atom2", "Donor"]
+ 
+-        data= pd.DataFrame(list(zip(self.nodes_id1, self.bonds, self.nodes_id2, self.distances, 
+-                                    self.angles,self.energies, self.atom1, self.atom2, self.donors)), columns= colunas)
+-        
++        data = pd.DataFrame(list(zip(self.nodes_id1, self.bonds, self.nodes_id2, self.distances,
++                                     self.angles, self.energies, self.atom1, self.atom2, self.donors)), columns=colunas)
++
+         data.to_csv(f'./{self.name}_edges.csv', sep='\t', index=False)
+-        
++
+     def print_output(self):
+         self.Bonds()
+ 
+@@ -554,9 +673,11 @@
+         # time.sleep(2)
+         for n in range(len(self.nodes_id1)):
+             try:
+-                print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
+-                
++                print(
++                    f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
++
+             except Exception as e:
+                 print(e)
+-                print(f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
++                print(
++                    f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}")
+         print(self.ligands)
+Index: main2.0.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from ysera2 import Nodes, Edges\nimport pymol\nimport time\n\ndef run_software(name_= False, file= None, hydrogenate = False):\n    start= time.time()\n\n    if file is None:\n        raise Exception(\"Load File\")\n    \n    if not hydrogenate:\n        pymol.cmd.load(file, 'myprotein')\n        pymol.cmd.h_add()\n        pymol.cmd.save('./temp/input_file.pdb')\n        time.sleep(2)\n\n    edges= Edges(name_, './temp/input_file.pdb')\n    edges.print_output()\n    \n    finish = (time.time() - start)\n\n    print(f\"---{finish} seconds ---\")\n\n    with open(\"time_log.txt\", \"a\") as file:\n        file.write(f\"---{finish} seconds ---\\n\")\n\n\nrun_software('3og7', './temp/3og7.pdb', hydrogenate= True)\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main2.0.py b/main2.0.py
+--- a/main2.0.py	(revision e08592e771bca1605f51f445614f8d52bd74287c)
++++ b/main2.0.py	(date 1676583002591)
+@@ -1,22 +1,23 @@
+ from ysera2 import Nodes, Edges
+-import pymol
++# import pymol
+ import time
+ 
+-def run_software(name_= False, file= None, hydrogenate = False):
+-    start= time.time()
++
++def run_software(name_=False, file=None, hydrogenate=False):
++    start = time.time()
+ 
+     if file is None:
+         raise Exception("Load File")
+-    
++    """
+     if not hydrogenate:
+         pymol.cmd.load(file, 'myprotein')
+         pymol.cmd.h_add()
+         pymol.cmd.save('./temp/input_file.pdb')
+         time.sleep(2)
+-
+-    edges= Edges(name_, './temp/input_file.pdb')
++    """
++    edges = Edges(name_, './temp/input_file.pdb')
+     edges.print_output()
+-    
++
+     finish = (time.time() - start)
+ 
+     print(f"---{finish} seconds ---")
+@@ -25,5 +26,6 @@
+         file.write(f"---{finish} seconds ---\n")
+ 
+ 
+-run_software('3og7', './temp/3og7.pdb', hydrogenate= True)
+-
++filename = '3og7.pdb'
++path = f'./temp/{filename}'
++run_software('3og7', path, hydrogenate=True)
+Index: aromatics.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from Bio.PDB import PDBParser, NeighborSearch\n\n\nclass FormatAromatics:\n    def __init__(self):\n\n        self.aromatic_pos = []\n        self.aromatic_points = []\n        self.aromatic_array = {}\n        self.aromatic_normals = {}\n        self.invalids = []\n\n    def calcula_array(self):\n        lig_032 =[]\n        for residue in self.structure.get_residues():\n            if str(residue.resname) == \"032\":\n                lig_032.append(residue)\n\n        for residue in lig_032:\n            for atom in residue:\n                for neighbor_pair in self.ns.search(atom.coord, 6.5, level='R'):\n                    print(neighbor_pair)\n\n\nif __name__ == '__main__':\n    inst = FormatAromatics()\n    inst.calcula_array()\n\n\n\n\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/aromatics.py b/aromatics.py
+--- a/aromatics.py	(revision e08592e771bca1605f51f445614f8d52bd74287c)
++++ b/aromatics.py	(date 1676583002591)
+@@ -1,30 +1,99 @@
+-from Bio.PDB import PDBParser, NeighborSearch
++import pandas as pd
++import numpy as np
++import os
++from biopandas.pdb import PandasPdb
+ 
+ 
+-class FormatAromatics:
+-    def __init__(self):
+-
++class AromaticsFormat:
++    """Gera uma matriz com as coordenadas e todas as distâncias de par em par dos átomos,
++    também gera o aromatic arrays e o aromatic normals"""
++    def __init__(self, filename):
++        self.filename = filename
++        self.project_home = os.path.dirname(os.path.realpath(__file__))
++        self.path = self.project_home + '/temp/' + self.filename
+         self.aromatic_pos = []
+         self.aromatic_points = []
++        self.invalids = []
+         self.aromatic_array = {}
+         self.aromatic_normals = {}
+-        self.invalids = []
++        self.df_total = pd.DataFrame()
++        self.aminos = pd.DataFrame()
++        self.arom_phe_tyr = ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ']
++        self.arom_trp = ['CD2', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2']
++
++    def _formata_arquivo(self):
++        """Formata o dataframe inicial usando o biopandas, cria um dataframe só com os aminoácidos
++        e os átomos necessários"""
++        file = open(self.path, 'r')
++        new_name = f'{self.filename}new.pdb'
++        with open(new_name, 'w') as f:
++            for line in file:
++                if "ENDMDL" in line:
++                    break
++                else:
++                    f.write(line)
++        ppdb = PandasPdb()
++        ppdb.read_pdb(new_name)
++        os.remove(self.project_home + '/' + new_name)
++        atom = ppdb.df['ATOM']
++        hetatm = ppdb.df['HETATM']
++        # Cria um dataframe apenas com ATOM E HETATM
++        self.df_total = pd.concat([atom, hetatm], sort=False)
++        self.df_total = self.df_total.reset_index()
++        self.df_total = self.df_total.drop(['index'], axis=1)
++        # Gera uma nova coluna 'amin' que vai ter o 'id' da cadeia e o número do resíduo
++        self.df_total['amin'] = self.df_total['chain_id'] + ' ' + self.df_total['residue_number'].astype(str)
++        self.df_total = self.df_total.drop(['atom_number', 'b_factor', 'alt_loc', 'line_idx',
++                                            'occupancy', 'element_symbol', 'charge', 'insertion',
++                                            'segment_id', 'blank_1', 'blank_2', 'blank_3', 'blank_4',
++                                            'chain_id', 'residue_number'], axis=1)
++        self.aminos = self.df_total[self.df_total['residue_name'].isin(['TYR', 'PHE', 'TRP'])]
++        self.aminos = self.aminos.loc[
++            (self.aminos['residue_name'].isin(['TYR'])) & (self.aminos['atom_name'].isin(self.arom_phe_tyr)) |
++            (self.aminos['residue_name'].isin(['PHE'])) & (self.aminos['atom_name'].isin(self.arom_phe_tyr)) |
++            (self.aminos['residue_name'].isin(['TRP'])) & (self.aminos['atom_name'].isin(self.arom_trp))]
+ 
+-    def calcula_array(self):
+-        lig_032 =[]
+-        for residue in self.structure.get_residues():
+-            if str(residue.resname) == "032":
+-                lig_032.append(residue)
++    def _calcula_array(self, amin):
++        """Calcula o aromaticpos e o aromaticpoints de um determinado Amin"""
++        df = self.aminos[self.aminos['amin'].isin([amin])]
++        self.aromatic_pos = [df.iloc[0]['x_coord'], df.iloc[0]['y_coord'], df.iloc[0]['z_coord']]
++        for index, linha in df.iterrows():
++            coordenada = self._gera_coord(linha)
++            self.aromatic_pos = [(x + y) / 2 for x, y in zip(self.aromatic_pos, coordenada)]
++            self.aromatic_array[amin] = self.aromatic_pos
+ 
+-        for residue in lig_032:
+-            for atom in residue:
+-                for neighbor_pair in self.ns.search(atom.coord, 6.5, level='R'):
+-                    print(neighbor_pair)
++        if len(df) < 3:
++            self.invalids.append(amin)
++        else:
++            self.aromatic_points = self._gera_coord(df.iloc[0:3])
++            veca = np.subtract(self.aromatic_points[1], self.aromatic_points[0])
++            vecb = np.subtract(self.aromatic_points[2], self.aromatic_points[0])
++            self.aromatic_normals[amin] = np.cross(veca, vecb)
++
++    def _gera_coord(self, linhas):
++        """Retorna as coordenadas de uma determinada linha ou listas de linhas"""
++        coord = []
++        if isinstance(linhas, pd.DataFrame):
++            for index, linha in linhas.iterrows():
++                coord.append([linha['x_coord'], linha['y_coord'], linha['z_coord']])
++        else:
++            coord = [linhas['x_coord'], linhas['y_coord'], linhas['z_coord']]
++        return coord
++
++    def get_data(self):
++        """Roda os métodos da classe e retorna o dataframe final com todas as distâncias
++        além do aromatic array e aromatic normals"""
++        self._formata_arquivo()
++        amin_list = list(dict.fromkeys(self.aminos['amin'].values))
++        for i in amin_list:
++            self._calcula_array(i)
++        return self.aromatic_array, self.aromatic_normals, self.invalids
+ 
+ 
+ if __name__ == '__main__':
+-    inst = FormatAromatics()
+-    inst.calcula_array()
++    af = AromaticsFormat('3og7.pdb')
++    array, normals, invalids = af.get_data()
++    print(array)
+ 
+ 
+ 
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"5f4f9766-4ab8-4886-b7f0-39d6ddff5e64\" name=\"Default Changelist\" comment=\"tirei a pasta ysera2.0 que tava atrapalhando\">\n      <change beforePath=\"$PROJECT_DIR$/main2.0.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main2.0.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/thread.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/thread.py\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"1pUZ4F2fP4Fy2veOK6S4EfHSizu\" />\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\n    \"last_opened_file_path\": \"/home/kdunorat/PycharmProjects/Ysera\"\n  }\n}]]></component>\n  <component name=\"RecentsManager\">\n    <key name=\"CopyFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$\" />\n    </key>\n  </component>\n  <component name=\"RunManager\" selected=\"Python.main2.0 (1)\">\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"yseraCalculate\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"D:\\TCC\\BackUP\\yseraCalculate\\main.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"main2.0 (1)\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"yseraCalculate\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main2.0.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"main2.0\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"yseraCalculate\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/Ysera2.0\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/Ysera2.0/main2.0.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"ysera_pandas (1)\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"yseraCalculate\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/ysera_pandas.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"ysera_pandas\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"yseraCalculate\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/Ysera2.0\" />\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/Ysera2.0/ysera_pandas.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Python.main2.0 (1)\" />\n        <item itemvalue=\"Python.ysera_pandas (1)\" />\n        <item itemvalue=\"Python.main2.0\" />\n        <item itemvalue=\"Python.ysera_pandas\" />\n        <item itemvalue=\"Python.main\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"5f4f9766-4ab8-4886-b7f0-39d6ddff5e64\" name=\"Default Changelist\" comment=\"\" />\n      <created>1615239435484</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1615239435484</updated>\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"add o arquivo da maurotoxina e da outra do tcc\">\n      <created>1668553967302</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1668553967302</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"Implementa a junção de todos os arquivos em um só\">\n      <created>1668554291901</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1668554291901</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"tirei a pasta ysera2.0 que tava atrapalhando\">\n      <created>1668554808298</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1668554808298</updated>\n    </task>\n    <task id=\"LOCAL-00004\" summary=\"tirei a pasta ysera2.0 que tava atrapalhando\">\n      <created>1668554993002</created>\n      <option name=\"number\" value=\"00004\" />\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1668554993002</updated>\n    </task>\n    <task id=\"LOCAL-00005\" summary=\"tirei a pasta ysera2.0 que tava atrapalhando\">\n      <created>1668555175048</created>\n      <option name=\"number\" value=\"00005\" />\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1668555175048</updated>\n    </task>\n    <task id=\"LOCAL-00006\" summary=\"tirei a pasta ysera2.0 que tava atrapalhando\">\n      <created>1668556065356</created>\n      <option name=\"number\" value=\"00006\" />\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1668556065356</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"7\" />\n    <servers />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"add o arquivo da maurotoxina e da outra do tcc\" />\n    <MESSAGE value=\"Implementa a junção de todos os arquivos em um só\" />\n    <MESSAGE value=\"tirei a pasta ysera2.0 que tava atrapalhando\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"tirei a pasta ysera2.0 que tava atrapalhando\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision e08592e771bca1605f51f445614f8d52bd74287c)
++++ b/.idea/workspace.xml	(date 1676583190802)
+@@ -1,9 +1,14 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="AutoImportSettings">
++    <option name="autoReloadType" value="SELECTIVE" />
++  </component>
+   <component name="ChangeListManager">
+     <list default="true" id="5f4f9766-4ab8-4886-b7f0-39d6ddff5e64" name="Default Changelist" comment="tirei a pasta ysera2.0 que tava atrapalhando">
++      <change beforePath="$PROJECT_DIR$/aromatics.py" beforeDir="false" afterPath="$PROJECT_DIR$/aromatics.py" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/main2.0.py" beforeDir="false" afterPath="$PROJECT_DIR$/main2.0.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/thread.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/time_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/time_log.txt" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/ysera2.py" beforeDir="false" afterPath="$PROJECT_DIR$/ysera2.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -11,6 +16,11 @@
+     <option name="LAST_RESOLUTION" value="IGNORE" />
+   </component>
+   <component name="Git.Settings">
++    <option name="RECENT_BRANCH_BY_REPOSITORY">
++      <map>
++        <entry key="$PROJECT_DIR$" value="adding_pi_bonds" />
++      </map>
++    </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
+   <component name="MarkdownSettingsMigration">
+@@ -22,14 +32,14 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+-    "last_opened_file_path": "/home/kdunorat/PycharmProjects/Ysera"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
++    &quot;last_opened_file_path&quot;: &quot;/home/kdunorat/PycharmProjects/Ysera&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RecentsManager">
+     <key name="CopyFile.RECENT_KEYS">
+       <recent name="$PROJECT_DIR$" />
+@@ -48,6 +58,7 @@
+       <option name="IS_MODULE_SDK" value="true" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+       <option name="SCRIPT_NAME" value="D:\TCC\BackUP\yseraCalculate\main.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+@@ -69,6 +80,7 @@
+       <option name="IS_MODULE_SDK" value="true" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main2.0.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+@@ -90,6 +102,7 @@
+       <option name="IS_MODULE_SDK" value="true" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Ysera2.0/main2.0.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+@@ -111,6 +124,7 @@
+       <option name="IS_MODULE_SDK" value="true" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ysera_pandas.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+@@ -132,6 +146,7 @@
+       <option name="IS_MODULE_SDK" value="true" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Ysera2.0/ysera_pandas.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+@@ -143,10 +158,10 @@
+     </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="Python.ysera_pandas (1)" />
++        <item itemvalue="Python.ysera_pandas" />
+         <item itemvalue="Python.main2.0 (1)" />
+-        <item itemvalue="Python.ysera_pandas (1)" />
+         <item itemvalue="Python.main2.0" />
+-        <item itemvalue="Python.ysera_pandas" />
+         <item itemvalue="Python.main" />
+       </list>
+     </recent_temporary>
+@@ -222,4 +237,7 @@
+     <MESSAGE value="tirei a pasta ysera2.0 que tava atrapalhando" />
+     <option name="LAST_COMMIT_MESSAGE" value="tirei a pasta ysera2.0 que tava atrapalhando" />
+   </component>
++  <component name="com.intellij.coverage.CoverageDataManagerImpl">
++    <SUITE FILE_PATH="coverage/Ysera$main2_0__1_.coverage" NAME="main2.0 (1) Coverage Results" MODIFIED="1676582799380" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
++  </component>
+ </project>
+\ No newline at end of file
+Index: time_log.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>---3.872451066970825 seconds ---\n---1.8779881000518799 seconds ---\n---1.9046909809112549 seconds ---\n---2.000713348388672 seconds ---\n---1.8948907852172852 seconds ---\n---1.908064603805542 seconds ---\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/time_log.txt b/time_log.txt
+--- a/time_log.txt	(revision e08592e771bca1605f51f445614f8d52bd74287c)
++++ b/time_log.txt	(date 1676583002592)
+@@ -4,3 +4,5 @@
+ ---2.000713348388672 seconds ---
+ ---1.8948907852172852 seconds ---
+ ---1.908064603805542 seconds ---
++---6.523051500320435 seconds ---
++---11.060903310775757 seconds ---
