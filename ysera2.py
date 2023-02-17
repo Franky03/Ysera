@@ -55,8 +55,8 @@ class Nodes:
                         self.positions.append(residue.id[1])
                         if str(residue.resname) == '032':
                             # Se o resíduo for o 032 então ele não terá um Bfactor-CA nem coordenadas
-                            self.bfactors.append('NaN')
-                            self.coords.append(np.array(['NaN', 'NaN', 'NaN']))
+                            self.bfactors.append('  ')
+                            self.coords.append(np.array(['  ', '   ', '    ']))
                         self.residues.append(str(residue.resname))
 
                         # Bfactor_CA
@@ -129,7 +129,7 @@ class Nodes:
 
         x, y, z = [], [], []
         for coord in self.coords:
-            if coord[0] != 'NaN':
+            if coord[0] != '    ':
                 x.append(f"{coord[0]:.3f}")
                 y.append(f"{coord[1]:.3f}")
                 z.append(f"{coord[2]:.3f}")
@@ -336,7 +336,7 @@ class Edges(Nodes):
                             atom_name,
                             neig_name,
                             f"{chain.id}:{str(n_or_o_donor.get_parent().id[1])}:_:{str(n_or_o_donor.get_parent().resname)}",
-                            "NaN",
+                            "   ",
                             "   ",
                             "   "
                         ], 'hb')
@@ -410,12 +410,12 @@ class Edges(Nodes):
                             chain, residue, neig_res,
                             f"VDW:{chain1}_{chain2}",
                             f"{distance:.3f}",
-                            "NaN",
+                            "   ",
                             f"{6.000:.3f}",
                             atom_name,
                             neig_name,
-                            "NaN",
-                            "NaN",
+                            "   ",
+                            "   ",
                             "   ",
                             "   "
                         ], 'vdw')
@@ -455,12 +455,12 @@ class Edges(Nodes):
                         chain, residue, neig_res,
                         f"SBOND:{chain1}_{chain2}",
                         f"{distance:.3f}",
-                        "NaN",
+                        "   ",
                         f"{167.000:.3f}",
                         atom_name,
                         neig_name,
-                        "NaN",
-                        "NaN",
+                        "   ",
+                        "   ",
                         "   ",
                         "   "
                     ], 'sbond')
@@ -516,12 +516,12 @@ class Edges(Nodes):
                                     chain, residue, neig_res,
                                     f"IONIC:{chain1}_{chain2}",
                                     f"{distance:.3f}",
-                                    "NaN",
+                                    "   ",
                                     f"{20.000:.3f}",
                                     atom_name,
                                     f"{neighbor.get_coord()[0]:.3f},{neighbor.get_coord()[1]:.3f},{neighbor.get_coord()[2]:.3f}",
+                                    "  ",
                                     f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}",
-                                    "NaN",
                                     "   ",
                                     "   "
                                 ], 'ionic')
@@ -532,12 +532,12 @@ class Edges(Nodes):
                                     chain, residue, neig_res,
                                     f"IONIC:{chain1}_{chain2}",
                                     f"{distance:.3f}",
-                                    "NaN",
+                                    "   ",
                                     f"{20.000:.3f}",
                                     f"{atom.get_coord()[0]:.3f},{atom.get_coord()[1]:.3f},{atom.get_coord()[2]:.3f}",
                                     neig_name,
+                                    "  ",
                                     f"{chain.id}:{str(ionic_donor.get_parent().id[1])}:_:{str(ionic_donor.get_parent().resname)}",
-                                    "NaN",
                                     "   ",
                                     "   "
                                 ], 'ionic')
@@ -594,7 +594,7 @@ class Edges(Nodes):
                                 f"{9.4:.3f}",
                                 coord_1,
                                 coord_2,
-                                "NaN",
+                                "   ",
                                 f"{orient_type}",
                                 "   ",
                                 "   "
@@ -637,11 +637,11 @@ class Edges(Nodes):
                                 chain, residue, neig_res,
                                 f"PICATION:{chain1}_{chain2}",
                                 f"{aromatic_distance:.3f}",
-                                "NaN",
+                                "   ",
                                 f"{9.6:.3f}",
                                 atom.get_name(),
                                 neighbor.get_name(),
-                                "NaN",
+                                "   ",
                                 "P",
                                 "   ",
                                 "   "
@@ -670,11 +670,11 @@ class Edges(Nodes):
                                 chain, residue, neig_res,
                                 f"PICATION:{chain1}_{chain2}",
                                 f"{aromatic_distance:.3f}",
-                                "NaN",
+                                "   ",
                                 f"{9.6:.3f}",
                                 atom.get_name(),
                                 neighbor.get_name(),
-                                "NaN",
+                                "   ",
                                 "P",
                                 "   ",
                                 "   "
