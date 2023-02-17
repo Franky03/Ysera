@@ -268,12 +268,12 @@ class Edges(Nodes):
                 if neig_res.id[1] == residue.id[1] or neig_name[0] == atom_name[0]:
                     continue
 
-                pair = (int(residue.id[1]), int(neig_res.id[1]))
+                pair = (residue, neig_res)
 
                 if pair in self.analyzed_pairs:
                     continue
                 else:
-                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                    self.analyzed_pairs.add((neig_res, residue))
 
                 if neighbor.fullname[1] in ['N', 'O'] or (neighbor.get_name() == 'SG' and neig_res.resname == 'CYS'):
                     distance = np.linalg.norm(atom.coord - neighbor.coord)
@@ -376,12 +376,12 @@ class Edges(Nodes):
                 if neig_res.resname in ['HOH', '032']:
                     continue
 
-                pair = (int(residue.id[1]), int(neig_res.id[1]))
+                pair = (residue, neig_res)
 
                 if pair in self.analyzed_pairs:
                     continue
                 else:
-                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                    self.analyzed_pairs.add((neig_res, residue))
 
                 if neighbor.fullname[1] in ['C', 'S', 'O', 'N']:
 
@@ -442,14 +442,15 @@ class Edges(Nodes):
             for neighbor in neighbors:
                 neig_res = neighbor.get_parent()
 
-                pair = (int(residue.id[1]), int(neig_res.id[1]))
-
                 if neig_res.id[1] == residue.id[1]:
                     continue
+
+                pair = (residue, neig_res)
+
                 if pair in self.analyzed_pairs:
                     continue
                 else:
-                    self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                    self.analyzed_pairs.add((neig_res, residue))
 
                 neig_name = neighbor.get_name()
                 neig_res = neighbor.get_parent()
@@ -487,12 +488,12 @@ class Edges(Nodes):
                 if neig_res.id[1] == residue.id[1]:
                     continue
                 if atom_name in ['CZ', 'NZ'] or neig_res in ['CZ', 'NZ']:
-                    pair = (int(residue.id[1]), int(neig_res.id[1]))
+                    pair = (residue, neig_res)
 
                     if pair in self.analyzed_pairs or pair in analyzed_ionic:
                         continue
                     else:
-                        self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                        self.analyzed_pairs.add((neig_res, residue))
                         analyzed_ionic.add(pair)
 
                     if neig_res.resname in ['ARG', 'LYS', 'HIS', 'ASP', 'GLU']:
@@ -563,12 +564,12 @@ class Edges(Nodes):
                     coord_2 = np.array(self.aromatic_array[neig_amin])
                     aromatic_distance = np.linalg.norm(coord_1 - coord_2)
                     if aromatic_distance < 5.5 and amin != neig_amin:
-                        pair = (int(residue.id[1]), int(neig_res.id[1]))
+                        pair = (residue, neig_res)
 
                         if pair in self.analyzed_pairs:
                             continue
                         else:
-                            self.analyzed_pairs.add((int(neig_res.id[1]), int(residue.id[1])))
+                            self.analyzed_pairs.add((neig_res, residue))
 
                         normal_1 = self.aromatic_normals[amin] / np.linalg.norm(self.aromatic_normals[amin])
                         normal_2 = self.aromatic_normals[neig_amin] / np.linalg.norm(self.aromatic_normals[neig_amin])
@@ -682,6 +683,7 @@ class Edges(Nodes):
     def Bonds(self):
 
         for chain in self.structure.get_chains():
+            #self.analyzed_pairs = set()
             for residue in chain:
 
                 if residue.resname in ['032', 'HOH']:
