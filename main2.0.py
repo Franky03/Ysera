@@ -16,7 +16,9 @@ def run_software(name_=False, file=None, hydrogenate=False):
         time.sleep(2)
     """
     edges = Edges(name_, './temp/input_file.pdb')
-    edges.print_output()
+    nodes= Nodes(name_, './temp/input_file.pdb')
+    edges.to_file()
+    nodes.to_file()
 
     finish = (time.time() - start)
 
