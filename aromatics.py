@@ -9,8 +9,6 @@ class AromaticsFormat:
     também gera o aromatic arrays e o aromatic normals"""
     def __init__(self, filename):
         self.filename = filename
-        self.project_home = os.path.dirname(os.path.realpath(__file__))
-        self.path = self.project_home + '/temp/' + self.filename
         self.aromatic_pos = []
         self.aromatic_points = []
         self.invalids = []
@@ -24,7 +22,7 @@ class AromaticsFormat:
     def _formata_arquivo(self):
         """Formata o dataframe inicial usando o biopandas, cria um dataframe só com os aminoácidos
         e os átomos necessários"""
-        file = open(self.path, 'r')
+        file = open(self.filename, 'r')
         new_name = f'{self.filename}new.pdb'
         with open(new_name, 'w') as f:
             for line in file:
@@ -34,7 +32,7 @@ class AromaticsFormat:
                     f.write(line)
         ppdb = PandasPdb()
         ppdb.read_pdb(new_name)
-        os.remove(self.project_home + '/' + new_name)
+        os.remove(new_name)
         atom = ppdb.df['ATOM']
         hetatm = ppdb.df['HETATM']
         # Cria um dataframe apenas com ATOM E HETATM
@@ -70,7 +68,8 @@ class AromaticsFormat:
             vecb = np.subtract(self.aromatic_points[2], self.aromatic_points[0])
             self.aromatic_normals[amin] = np.cross(veca, vecb)
 
-    def _gera_coord(self, linhas):
+    @staticmethod
+    def _gera_coord(linhas):
         """Retorna as coordenadas de uma determinada linha ou listas de linhas"""
         coord = []
         if isinstance(linhas, pd.DataFrame):
@@ -94,9 +93,3 @@ if __name__ == '__main__':
     af = AromaticsFormat('3og7.pdb')
     array, normals, invalids = af.get_data()
     print(array)
-
-
-
-
-
-

@@ -3,6 +3,7 @@ from ysera2 import Nodes, Edges
 import time
 import os
 
+
 def run_software(name_=False, file=None, hydrogenate=False):
     start = time.time()
 
@@ -28,6 +29,7 @@ def run_software(name_=False, file=None, hydrogenate=False):
         file.write(f"---{finish} seconds ---\n")
 
     os.remove('./temp/input_file.pdb')
+
 
 filename = 'file_30.pdb'
 path = f'./temp/{filename}'
