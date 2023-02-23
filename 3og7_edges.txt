@@ -1,5 +1,5 @@
 NodeId1	Interaction	NodeId2	Distance	Angle	Energy	Atom1	Atom2	Donor	Positive	Cation	Orientation
-A:449:_:ASP	VDW:MC_SC	A:450:_:TRP	3.670	   	6.000	C	CG	   	   	   	   
+A:449:_:ASP	VDW:MC_SC	A:450:_:TRP	3.498	   	6.000	C	CB	   	   	   	   
 A:449:_:ASP	HBOND:SC_MC	A:450:_:TRP	3.394	38.290	17.000	OD1	N	A:450:_:TRP	   	   	   
 A:450:_:TRP	PICATION:MC_SC	B:570:_:LYS	3.985	   	9.600	N	NZ	   	   	B:570:_:LYS	P
 A:450:_:TRP	VDW:MC_SC	A:519:_:TYR	3.607	   	6.000	C	CE2	   	   	   	   
@@ -9,14 +9,17 @@ A:450:_:TRP	VDW:SC_MC	B:507:_:LYS	3.860	   	6.000	CZ2	C
 A:450:_:TRP	VDW:SC_SC	B:509:_:ARG	3.584	   	6.000	CZ3	CB	   	   	   	   
 A:451:_:GLU	VDW:MC_SC	A:452:_:ILE	3.612	   	6.000	C	CB	   	   	   	   
 A:451:_:GLU	VDW:SC_SC	A:519:_:TYR	3.368	   	6.000	CB	CZ	   	   	   	   
+A:452:_:ILE	HBOND:MC_MC	A:519:_:TYR	2.915	8.484	17.000	N	O	A:452:_:ILE	   	   	   
 A:452:_:ILE	VDW:MC_SC	A:453:_:PRO	2.491	   	6.000	C	CD	   	   	   	   
 A:452:_:ILE	VDW:SC_SC	A:457:_:ILE	3.872	   	6.000	CG2	CG1	   	   	   	   
 A:452:_:ILE	VDW:SC_SC	A:456:_:GLN	3.657	   	6.000	CG2	OE1	   	   	   	   
 A:452:_:ILE	VDW:SC_SC	A:476:_:TRP	3.706	   	6.000	CG2	CE2	   	   	   	   
 A:452:_:ILE	VDW:SC_SC	A:528:_:VAL	3.766	   	6.000	CD1	CG2	   	   	   	   
+A:453:_:PRO	VDW:MC_SC	A:454:_:ASP	3.722	   	6.000	C	CB	   	   	   	   
 A:453:_:PRO	HBOND:MC_MC	A:456:_:GLN	3.425	11.254	17.000	O	N	A:456:_:GLN	   	   	   
 A:453:_:PRO	VDW:SC_SC	A:456:_:GLN	3.439	   	6.000	CG	NE2	   	   	   	   
 A:454:_:ASP	VDW:SC_SC	A:523:_:PRO	3.867	   	6.000	CG	CD	   	   	   	   
+A:455:_:GLY	VDW:MC_SC	A:456:_:GLN	3.706	   	6.000	C	CB	   	   	   	   
 A:456:_:GLN	VDW:MC_SC	A:457:_:ILE	3.623	   	6.000	C	CB	   	   	   	   
 A:456:_:GLN	VDW:SC_SC	A:476:_:TRP	3.853	   	6.000	CB	CD1	   	   	   	   
 A:456:_:GLN	HBOND:SC_SC	A:476:_:TRP	2.980	9.402	17.000	OE1	NE1	A:476:_:TRP	   	   	   
@@ -26,14 +29,16 @@ A:457:_:ILE	VDW:SC_SC	A:482:_:VAL	3.830	   	6.000	CG2	CG2
 A:457:_:ILE	VDW:SC_SC	A:528:_:VAL	3.451	   	6.000	CD1	CG2	   	   	   	   
 A:458:_:THR	VDW:MC_SC	A:459:_:VAL	3.704	   	6.000	C	CB	   	   	   	   
 A:458:_:THR	HBOND:MC_MC	A:475:_:LYS	3.004	30.483	17.000	O	N	A:475:_:LYS	   	   	   
-A:459:_:VAL	VDW:SC_SC	A:484:_:MET	3.737	   	6.000	CG1	CE	   	   	   	   
 A:459:_:VAL	VDW:SC_SC	A:472:_:TYR	3.410	   	6.000	CG1	CB	   	   	   	   
+A:459:_:VAL	VDW:SC_SC	A:484:_:MET	3.327	   	6.000	CG2	CE	   	   	   	   
 A:460:_:GLY	HBOND:MC_MC	A:473:_:LYS	2.741	24.411	17.000	N	O	A:460:_:GLY	   	   	   
 A:460:_:GLY	VDW:MC_SC	A:461:_:GLN	3.720	   	6.000	C	CB	   	   	   	   
 A:461:_:GLN	VDW:MC_SC	A:462:_:ARG	3.704	   	6.000	C	CB	   	   	   	   
 A:461:_:GLN	HBOND:MC_MC	A:473:_:LYS	2.946	11.457	17.000	O	N	A:473:_:LYS	   	   	   
 A:462:_:ARG	VDW:MC_SC	A:463:_:ILE	3.625	   	6.000	C	CB	   	   	   	   
-A:462:_:ARG	VDW:SC_SC	A:472:_:TYR	3.809	   	6.000	CG	CZ	   	   	   	   
+A:462:_:ARG	VDW:SC_SC	A:470:_:THR	3.553	   	6.000	CG	CG2	   	   	   	   
+A:462:_:ARG	VDW:SC_SC	A:472:_:TYR	3.470	   	6.000	CG	CE2	   	   	   	   
+A:462:_:ARG	HBOND:SC_SC	A:465:_:SER	2.809	36.507	17.000	NH2	OG	A:462:_:ARG	   	   	   
 A:463:_:ILE	HBOND:MC_MC	A:471:_:VAL	2.679	14.461	17.000	N	O	A:463:_:ILE	   	   	   
 A:464:_:GLY	VDW:MC_SC	A:465:_:SER	3.408	   	6.000	C	CB	   	   	   	   
 A:464:_:GLY	HBOND:MC_MC	A:471:_:VAL	2.870	5.383	17.000	O	N	A:471:_:VAL	   	   	   
@@ -58,15 +63,19 @@ A:474:_:GLY	VDW:MC_SC	A:480:_:VAL	3.441	   	6.000	C	CG2
 A:474:_:GLY	VDW:MC_SC	A:475:_:LYS	3.457	   	6.000	C	CB	   	   	   	   
 A:475:_:LYS	VDW:MC_SC	A:476:_:TRP	3.197	   	6.000	C	CB	   	   	   	   
 A:475:_:LYS	VDW:SC_MC	A:478:_:GLY	3.760	   	6.000	CE	C	   	   	   	   
-A:475:_:LYS	IONIC:SC_SC	A:479:_:ASP	3.968	53.628	20.000	NZ	6.206,7.765,-14.321	  	A:475:_:LYS	   	   
+A:475:_:LYS	IONIC:SC_SC	A:479:_:ASP	2.969	89.338	20.000	NZ	8.648,7.795,-13.637	  	A:475:_:LYS	   	   
 A:475:_:LYS	IONIC:SC_SC	B:715:_:GLU	3.919	138.248	20.000	NZ	9.627,12.120,-9.696	  	A:475:_:LYS	   	   
 A:476:_:TRP	HBOND:MC_MC	A:478:_:GLY	2.646	9.758	17.000	N	O	A:476:_:TRP	   	   	   
 A:476:_:TRP	PIPISTACK:SC_SC	B:566:_:TYR	5.434	1.348	9.400	-3.551,10.268,-12.436	-4.287,8.643,-7.304	   	   	   	P
 A:476:_:TRP	VDW:MC_SC	A:477:_:HIS	3.082	   	6.000	C	CB	   	   	   	   
 A:476:_:TRP	VDW:SC_SC	A:480:_:VAL	3.571	   	6.000	CB	CG1	   	   	   	   
-A:476:_:TRP	VDW:SC_SC	A:517:_:MET	3.879	   	6.000	CE3	CE	   	   	   	   
+A:476:_:TRP	VDW:SC_SC	A:517:_:MET	3.829	   	6.000	CZ3	CE	   	   	   	   
+A:476:_:TRP	VDW:SC_SC	B:566:_:TYR	3.761	   	6.000	CZ3	CE1	   	   	   	   
+A:477:_:HIS	HBOND:MC_SC	B:510:_:HIS	2.898	4.242	17.000	O	NE2	A:510:_:HIS	   	   	   
+A:477:_:HIS	VDW:SC_SC	B:566:_:TYR	3.748	   	6.000	CD2	CD1	   	   	   	   
+A:477:_:HIS	VDW:SC_SC	B:569:_:ALA	3.289	   	6.000	CE1	CB	   	   	   	   
 A:478:_:GLY	VDW:MC_SC	A:479:_:ASP	3.701	   	6.000	C	CB	   	   	   	   
-A:479:_:ASP	VDW:MC_SC	A:480:_:VAL	3.394	   	6.000	C	CB	   	   	   	   
+A:479:_:ASP	VDW:MC_SC	A:480:_:VAL	3.366	   	6.000	C	CG1	   	   	   	   
 A:479:_:ASP	VDW:SC_SC	A:531:_:TRP	3.752	   	6.000	CB	CB	   	   	   	   
 A:480:_:VAL	VDW:MC_SC	A:481:_:ALA	3.478	   	6.000	C	CB	   	   	   	   
 A:481:_:ALA	VDW:MC_SC	A:482:_:VAL	3.482	   	6.000	C	CG2	   	   	   	   
@@ -79,6 +88,7 @@ A:483:_:LYS	HBOND:MC_MC	A:527:_:ILE	2.971	3.096	17.000	N	O	A:483:_:LYS
 A:483:_:LYS	VDW:MC_SC	A:484:_:MET	3.706	   	6.000	C	CB	   	   	   	   
 A:483:_:LYS	HBOND:SC_SC	A:594:_:ASP	3.299	36.996	17.000	NZ	OD1	A:483:_:LYS	   	   	   
 A:483:_:LYS	IONIC:SC_SC	A:594:_:ASP	3.299	165.560	20.000	NZ	-3.341,-6.502,-24.280	  	A:483:_:LYS	   	   
+A:484:_:MET	VDW:MC_SC	A:485:_:LEU	3.713	   	6.000	C	CB	   	   	   	   
 A:485:_:LEU	HBOND:MC_MC	A:525:_:LEU	2.937	16.103	17.000	N	O	A:485:_:LEU	   	   	   
 A:485:_:LEU	VDW:MC_SC	A:486:_:ASN	3.697	   	6.000	C	CB	   	   	   	   
 A:485:_:LEU	HBOND:MC_MC	A:487:_:VAL	2.641	23.913	17.000	O	N	A:487:_:VAL	   	   	   
@@ -88,12 +98,15 @@ A:487:_:VAL	VDW:MC_SC	A:488:_:THR	3.754	   	6.000	C	CB
 A:487:_:VAL	VDW:SC_MC	A:489:_:ALA	3.716	   	6.000	CG1	C	   	   	   	   
 A:488:_:THR	VDW:MC_SC	A:489:_:ALA	3.465	   	6.000	C	CB	   	   	   	   
 A:488:_:THR	HBOND:SC_MC	A:489:_:ALA	2.580	34.255	17.000	OG1	N	A:489:_:ALA	   	   	   
-A:489:_:ALA	VDW:MC_SC	A:490:_:PRO	3.506	   	6.000	C	CG	   	   	   	   
+A:489:_:ALA	VDW:MC_SC	A:490:_:PRO	2.488	   	6.000	C	CD	   	   	   	   
 A:490:_:PRO	VDW:MC_SC	A:491:_:THR	3.706	   	6.000	C	CB	   	   	   	   
+A:490:_:PRO	VDW:MC_SC	A:494:_:GLN	3.481	   	6.000	C	OE1	   	   	   	   
+A:491:_:THR	VDW:MC_SC	A:492:_:PRO	2.516	   	6.000	C	CD	   	   	   	   
 A:491:_:THR	HBOND:MC_MC	A:494:_:GLN	2.741	47.823	17.000	O	N	A:494:_:GLN	   	   	   
 A:491:_:THR	HBOND:MC_MC	A:495:_:LEU	2.731	27.182	17.000	O	N	A:495:_:LEU	   	   	   
-A:491:_:THR	VDW:SC_SC	A:492:_:PRO	3.403	   	6.000	CB	CD	   	   	   	   
+A:492:_:PRO	VDW:MC_SC	A:493:_:GLN	3.714	   	6.000	C	CB	   	   	   	   
 A:492:_:PRO	HBOND:MC_MC	A:496:_:GLN	3.313	18.655	17.000	O	N	A:496:_:GLN	   	   	   
+A:492:_:PRO	HBOND:MC_MC	A:495:_:LEU	3.283	42.048	17.000	O	N	A:495:_:LEU	   	   	   
 A:493:_:GLN	VDW:MC_SC	A:494:_:GLN	3.720	   	6.000	C	CB	   	   	   	   
 A:493:_:GLN	HBOND:MC_MC	A:497:_:ALA	3.251	13.355	17.000	O	N	A:497:_:ALA	   	   	   
 A:494:_:GLN	VDW:MC_SC	A:495:_:LEU	3.712	   	6.000	C	CB	   	   	   	   
@@ -141,8 +154,8 @@ A:508:_:THR	HBOND:MC_SC	B:509:_:ARG	3.088	13.349	17.000	O	NH1	A:509:_:ARG
 A:508:_:THR	VDW:SC_SC	A:595:_:PHE	3.819	   	6.000	CG2	CE2	   	   	   	   
 A:509:_:ARG	HBOND:MC_SC	A:566:_:TYR	2.926	11.123	17.000	N	OH	A:509:_:ARG	   	   	   
 A:509:_:ARG	VDW:MC_SC	A:510:_:HIS	3.213	   	6.000	C	CB	   	   	   	   
-A:509:_:ARG	VDW:SC_SC	B:450:_:TRP	3.534	   	6.000	CG	CZ3	   	   	   	   
-A:509:_:ARG	VDW:SC_SC	B:516:_:PHE	3.620	   	6.000	CD	CD2	   	   	   	   
+A:509:_:ARG	VDW:SC_SC	B:450:_:TRP	3.453	   	6.000	CD	CZ3	   	   	   	   
+A:509:_:ARG	VDW:SC_SC	B:516:_:PHE	3.571	   	6.000	CZ	CD2	   	   	   	   
 A:509:_:ARG	IONIC:SC_SC	B:506:_:ARG	3.279	144.110	20.000	CZ	-11.577,2.883,-4.040	  	A:483:_:LYS	   	   
 A:509:_:ARG	HBOND:SC_MC	B:516:_:PHE	3.086	23.605	17.000	NH1	O	A:509:_:ARG	   	   	   
 A:509:_:ARG	HBOND:SC_MC	B:506:_:ARG	2.874	44.528	17.000	NH2	O	A:509:_:ARG	   	   	   
@@ -150,7 +163,7 @@ A:510:_:HIS	VDW:MC_SC	A:511:_:VAL	3.722	   	6.000	C	CB
 A:510:_:HIS	VDW:MC_SC	B:515:_:LEU	3.574	   	6.000	C	CD2	   	   	   	   
 A:510:_:HIS	HBOND:MC_MC	A:513:_:ILE	3.351	24.497	17.000	O	N	A:513:_:ILE	   	   	   
 A:510:_:HIS	VDW:SC_SC	A:513:_:ILE	3.790	   	6.000	CB	CG1	   	   	   	   
-A:510:_:HIS	VDW:SC_SC	A:566:_:TYR	3.506	   	6.000	CD2	CD1	   	   	   	   
+A:510:_:HIS	VDW:SC_SC	A:566:_:TYR	3.495	   	6.000	CD2	CG	   	   	   	   
 A:510:_:HIS	VDW:SC_SC	B:517:_:MET	3.860	   	6.000	CD2	CE	   	   	   	   
 A:510:_:HIS	VDW:SC_SC	A:512:_:ASN	3.244	   	6.000	CE1	OD1	   	   	   	   
 A:510:_:HIS	HBOND:SC_MC	B:477:_:HIS	2.872	8.064	17.000	NE2	O	A:510:_:HIS	   	   	   
@@ -163,6 +176,7 @@ A:512:_:ASN	VDW:SC_SC	A:562:_:ARG	3.357	   	6.000	OD1	CB
 A:513:_:ILE	VDW:MC_SC	A:514:_:LEU	3.697	   	6.000	C	CB	   	   	   	   
 A:513:_:ILE	VDW:SC_SC	A:595:_:PHE	3.621	   	6.000	CG2	CZ	   	   	   	   
 A:513:_:ILE	VDW:SC_SC	A:567:_:LEU	3.605	   	6.000	CD1	CG	   	   	   	   
+A:513:_:ILE	VDW:SC_MC	A:563:_:GLY	3.815	   	6.000	CD1	C	   	   	   	   
 A:514:_:LEU	HBOND:MC_MC	A:592:_:ILE	3.067	20.616	17.000	N	O	A:514:_:LEU	   	   	   
 A:514:_:LEU	VDW:MC_SC	A:515:_:LEU	3.696	   	6.000	C	CB	   	   	   	   
 A:514:_:LEU	HBOND:MC_MC	A:516:_:PHE	3.229	57.632	17.000	O	N	A:516:_:PHE	   	   	   
@@ -171,6 +185,7 @@ A:514:_:LEU	VDW:SC_SC	A:530:_:GLN	3.522	   	6.000	CD1	CG
 A:515:_:LEU	HBOND:MC_SC	A:530:_:GLN	2.913	20.244	17.000	N	OE1	A:515:_:LEU	   	   	   
 A:515:_:LEU	VDW:MC_SC	A:516:_:PHE	3.700	   	6.000	C	CB	   	   	   	   
 A:515:_:LEU	VDW:SC_SC	A:530:_:GLN	3.200	   	6.000	CB	OE1	   	   	   	   
+A:515:_:LEU	VDW:SC_MC	B:509:_:ARG	3.850	   	6.000	CD2	C	   	   	   	   
 A:515:_:LEU	VDW:SC_MC	B:510:_:HIS	3.637	   	6.000	CD2	C	   	   	   	   
 A:516:_:PHE	VDW:MC_SC	A:517:_:MET	3.529	   	6.000	C	CB	   	   	   	   
 A:516:_:PHE	VDW:SC_MC	A:518:_:GLY	3.643	   	6.000	CE1	C	   	   	   	   
@@ -184,6 +199,7 @@ A:520:_:SER	HBOND:MC_MC	A:526:_:ALA	2.834	7.452	17.000	N	O	A:520:_:SER
 A:520:_:SER	VDW:MC_SC	A:521:_:THR	3.539	   	6.000	C	CB	   	   	   	   
 A:521:_:THR	VDW:MC_SC	A:522:_:ALA	3.326	   	6.000	C	CB	   	   	   	   
 A:522:_:ALA	VDW:MC_SC	A:523:_:PRO	2.444	   	6.000	C	CD	   	   	   	   
+A:523:_:PRO	VDW:MC_SC	A:524:_:GLN	3.489	   	6.000	C	CB	   	   	   	   
 A:524:_:GLN	VDW:MC_SC	A:525:_:LEU	3.713	   	6.000	C	CB	   	   	   	   
 A:525:_:LEU	VDW:MC_SC	A:526:_:ALA	3.172	   	6.000	C	CB	   	   	   	   
 A:526:_:ALA	VDW:MC_SC	A:527:_:ILE	3.587	   	6.000	C	CB	   	   	   	   
@@ -217,14 +233,15 @@ A:538:_:TYR	VDW:MC_SC	A:539:_:HIS	3.719	   	6.000	C	CB
 A:538:_:TYR	HBOND:MC_MC	A:542:_:HIS	2.890	28.951	17.000	O	N	A:542:_:HIS	   	   	   
 A:538:_:TYR	HBOND:MC_MC	A:541:_:LEU	3.374	57.135	17.000	O	N	A:541:_:LEU	   	   	   
 A:538:_:TYR	VDW:SC_MC	A:579:_:SER	3.814	   	6.000	CB	C	   	   	   	   
-A:538:_:TYR	VDW:SC_SC	A:580:_:ASN	3.520	   	6.000	CG	OD1	   	   	   	   
+A:538:_:TYR	VDW:SC_SC	A:580:_:ASN	2.975	   	6.000	CD1	OD1	   	   	   	   
 A:538:_:TYR	VDW:SC_SC	A:542:_:HIS	3.606	   	6.000	CD1	CD2	   	   	   	   
+A:539:_:HIS	VDW:MC_SC	A:540:_:HIS	3.697	   	6.000	C	CB	   	   	   	   
 A:539:_:HIS	HBOND:MC_MC	A:543:_:ALA	2.975	39.310	17.000	O	N	A:543:_:ALA	   	   	   
 A:539:_:HIS	HBOND:MC_MC	A:544:_:SER	2.664	16.394	17.000	O	N	A:544:_:SER	   	   	   
-A:539:_:HIS	VDW:SC_SC	A:543:_:ALA	3.526	   	6.000	CG	CB	   	   	   	   
+A:539:_:HIS	VDW:SC_SC	A:543:_:ALA	3.287	   	6.000	CD2	CB	   	   	   	   
 A:539:_:HIS	VDW:SC_SC	A:544:_:SER	3.562	   	6.000	CE1	CB	   	   	   	   
 A:540:_:HIS	VDW:MC_SC	A:541:_:LEU	3.711	   	6.000	C	CB	   	   	   	   
-A:540:_:HIS	VDW:SC_SC	A:548:_:PHE	3.677	   	6.000	CB	CZ	   	   	   	   
+A:540:_:HIS	VDW:SC_SC	A:548:_:PHE	3.553	   	6.000	CG	CZ	   	   	   	   
 A:540:_:HIS	VDW:SC_SC	A:584:_:LEU	3.472	   	6.000	CD2	CD1	   	   	   	   
 A:541:_:LEU	VDW:MC_SC	A:542:_:HIS	3.282	   	6.000	C	CG	   	   	   	   
 A:541:_:LEU	VDW:SC_SC	A:648:_:GLU	3.544	   	6.000	CD2	CB	   	   	   	   
@@ -285,7 +302,7 @@ A:559:_:GLN	VDW:SC_SC	A:589:_:THR	3.539	   	6.000	OE1	CG2
 A:560:_:THR	VDW:MC_SC	A:561:_:ALA	3.694	   	6.000	C	CB	   	   	   	   
 A:560:_:THR	HBOND:MC_MC	A:564:_:MET	2.803	15.045	17.000	O	N	A:564:_:MET	   	   	   
 A:560:_:THR	HBOND:MC_MC	A:563:_:GLY	3.343	58.234	17.000	O	N	A:563:_:GLY	   	   	   
-A:560:_:THR	VDW:SC_SC	A:642:_:PHE	3.732	   	6.000	CG2	CD1	   	   	   	   
+A:560:_:THR	VDW:SC_SC	A:642:_:PHE	3.547	   	6.000	CG2	CE1	   	   	   	   
 A:560:_:THR	VDW:SC_SC	A:592:_:ILE	3.753	   	6.000	CG2	CD1	   	   	   	   
 A:561:_:ALA	VDW:MC_SC	A:562:_:ARG	3.722	   	6.000	C	CB	   	   	   	   
 A:561:_:ALA	HBOND:MC_MC	A:565:_:ASP	2.727	12.876	17.000	O	N	A:565:_:ASP	   	   	   
@@ -302,6 +319,8 @@ A:564:_:MET	VDW:MC_SC	A:565:_:ASP	3.712	   	6.000	C	CB
 A:564:_:MET	HBOND:MC_MC	A:568:_:HIS	3.081	11.447	17.000	O	N	A:568:_:HIS	   	   	   
 A:564:_:MET	HBOND:MC_MC	A:567:_:LEU	3.337	54.929	17.000	O	N	A:567:_:LEU	   	   	   
 A:564:_:MET	VDW:SC_SC	A:707:_:PHE	3.298	   	6.000	CB	CZ	   	   	   	   
+A:564:_:MET	VDW:SC_SC	A:577:_:LEU	3.810	   	6.000	SD	CD2	   	   	   	   
+A:565:_:ASP	VDW:MC_SC	A:566:_:TYR	3.722	   	6.000	C	CB	   	   	   	   
 A:565:_:ASP	HBOND:MC_MC	A:569:_:ALA	2.923	19.748	17.000	O	N	A:569:_:ALA	   	   	   
 A:565:_:ASP	HBOND:MC_MC	A:568:_:HIS	3.486	54.111	17.000	O	N	A:568:_:HIS	   	   	   
 A:566:_:TYR	PIPISTACK:MC_MC	B:476:_:TRP	5.260	1.455	9.400	-9.728,-8.419,-8.086	-11.652,-9.754,-3.376	   	   	   	P
@@ -316,7 +335,9 @@ A:567:_:LEU	HBOND:MC_MC	A:570:_:LYS	2.980	44.702	17.000	O	N	A:570:_:LYS
 A:568:_:HIS	VDW:MC_SC	A:569:_:ALA	3.701	   	6.000	C	CB	   	   	   	   
 A:568:_:HIS	HBOND:MC_MC	A:571:_:SER	2.715	26.885	17.000	O	N	A:571:_:SER	   	   	   
 A:568:_:HIS	VDW:SC_SC	A:635:_:PHE	3.073	   	6.000	CG	CD2	   	   	   	   
-A:568:_:HIS	VDW:SC_SC	A:707:_:PHE	3.292	   	6.000	CE1	CE2	   	   	   	   
+A:568:_:HIS	VDW:SC_SC	A:638:_:ASP	3.546	   	6.000	CE1	CB	   	   	   	   
+A:568:_:HIS	VDW:SC_SC	A:707:_:PHE	3.223	   	6.000	CE1	CD2	   	   	   	   
+A:568:_:HIS	HBOND:SC_SC	A:638:_:ASP	2.920	2.964	17.000	NE2	OD2	A:568:_:HIS	   	   	   
 A:569:_:ALA	VDW:MC_SC	A:570:_:LYS	3.659	   	6.000	C	CB	   	   	   	   
 A:569:_:ALA	HBOND:MC_MC	A:571:_:SER	3.368	47.302	17.000	O	N	A:571:_:SER	   	   	   
 A:569:_:ALA	VDW:SC_SC	B:477:_:HIS	3.282	   	6.000	CB	CE1	   	   	   	   
@@ -341,8 +362,9 @@ A:577:_:LEU	VDW:MC_SC	A:578:_:LYS	3.203	   	6.000	C	CB
 A:578:_:LYS	VDW:MC_SC	A:579:_:SER	3.722	   	6.000	C	CB	   	   	   	   
 A:578:_:LYS	HBOND:MC_MC	A:581:_:ASN	2.940	21.185	17.000	O	N	A:581:_:ASN	   	   	   
 A:578:_:LYS	VDW:SC_SC	A:619:_:TRP	3.338	   	6.000	CB	CD2	   	   	   	   
+A:578:_:LYS	VDW:SC_SC	A:616:_:SER	3.716	   	6.000	CD	CB	   	   	   	   
+A:578:_:LYS	VDW:SC_SC	A:580:_:ASN	3.058	   	6.000	CD	ND2	   	   	   	   
 A:578:_:LYS	VDW:SC_SC	A:581:_:ASN	3.710	   	6.000	CE	ND2	   	   	   	   
-A:578:_:LYS	VDW:SC_SC	A:580:_:ASN	3.062	   	6.000	CE	ND2	   	   	   	   
 A:578:_:LYS	HBOND:SC_SC	A:616:_:SER	3.007	31.806	17.000	NZ	OG	A:578:_:LYS	   	   	   
 A:579:_:SER	VDW:MC_SC	A:580:_:ASN	3.653	   	6.000	C	CB	   	   	   	   
 A:579:_:SER	VDW:SC_SC	A:648:_:GLU	3.453	   	6.000	CB	CD	   	   	   	   
@@ -350,7 +372,7 @@ A:580:_:ASN	VDW:MC_SC	A:581:_:ASN	3.553	   	6.000	C	OD1
 A:581:_:ASN	VDW:MC_SC	A:582:_:ILE	3.495	   	6.000	C	CB	   	   	   	   
 A:581:_:ASN	HBOND:MC_MC	A:593:_:GLY	3.073	7.474	17.000	O	N	A:593:_:GLY	   	   	   
 A:581:_:ASN	HBOND:SC_SC	A:594:_:ASP	3.494	48.757	17.000	ND2	OD2	A:581:_:ASN	   	   	   
-A:581:_:ASN	VDW:SC_SC	A:594:_:ASP	3.517	   	6.000	OD1	CB	   	   	   	   
+A:581:_:ASN	VDW:SC_SC	A:594:_:ASP	3.369	   	6.000	ND2	CB	   	   	   	   
 A:582:_:ILE	VDW:MC_SC	A:583:_:PHE	3.576	   	6.000	C	CB	   	   	   	   
 A:582:_:ILE	VDW:SC_SC	A:590:_:VAL	3.703	   	6.000	CG2	CG1	   	   	   	   
 A:583:_:PHE	VDW:MC_SC	A:584:_:LEU	3.671	   	6.000	C	CB	   	   	   	   
@@ -365,10 +387,11 @@ A:585:_:HIS	HBOND:MC_MC	A:588:_:ASN	3.299	13.153	17.000	O	N	A:588:_:ASN
 A:585:_:HIS	HBOND:MC_MC	A:587:_:ASP	2.958	59.905	17.000	O	N	A:587:_:ASP	   	   	   
 A:585:_:HIS	VDW:SC_SC	A:591:_:LYS	3.881	   	6.000	CB	CG	   	   	   	   
 A:586:_:GLU	VDW:MC_SC	A:587:_:ASP	2.978	   	6.000	C	CB	   	   	   	   
-A:587:_:ASP	VDW:MC_SC	A:588:_:ASN	3.662	   	6.000	C	CG	   	   	   	   
+A:587:_:ASP	VDW:MC_SC	A:588:_:ASN	3.324	   	6.000	C	OD1	   	   	   	   
 A:588:_:ASN	VDW:MC_SC	A:589:_:THR	3.643	   	6.000	C	CB	   	   	   	   
 A:589:_:THR	VDW:MC_SC	A:590:_:VAL	3.669	   	6.000	C	CB	   	   	   	   
 A:590:_:VAL	VDW:MC_SC	A:591:_:LYS	3.460	   	6.000	C	CB	   	   	   	   
+A:591:_:LYS	VDW:MC_SC	A:592:_:ILE	3.677	   	6.000	C	CB	   	   	   	   
 A:593:_:GLY	VDW:MC_SC	A:594:_:ASP	2.947	   	6.000	C	CB	   	   	   	   
 A:593:_:GLY	VDW:MC_SC	A:595:_:PHE	3.840	   	6.000	C	CD1	   	   	   	   
 A:594:_:ASP	VDW:MC_SC	A:595:_:PHE	3.658	   	6.000	C	CB	   	   	   	   
@@ -382,7 +405,8 @@ A:617:_:ILE	VDW:SC_SC	A:666:_:ILE	3.347	   	6.000	CD1	CG1
 A:617:_:ILE	VDW:SC_SC	A:662:_:ARG	3.337	   	6.000	CD1	CG	   	   	   	   
 A:618:_:LEU	VDW:MC_SC	A:619:_:TRP	3.580	   	6.000	C	CB	   	   	   	   
 A:618:_:LEU	VDW:SC_SC	A:656:_:TYR	3.432	   	6.000	CD2	CD2	   	   	   	   
-A:619:_:TRP	VDW:SC_SC	A:644:_:ILE	3.305	   	6.000	CD1	CB	   	   	   	   
+A:619:_:TRP	VDW:MC_SC	A:620:_:MET	3.671	   	6.000	C	CB	   	   	   	   
+A:619:_:TRP	VDW:SC_SC	A:644:_:ILE	3.246	   	6.000	CD1	CG2	   	   	   	   
 A:619:_:TRP	HBOND:SC_SC	A:648:_:GLU	2.622	25.442	17.000	NE1	OE2	A:619:_:TRP	   	   	   
 A:619:_:TRP	VDW:SC_SC	A:648:_:GLU	3.743	   	6.000	CZ2	CD	   	   	   	   
 A:619:_:TRP	VDW:SC_SC	A:654:_:LEU	3.735	   	6.000	CZ2	CD2	   	   	   	   
@@ -390,11 +414,11 @@ A:620:_:MET	VDW:MC_SC	A:621:_:ALA	3.704	   	6.000	C	CB
 A:620:_:MET	VDW:MC_SC	A:640:_:TYR	3.607	   	6.000	C	CE2	   	   	   	   
 A:620:_:MET	VDW:SC_SC	A:624:_:VAL	3.446	   	6.000	CE	CG1	   	   	   	   
 A:620:_:MET	VDW:SC_SC	A:625:_:ILE	3.686	   	6.000	CE	CG1	   	   	   	   
+A:621:_:ALA	VDW:MC_SC	A:622:_:PRO	2.506	   	6.000	C	CD	   	   	   	   
 A:621:_:ALA	HBOND:MC_MC	A:625:_:ILE	3.014	21.480	17.000	O	N	A:625:_:ILE	   	   	   
 A:621:_:ALA	HBOND:MC_MC	A:624:_:VAL	2.770	33.433	17.000	O	N	A:624:_:VAL	   	   	   
 A:621:_:ALA	VDW:SC_SC	A:623:_:GLU	3.423	   	6.000	CB	CD	   	   	   	   
-A:621:_:ALA	VDW:SC_SC	A:622:_:PRO	3.436	   	6.000	CB	CD	   	   	   	   
-A:621:_:ALA	VDW:SC_SC	A:640:_:TYR	3.827	   	6.000	CB	CB	   	   	   	   
+A:621:_:ALA	VDW:SC_SC	A:640:_:TYR	3.800	   	6.000	CB	CG	   	   	   	   
 A:622:_:PRO	VDW:MC_SC	A:623:_:GLU	3.724	   	6.000	C	CB	   	   	   	   
 A:622:_:PRO	HBOND:MC_MC	A:626:_:ARG	3.244	6.143	17.000	O	N	A:626:_:ARG	   	   	   
 A:622:_:PRO	HBOND:MC_MC	A:625:_:ILE	3.147	44.484	17.000	O	N	A:625:_:ILE	   	   	   
@@ -407,12 +431,14 @@ A:625:_:ILE	VDW:SC_SC	A:666:_:ILE	3.515	   	6.000	CG2	CG2
 A:625:_:ILE	VDW:SC_SC	A:669:_:VAL	3.747	   	6.000	CD1	CG1	   	   	   	   
 A:626:_:ARG	HBOND:SC_MC	A:670:_:GLY	3.097	30.773	17.000	NE	O	A:626:_:ARG	   	   	   
 A:631:_:ASN	VDW:MC_SC	A:632:_:PRO	2.511	   	6.000	C	CD	   	   	   	   
+A:632:_:PRO	VDW:MC_SC	A:633:_:TYR	3.654	   	6.000	C	CB	   	   	   	   
 A:633:_:TYR	VDW:MC_SC	A:634:_:SER	3.291	   	6.000	C	CB	   	   	   	   
 A:634:_:SER	HBOND:MC_SC	A:637:_:SER	2.878	8.987	17.000	N	OG	A:634:_:SER	   	   	   
 A:634:_:SER	VDW:MC_SC	A:635:_:PHE	3.713	   	6.000	C	CB	   	   	   	   
 A:634:_:SER	HBOND:MC_MC	A:638:_:ASP	3.168	20.146	17.000	O	N	A:638:_:ASP	   	   	   
 A:634:_:SER	VDW:SC_SC	A:636:_:GLN	3.578	   	6.000	CB	NE2	   	   	   	   
 A:634:_:SER	HBOND:SC_MC	A:636:_:GLN	3.263	41.561	17.000	OG	N	A:636:_:GLN	   	   	   
+A:635:_:PHE	VDW:MC_SC	A:636:_:GLN	3.705	   	6.000	C	CB	   	   	   	   
 A:635:_:PHE	HBOND:MC_MC	A:639:_:VAL	2.996	26.823	17.000	O	N	A:639:_:VAL	   	   	   
 A:635:_:PHE	HBOND:MC_MC	A:638:_:ASP	3.277	48.098	17.000	O	N	A:638:_:ASP	   	   	   
 A:636:_:GLN	VDW:MC_SC	A:637:_:SER	3.701	   	6.000	C	CB	   	   	   	   
@@ -420,6 +446,7 @@ A:636:_:GLN	HBOND:MC_SC	A:704:_:ARG	3.181	50.635	17.000	O	NH1	A:704:_:ARG
 A:636:_:GLN	HBOND:MC_MC	A:639:_:VAL	3.291	49.407	17.000	O	N	A:639:_:VAL	   	   	   
 A:636:_:GLN	HBOND:MC_MC	A:640:_:TYR	3.140	20.821	17.000	O	N	A:640:_:TYR	   	   	   
 A:636:_:GLN	VDW:SC_SC	A:701:_:ARG	3.027	   	6.000	OE1	CD	   	   	   	   
+A:637:_:SER	VDW:MC_SC	A:638:_:ASP	3.721	   	6.000	C	CB	   	   	   	   
 A:637:_:SER	HBOND:MC_MC	A:640:_:TYR	3.457	50.248	17.000	O	N	A:640:_:TYR	   	   	   
 A:637:_:SER	HBOND:MC_MC	A:641:_:ALA	3.189	11.092	17.000	O	N	A:641:_:ALA	   	   	   
 A:638:_:ASP	VDW:MC_SC	A:639:_:VAL	3.744	   	6.000	C	CB	   	   	   	   
@@ -442,8 +469,12 @@ A:641:_:ALA	HBOND:MC_MC	A:645:_:VAL	3.147	16.976	17.000	O	N	A:645:_:VAL
 A:642:_:PHE	HBOND:MC_MC	A:645:_:VAL	2.993	55.292	17.000	O	N	A:645:_:VAL	   	   	   
 A:642:_:PHE	HBOND:MC_MC	A:646:_:LEU	2.727	10.627	17.000	O	N	A:646:_:LEU	   	   	   
 A:642:_:PHE	VDW:SC_SC	A:707:_:PHE	3.756	   	6.000	CB	CZ	   	   	   	   
-A:642:_:PHE	VDW:SC_SC	A:646:_:LEU	3.515	   	6.000	CZ	CD2	   	   	   	   
+A:642:_:PHE	VDW:SC_SC	A:710:_:ILE	3.608	   	6.000	CE2	CG2	   	   	   	   
+A:642:_:PHE	VDW:SC_SC	A:646:_:LEU	3.397	   	6.000	CE2	CD2	   	   	   	   
+A:643:_:GLY	VDW:MC_SC	A:697:_:LEU	3.581	   	6.000	C	CD2	   	   	   	   
+A:643:_:GLY	VDW:MC_SC	A:644:_:ILE	3.736	   	6.000	C	CB	   	   	   	   
 A:643:_:GLY	HBOND:MC_MC	A:646:_:LEU	3.247	59.248	17.000	O	N	A:646:_:LEU	   	   	   
+A:643:_:GLY	HBOND:MC_MC	A:647:_:TYR	2.891	19.725	17.000	O	N	A:647:_:TYR	   	   	   
 A:644:_:ILE	VDW:MC_SC	A:647:_:TYR	3.821	   	6.000	C	CB	   	   	   	   
 A:644:_:ILE	VDW:MC_SC	A:645:_:VAL	3.736	   	6.000	C	CB	   	   	   	   
 A:644:_:ILE	HBOND:MC_MC	A:647:_:TYR	2.972	54.412	17.000	O	N	A:647:_:TYR	   	   	   
@@ -465,6 +496,8 @@ A:647:_:TYR	VDW:SC_SC	A:676:_:PRO	3.760	   	6.000	CD1	CB
 A:647:_:TYR	VDW:SC_SC	A:655:_:PRO	3.704	   	6.000	CD2	CG	   	   	   	   
 A:647:_:TYR	VDW:SC_MC	A:677:_:ASP	3.772	   	6.000	CE1	C	   	   	   	   
 A:647:_:TYR	VDW:SC_SC	A:651:_:THR	3.661	   	6.000	CE1	CG2	   	   	   	   
+A:647:_:TYR	VDW:SC_MC	A:654:_:LEU	3.612	   	6.000	CE2	C	   	   	   	   
+A:648:_:GLU	VDW:MC_SC	A:649:_:LEU	3.716	   	6.000	C	CB	   	   	   	   
 A:648:_:GLU	HBOND:MC_MC	A:652:_:GLY	2.692	29.688	17.000	O	N	A:652:_:GLY	   	   	   
 A:648:_:GLU	VDW:SC_SC	A:654:_:LEU	3.761	   	6.000	CD	CD2	   	   	   	   
 A:649:_:LEU	VDW:MC_SC	A:650:_:MET	3.660	   	6.000	C	CB	   	   	   	   
@@ -474,16 +507,19 @@ A:650:_:MET	VDW:SC_SC	A:693:_:MET	3.441	   	6.000	CG	CE
 A:650:_:MET	VDW:SC_SC	A:685:_:CYS	3.554	   	6.000	CG	SG	   	   	   	   
 A:650:_:MET	VDW:SC_SC	A:689:_:MET	3.581	   	6.000	CE	CG	   	   	   	   
 A:651:_:THR	VDW:SC_SC	A:681:_:VAL	3.852	   	6.000	CG2	CG1	   	   	   	   
-A:651:_:THR	VDW:SC_SC	A:680:_:LYS	3.876	   	6.000	CG2	CB	   	   	   	   
+A:651:_:THR	VDW:SC_MC	A:680:_:LYS	3.861	   	6.000	CG2	C	   	   	   	   
 A:651:_:THR	HBOND:SC_MC	A:653:_:GLN	3.076	20.559	17.000	OG1	N	A:653:_:GLN	   	   	   
 A:652:_:GLY	VDW:MC_SC	A:653:_:GLN	3.203	   	6.000	C	CB	   	   	   	   
 A:653:_:GLN	VDW:MC_SC	A:654:_:LEU	3.687	   	6.000	C	CB	   	   	   	   
-A:653:_:GLN	VDW:SC_SC	A:680:_:LYS	3.368	   	6.000	NE2	CB	   	   	   	   
+A:653:_:GLN	VDW:SC_SC	A:680:_:LYS	3.165	   	6.000	NE2	CD	   	   	   	   
 A:654:_:LEU	VDW:MC_SC	A:655:_:PRO	2.506	   	6.000	C	CD	   	   	   	   
-A:655:_:PRO	VDW:MC_SC	A:656:_:TYR	3.190	   	6.000	C	CG	   	   	   	   
+A:655:_:PRO	VDW:MC_SC	A:656:_:TYR	3.034	   	6.000	C	CB	   	   	   	   
+A:656:_:TYR	VDW:MC_SC	A:657:_:SER	3.716	   	6.000	C	CB	   	   	   	   
+A:656:_:TYR	HBOND:MC_MC	A:659:_:ILE	3.169	45.939	17.000	O	N	A:659:_:ILE	   	   	   
 A:656:_:TYR	VDW:SC_SC	A:665:_:ILE	3.541	   	6.000	CB	CD1	   	   	   	   
-A:656:_:TYR	VDW:SC_SC	A:674:_:LEU	3.751	   	6.000	CE1	CD2	   	   	   	   
+A:656:_:TYR	VDW:SC_SC	A:674:_:LEU	3.453	   	6.000	CE1	CG	   	   	   	   
 A:656:_:TYR	VDW:SC_MC	A:675:_:SER	3.642	   	6.000	CE1	C	   	   	   	   
+A:656:_:TYR	VDW:SC_SC	A:669:_:VAL	3.657	   	6.000	CZ	CG2	   	   	   	   
 A:657:_:SER	VDW:MC_SC	A:658:_:ASN	3.713	   	6.000	C	CB	   	   	   	   
 A:658:_:ASN	VDW:MC_SC	A:659:_:ILE	3.654	   	6.000	C	CB	   	   	   	   
 A:658:_:ASN	HBOND:MC_MC	A:660:_:ASN	3.475	45.702	17.000	O	N	A:660:_:ASN	   	   	   
@@ -494,7 +530,10 @@ A:659:_:ILE	VDW:SC_SC	A:668:_:MET	3.673	   	6.000	CD1	CE
 A:660:_:ASN	VDW:MC_SC	A:661:_:ASN	3.323	   	6.000	C	CB	   	   	   	   
 A:661:_:ASN	HBOND:MC_MC	A:665:_:ILE	2.887	8.667	17.000	O	N	A:665:_:ILE	   	   	   
 A:661:_:ASN	VDW:SC_SC	A:664:_:GLN	3.452	   	6.000	CB	CB	   	   	   	   
+A:661:_:ASN	HBOND:SC_MC	A:664:_:GLN	2.824	15.857	17.000	OD1	N	A:664:_:GLN	   	   	   
 A:661:_:ASN	VDW:SC_SC	A:663:_:ASP	3.613	   	6.000	OD1	CB	   	   	   	   
+A:661:_:ASN	VDW:SC_MC	A:662:_:ARG	3.519	   	6.000	OD1	C	   	   	   	   
+A:662:_:ARG	VDW:MC_SC	A:663:_:ASP	3.723	   	6.000	C	CB	   	   	   	   
 A:662:_:ARG	HBOND:MC_MC	A:666:_:ILE	2.749	4.173	17.000	O	N	A:666:_:ILE	   	   	   
 A:662:_:ARG	HBOND:MC_MC	A:665:_:ILE	2.909	55.002	17.000	O	N	A:665:_:ILE	   	   	   
 A:662:_:ARG	VDW:SC_SC	A:666:_:ILE	3.585	   	6.000	CG	CD1	   	   	   	   
@@ -517,6 +556,7 @@ A:668:_:MET	HBOND:MC_MC	A:672:_:GLY	3.270	38.592	17.000	O	N	A:672:_:GLY
 A:668:_:MET	HBOND:MC_MC	A:673:_:SER	2.856	28.329	17.000	O	N	A:673:_:SER	   	   	   
 A:668:_:MET	HBOND:MC_MC	A:674:_:LEU	3.079	38.673	17.000	O	N	A:674:_:LEU	   	   	   
 A:668:_:MET	VDW:SC_SC	A:674:_:LEU	3.691	   	6.000	CB	CB	   	   	   	   
+A:669:_:VAL	HBOND:MC_MC	A:672:_:GLY	3.355	35.996	17.000	O	N	A:672:_:GLY	   	   	   
 A:669:_:VAL	VDW:SC_SC	A:674:_:LEU	3.871	   	6.000	CG2	CB	   	   	   	   
 A:670:_:GLY	VDW:MC_SC	A:671:_:ARG	3.634	   	6.000	C	CB	   	   	   	   
 A:671:_:ARG	HBOND:SC_SC	A:673:_:SER	2.890	5.371	17.000	NE	OG	A:671:_:ARG	   	   	   
@@ -526,6 +566,7 @@ A:673:_:SER	VDW:MC_SC	A:674:_:LEU	3.378	   	6.000	C	CB
 A:674:_:LEU	VDW:MC_SC	A:675:_:SER	3.241	   	6.000	C	CB	   	   	   	   
 A:675:_:SER	VDW:MC_SC	A:676:_:PRO	2.517	   	6.000	C	CD	   	   	   	   
 A:676:_:PRO	VDW:MC_SC	A:677:_:ASP	3.681	   	6.000	C	CB	   	   	   	   
+A:676:_:PRO	HBOND:MC_MC	A:678:_:LEU	3.358	61.720	17.000	O	N	A:678:_:LEU	   	   	   
 A:676:_:PRO	VDW:SC_SC	A:697:_:LEU	3.861	   	6.000	CG	CD1	   	   	   	   
 A:677:_:ASP	VDW:MC_SC	A:678:_:LEU	3.661	   	6.000	C	CB	   	   	   	   
 A:677:_:ASP	HBOND:MC_MC	A:680:_:LYS	3.463	21.403	17.000	O	N	A:680:_:LYS	   	   	   
@@ -544,7 +585,7 @@ A:682:_:ARG	VDW:SC_SC	A:684:_:ASN	3.164	   	6.000	CB	OD1
 A:683:_:SER	VDW:MC_SC	A:684:_:ASN	3.698	   	6.000	C	CB	   	   	   	   
 A:683:_:SER	HBOND:MC_MC	A:685:_:CYS	2.779	28.200	17.000	O	N	A:685:_:CYS	   	   	   
 A:684:_:ASN	VDW:MC_SC	A:685:_:CYS	3.551	   	6.000	C	CB	   	   	   	   
-A:685:_:CYS	VDW:MC_SC	A:686:_:PRO	3.664	   	6.000	C	CG	   	   	   	   
+A:685:_:CYS	VDW:MC_SC	A:686:_:PRO	2.541	   	6.000	C	CD	   	   	   	   
 A:686:_:PRO	VDW:MC_SC	A:687:_:LYS	3.672	   	6.000	C	CB	   	   	   	   
 A:686:_:PRO	HBOND:MC_MC	A:689:_:MET	2.604	21.185	17.000	O	N	A:689:_:MET	   	   	   
 A:686:_:PRO	HBOND:MC_MC	A:688:_:ARG	2.806	60.076	17.000	O	N	A:688:_:ARG	   	   	   
@@ -596,14 +637,14 @@ A:702:_:ASP	HBOND:MC_MC	A:704:_:ARG	3.363	49.895	17.000	O	N	A:704:_:ARG
 A:703:_:GLU	VDW:MC_SC	A:704:_:ARG	3.602	   	6.000	C	CB	   	   	   	   
 A:704:_:ARG	VDW:MC_SC	A:705:_:PRO	2.486	   	6.000	C	CD	   	   	   	   
 A:705:_:PRO	VDW:MC_SC	A:706:_:SER	3.719	   	6.000	C	CB	   	   	   	   
+A:706:_:SER	VDW:MC_SC	A:708:_:PRO	3.398	   	6.000	C	CD	   	   	   	   
 A:706:_:SER	VDW:MC_SC	A:707:_:PHE	3.717	   	6.000	C	CB	   	   	   	   
 A:706:_:SER	VDW:MC_SC	A:710:_:ILE	3.607	   	6.000	C	CG1	   	   	   	   
 A:706:_:SER	HBOND:MC_MC	A:709:_:ARG	3.146	51.286	17.000	O	N	A:709:_:ARG	   	   	   
 A:706:_:SER	HBOND:MC_MC	A:710:_:ILE	2.931	13.402	17.000	O	N	A:710:_:ILE	   	   	   
-A:706:_:SER	VDW:SC_SC	A:708:_:PRO	3.554	   	6.000	CB	CD	   	   	   	   
+A:707:_:PHE	VDW:MC_SC	A:708:_:PRO	2.559	   	6.000	C	CD	   	   	   	   
 A:707:_:PHE	HBOND:MC_MC	A:710:_:ILE	3.069	62.012	17.000	O	N	A:710:_:ILE	   	   	   
 A:707:_:PHE	HBOND:MC_MC	A:711:_:LEU	2.602	14.741	17.000	O	N	A:711:_:LEU	   	   	   
-A:707:_:PHE	VDW:SC_SC	A:708:_:PRO	3.582	   	6.000	CB	CD	   	   	   	   
 A:707:_:PHE	VDW:SC_SC	A:710:_:ILE	3.638	   	6.000	CD1	CD1	   	   	   	   
 A:708:_:PRO	VDW:MC_SC	A:709:_:ARG	3.718	   	6.000	C	CB	   	   	   	   
 A:708:_:PRO	HBOND:MC_MC	A:711:_:LEU	3.353	50.062	17.000	O	N	A:711:_:LEU	   	   	   
@@ -645,15 +686,17 @@ B:451:_:GLU	VDW:MC_SC	B:452:_:ILE	3.705	   	6.000	C	CB
 B:451:_:GLU	HBOND:MC_MC	B:453:_:PRO	3.420	43.846	17.000	O	N	B:453:_:PRO	   	   	   
 B:451:_:GLU	VDW:SC_SC	B:519:_:TYR	3.654	   	6.000	CB	CZ	   	   	   	   
 B:452:_:ILE	HBOND:MC_MC	B:519:_:TYR	2.801	19.042	17.000	N	O	B:452:_:ILE	   	   	   
-B:452:_:ILE	VDW:MC_SC	B:453:_:PRO	3.621	   	6.000	C	CG	   	   	   	   
+B:452:_:ILE	VDW:MC_SC	B:453:_:PRO	2.514	   	6.000	C	CD	   	   	   	   
 B:452:_:ILE	VDW:SC_SC	B:457:_:ILE	3.861	   	6.000	CG2	CD1	   	   	   	   
+B:452:_:ILE	VDW:SC_SC	B:476:_:TRP	3.763	   	6.000	CG2	CE2	   	   	   	   
 B:452:_:ILE	VDW:SC_SC	B:528:_:VAL	3.820	   	6.000	CD1	CG2	   	   	   	   
 B:453:_:PRO	VDW:MC_SC	B:454:_:ASP	3.711	   	6.000	C	CB	   	   	   	   
 B:453:_:PRO	HBOND:MC_MC	B:456:_:GLN	3.437	25.930	17.000	O	N	B:456:_:GLN	   	   	   
-B:453:_:PRO	VDW:SC_SC	B:456:_:GLN	3.399	   	6.000	CD	OE1	   	   	   	   
+B:453:_:PRO	VDW:SC_SC	B:456:_:GLN	3.180	   	6.000	CG	NE2	   	   	   	   
+B:454:_:ASP	VDW:SC_SC	B:523:_:PRO	2.915	   	6.000	CG	CG	   	   	   	   
 B:455:_:GLY	VDW:MC_SC	B:456:_:GLN	3.635	   	6.000	C	CB	   	   	   	   
+B:456:_:GLN	VDW:MC_SC	B:457:_:ILE	3.559	   	6.000	C	CG1	   	   	   	   
 B:456:_:GLN	VDW:MC_SC	B:476:_:TRP	3.683	   	6.000	C	CD1	   	   	   	   
-B:456:_:GLN	VDW:MC_SC	B:457:_:ILE	3.565	   	6.000	C	CB	   	   	   	   
 B:456:_:GLN	HBOND:SC_SC	B:476:_:TRP	3.349	12.018	17.000	OE1	NE1	B:476:_:TRP	   	   	   
 B:457:_:ILE	VDW:MC_SC	B:458:_:THR	3.665	   	6.000	C	CB	   	   	   	   
 B:458:_:THR	VDW:MC_SC	B:459:_:VAL	3.685	   	6.000	C	CB	   	   	   	   
@@ -664,7 +707,7 @@ B:461:_:GLN	VDW:MC_SC	B:472:_:TYR	3.785	   	6.000	C	CD2
 B:461:_:GLN	VDW:MC_SC	B:462:_:ARG	3.696	   	6.000	C	CB	   	   	   	   
 B:461:_:GLN	HBOND:MC_MC	B:473:_:LYS	3.134	25.875	17.000	O	N	B:473:_:LYS	   	   	   
 B:462:_:ARG	VDW:MC_SC	B:463:_:ILE	3.351	   	6.000	C	CD1	   	   	   	   
-B:462:_:ARG	VDW:SC_SC	B:472:_:TYR	3.476	   	6.000	CB	CD2	   	   	   	   
+B:462:_:ARG	VDW:SC_SC	B:472:_:TYR	3.371	   	6.000	CB	CE2	   	   	   	   
 B:463:_:ILE	HBOND:MC_MC	B:471:_:VAL	2.978	14.823	17.000	N	O	B:463:_:ILE	   	   	   
 B:463:_:ILE	VDW:SC_SC	B:471:_:VAL	3.753	   	6.000	CB	CG2	   	   	   	   
 B:463:_:ILE	VDW:SC_MC	B:472:_:TYR	3.817	   	6.000	CD1	C	   	   	   	   
@@ -676,28 +719,35 @@ B:466:_:GLY	VDW:MC_SC	B:467:_:SER	3.693	   	6.000	C	CB
 B:467:_:SER	VDW:MC_SC	B:468:_:PHE	3.647	   	6.000	C	CB	   	   	   	   
 B:467:_:SER	HBOND:MC_MC	B:469:_:GLY	3.371	51.780	17.000	O	N	B:469:_:GLY	   	   	   
 B:468:_:PHE	VDW:MC_SC	B:485:_:LEU	3.800	   	6.000	C	CD1	   	   	   	   
-B:468:_:PHE	VDW:SC_SC	B:483:_:LYS	3.348	   	6.000	CB	CD	   	   	   	   
+B:468:_:PHE	VDW:SC_SC	B:483:_:LYS	3.308	   	6.000	CD1	CD	   	   	   	   
 B:468:_:PHE	VDW:SC_SC	B:498:_:PHE	3.746	   	6.000	CE1	CD1	   	   	   	   
 B:468:_:PHE	VDW:SC_SC	B:527:_:ILE	3.573	   	6.000	CE1	CD1	   	   	   	   
 B:468:_:PHE	VDW:SC_SC	B:501:_:GLU	3.856	   	6.000	CE1	CD	   	   	   	   
-B:468:_:PHE	VDW:SC_SC	B:497:_:ALA	3.521	   	6.000	CE2	CB	   	   	   	   
+B:468:_:PHE	VDW:SC_MC	B:497:_:ALA	3.124	   	6.000	CZ	C	   	   	   	   
 B:469:_:GLY	VDW:MC_SC	B:470:_:THR	3.597	   	6.000	C	CB	   	   	   	   
 B:470:_:THR	VDW:MC_SC	B:471:_:VAL	3.500	   	6.000	C	CG1	   	   	   	   
 B:470:_:THR	HBOND:MC_MC	B:484:_:MET	2.704	5.034	17.000	O	N	B:484:_:MET	   	   	   
 B:470:_:THR	VDW:SC_SC	B:472:_:TYR	3.838	   	6.000	CB	CE1	   	   	   	   
 B:471:_:VAL	VDW:MC_SC	B:472:_:TYR	3.421	   	6.000	C	CB	   	   	   	   
+B:471:_:VAL	VDW:SC_SC	B:483:_:LYS	3.855	   	6.000	CG1	CB	   	   	   	   
 B:472:_:TYR	HBOND:MC_MC	B:482:_:VAL	2.864	28.505	17.000	N	O	B:472:_:TYR	   	   	   
 B:472:_:TYR	VDW:MC_SC	B:473:_:LYS	3.706	   	6.000	C	CB	   	   	   	   
 B:472:_:TYR	VDW:SC_SC	B:484:_:MET	3.160	   	6.000	CD1	SD	   	   	   	   
-B:473:_:LYS	VDW:SC_SC	B:531:_:TRP	3.783	   	6.000	CE	CD1	   	   	   	   
+B:473:_:LYS	VDW:SC_SC	B:531:_:TRP	3.417	   	6.000	CE	CE2	   	   	   	   
 B:474:_:GLY	HBOND:MC_MC	B:480:_:VAL	2.747	7.886	17.000	N	O	B:474:_:GLY	   	   	   
 B:474:_:GLY	VDW:MC_SC	B:475:_:LYS	3.386	   	6.000	C	CB	   	   	   	   
 B:474:_:GLY	VDW:MC_SC	B:480:_:VAL	3.396	   	6.000	C	CG2	   	   	   	   
+B:475:_:LYS	VDW:MC_SC	B:476:_:TRP	3.138	   	6.000	C	CB	   	   	   	   
 B:475:_:LYS	HBOND:SC_SC	B:479:_:ASP	2.779	9.346	17.000	NZ	OD1	B:475:_:LYS	   	   	   
 B:475:_:LYS	IONIC:SC_SC	B:479:_:ASP	2.779	80.411	20.000	NZ	-1.188,-14.499,1.947	  	B:475:_:LYS	   	   
 B:476:_:TRP	HBOND:MC_MC	B:478:_:GLY	2.833	8.110	17.000	N	O	B:476:_:TRP	   	   	   
+B:476:_:TRP	VDW:MC_SC	B:477:_:HIS	3.027	   	6.000	C	CB	   	   	   	   
 B:476:_:TRP	VDW:SC_SC	B:480:_:VAL	3.855	   	6.000	CB	CG1	   	   	   	   
-B:476:_:TRP	VDW:SC_SC	B:477:_:HIS	3.618	   	6.000	CE3	CD2	   	   	   	   
+B:476:_:TRP	VDW:SC_SC	B:517:_:MET	3.823	   	6.000	CZ3	CE	   	   	   	   
+B:478:_:GLY	VDW:MC_SC	B:479:_:ASP	3.700	   	6.000	C	CB	   	   	   	   
+B:479:_:ASP	VDW:MC_SC	B:480:_:VAL	3.225	   	6.000	C	CG1	   	   	   	   
+B:479:_:ASP	VDW:SC_SC	B:531:_:TRP	3.647	   	6.000	CB	CB	   	   	   	   
+B:480:_:VAL	VDW:MC_SC	B:531:_:TRP	3.847	   	6.000	C	CB	   	   	   	   
 B:480:_:VAL	VDW:MC_SC	B:481:_:ALA	3.488	   	6.000	C	CB	   	   	   	   
 B:481:_:ALA	HBOND:MC_MC	B:529:_:THR	2.777	3.450	17.000	N	O	B:481:_:ALA	   	   	   
 B:481:_:ALA	VDW:MC_SC	B:482:_:VAL	3.539	   	6.000	C	CB	   	   	   	   
@@ -705,7 +755,7 @@ B:482:_:VAL	VDW:MC_SC	B:483:_:LYS	3.543	   	6.000	C	CB
 B:483:_:LYS	VDW:MC_SC	B:484:_:MET	3.448	   	6.000	C	CB	   	   	   	   
 B:483:_:LYS	HBOND:MC_MC	B:527:_:ILE	2.824	14.233	17.000	O	N	B:527:_:ILE	   	   	   
 B:483:_:LYS	HBOND:SC_SC	B:501:_:GLU	3.137	47.324	17.000	NZ	OE2	B:483:_:LYS	   	   	   
-B:483:_:LYS	IONIC:SC_SC	B:501:_:GLU	3.225	128.463	20.000	NZ	-10.421,3.927,6.751	  	B:483:_:LYS	   	   
+B:483:_:LYS	IONIC:SC_SC	B:501:_:GLU	2.588	129.437	20.000	NZ	-9.284,3.418,6.657	  	B:483:_:LYS	   	   
 B:484:_:MET	VDW:MC_SC	B:485:_:LEU	3.654	   	6.000	C	CB	   	   	   	   
 B:484:_:MET	HBOND:MC_MC	B:486:_:ASN	3.332	54.184	17.000	O	N	B:486:_:ASN	   	   	   
 B:485:_:LEU	HBOND:MC_MC	B:525:_:LEU	2.847	7.209	17.000	N	O	B:485:_:LEU	   	   	   
@@ -718,11 +768,15 @@ B:486:_:ASN	VDW:SC_SC	B:524:_:GLN	3.293	   	6.000	CB	NE2
 B:487:_:VAL	VDW:MC_SC	B:488:_:THR	3.749	   	6.000	C	CB	   	   	   	   
 B:487:_:VAL	VDW:SC_SC	B:494:_:GLN	3.268	   	6.000	CG1	OE1	   	   	   	   
 B:487:_:VAL	VDW:SC_SC	B:490:_:PRO	3.888	   	6.000	CG2	CG	   	   	   	   
+B:488:_:THR	VDW:MC_SC	B:489:_:ALA	3.385	   	6.000	C	CB	   	   	   	   
 B:489:_:ALA	VDW:MC_SC	B:490:_:PRO	2.494	   	6.000	C	CD	   	   	   	   
+B:490:_:PRO	VDW:MC_SC	B:494:_:GLN	3.305	   	6.000	C	NE2	   	   	   	   
 B:490:_:PRO	VDW:MC_SC	B:491:_:THR	3.730	   	6.000	C	CB	   	   	   	   
 B:491:_:THR	VDW:MC_SC	B:492:_:PRO	2.519	   	6.000	C	CD	   	   	   	   
+B:491:_:THR	HBOND:MC_MC	B:495:_:LEU	3.141	24.370	17.000	O	N	B:495:_:LEU	   	   	   
 B:491:_:THR	HBOND:MC_MC	B:494:_:GLN	3.310	54.790	17.000	O	N	B:494:_:GLN	   	   	   
-B:491:_:THR	VDW:SC_SC	B:494:_:GLN	3.643	   	6.000	CB	NE2	   	   	   	   
+B:491:_:THR	VDW:SC_SC	B:494:_:GLN	3.485	   	6.000	CG2	NE2	   	   	   	   
+B:491:_:THR	HBOND:SC_MC	B:493:_:GLN	3.303	37.287	17.000	OG1	N	B:493:_:GLN	   	   	   
 B:492:_:PRO	VDW:MC_SC	B:493:_:GLN	3.710	   	6.000	C	CB	   	   	   	   
 B:492:_:PRO	HBOND:MC_MC	B:496:_:GLN	3.149	9.839	17.000	O	N	B:496:_:GLN	   	   	   
 B:493:_:GLN	VDW:MC_SC	B:494:_:GLN	3.715	   	6.000	C	CB	   	   	   	   
@@ -771,6 +825,7 @@ B:505:_:LEU	VDW:SC_SC	B:595:_:PHE	3.353	   	6.000	CD2	CD1
 B:506:_:ARG	VDW:MC_SC	B:507:_:LYS	3.627	   	6.000	C	CB	   	   	   	   
 B:507:_:LYS	VDW:MC_SC	B:508:_:THR	3.524	   	6.000	C	CB	   	   	   	   
 B:507:_:LYS	IONIC:SC_SC	B:600:_:GLU	2.707	111.719	20.000	NZ	-14.744,12.798,-1.919	  	B:507:_:LYS	   	   
+B:508:_:THR	VDW:MC_SC	B:509:_:ARG	3.310	   	6.000	C	CB	   	   	   	   
 B:509:_:ARG	HBOND:MC_SC	B:566:_:TYR	2.904	15.828	17.000	N	OH	B:509:_:ARG	   	   	   
 B:509:_:ARG	VDW:MC_SC	B:510:_:HIS	3.328	   	6.000	C	CB	   	   	   	   
 B:510:_:HIS	VDW:MC_SC	B:511:_:VAL	3.730	   	6.000	C	CB	   	   	   	   
@@ -779,20 +834,20 @@ B:510:_:HIS	VDW:SC_SC	B:513:_:ILE	3.568	   	6.000	CB	CG1
 B:510:_:HIS	VDW:SC_SC	B:566:_:TYR	3.644	   	6.000	CD2	CB	   	   	   	   
 B:510:_:HIS	VDW:SC_SC	B:512:_:ASN	3.355	   	6.000	CE1	OD1	   	   	   	   
 B:511:_:VAL	VDW:MC_SC	B:512:_:ASN	3.582	   	6.000	C	CB	   	   	   	   
-B:512:_:ASN	VDW:MC_SC	B:513:_:ILE	3.590	   	6.000	C	CG1	   	   	   	   
+B:512:_:ASN	VDW:MC_SC	B:513:_:ILE	3.525	   	6.000	C	CB	   	   	   	   
 B:512:_:ASN	HBOND:MC_MC	B:592:_:ILE	2.828	6.677	17.000	O	N	B:592:_:ILE	   	   	   
 B:512:_:ASN	HBOND:SC_SC	B:559:_:GLN	3.184	32.109	17.000	ND2	OE1	B:512:_:ASN	   	   	   
 B:512:_:ASN	VDW:SC_SC	B:559:_:GLN	3.642	   	6.000	ND2	CB	   	   	   	   
 B:512:_:ASN	VDW:SC_SC	B:562:_:ARG	3.637	   	6.000	OD1	CB	   	   	   	   
 B:513:_:ILE	VDW:MC_SC	B:514:_:LEU	3.704	   	6.000	C	CB	   	   	   	   
 B:513:_:ILE	VDW:SC_SC	B:595:_:PHE	3.546	   	6.000	CG2	CZ	   	   	   	   
-B:513:_:ILE	VDW:SC_SC	B:567:_:LEU	3.727	   	6.000	CD1	CG	   	   	   	   
+B:513:_:ILE	VDW:SC_SC	B:567:_:LEU	3.721	   	6.000	CD1	CD1	   	   	   	   
 B:514:_:LEU	HBOND:MC_MC	B:592:_:ILE	2.946	8.210	17.000	N	O	B:514:_:LEU	   	   	   
 B:514:_:LEU	VDW:MC_SC	B:515:_:LEU	3.692	   	6.000	C	CB	   	   	   	   
 B:514:_:LEU	HBOND:MC_MC	B:516:_:PHE	3.186	52.549	17.000	O	N	B:516:_:PHE	   	   	   
 B:515:_:LEU	HBOND:MC_SC	B:530:_:GLN	2.899	22.967	17.000	N	OE1	B:515:_:LEU	   	   	   
 B:515:_:LEU	VDW:MC_SC	B:516:_:PHE	3.703	   	6.000	C	CB	   	   	   	   
-B:515:_:LEU	VDW:SC_SC	B:530:_:GLN	3.434	   	6.000	CB	CD	   	   	   	   
+B:515:_:LEU	VDW:SC_SC	B:530:_:GLN	3.070	   	6.000	CB	OE1	   	   	   	   
 B:516:_:PHE	VDW:MC_SC	B:517:_:MET	3.483	   	6.000	C	CB	   	   	   	   
 B:516:_:PHE	VDW:SC_MC	B:518:_:GLY	3.668	   	6.000	CE1	C	   	   	   	   
 B:517:_:MET	HBOND:MC_MC	B:528:_:VAL	3.044	13.271	17.000	N	O	B:517:_:MET	   	   	   
@@ -807,7 +862,7 @@ B:520:_:SER	HBOND:SC_MC	B:521:_:THR	3.216	59.965	17.000	OG	N	B:521:_:THR
 B:521:_:THR	VDW:MC_SC	B:522:_:ALA	3.708	   	6.000	C	CB	   	   	   	   
 B:521:_:THR	VDW:MC_SC	B:523:_:PRO	3.057	   	6.000	C	CD	   	   	   	   
 B:521:_:THR	HBOND:SC_MC	B:522:_:ALA	2.612	61.052	17.000	OG1	N	B:522:_:ALA	   	   	   
-B:522:_:ALA	VDW:MC_SC	B:523:_:PRO	3.513	   	6.000	C	CG	   	   	   	   
+B:522:_:ALA	VDW:MC_SC	B:523:_:PRO	2.500	   	6.000	C	CD	   	   	   	   
 B:523:_:PRO	VDW:MC_SC	B:524:_:GLN	3.629	   	6.000	C	CB	   	   	   	   
 B:524:_:GLN	VDW:MC_SC	B:525:_:LEU	3.657	   	6.000	C	CB	   	   	   	   
 B:525:_:LEU	VDW:MC_SC	B:526:_:ALA	3.368	   	6.000	C	CB	   	   	   	   
@@ -848,13 +903,15 @@ B:538:_:TYR	HBOND:MC_MC	B:542:_:HIS	2.766	20.331	17.000	O	N	B:542:_:HIS
 B:538:_:TYR	VDW:SC_MC	B:579:_:SER	3.794	   	6.000	CB	C	   	   	   	   
 B:538:_:TYR	VDW:SC_SC	B:542:_:HIS	3.286	   	6.000	CD1	CD2	   	   	   	   
 B:539:_:HIS	VDW:MC_SC	B:540:_:HIS	3.710	   	6.000	C	CB	   	   	   	   
+B:539:_:HIS	HBOND:MC_MC	B:543:_:ALA	3.000	49.858	17.000	O	N	B:543:_:ALA	   	   	   
 B:540:_:HIS	VDW:MC_SC	B:541:_:LEU	3.651	   	6.000	C	CB	   	   	   	   
 B:540:_:HIS	VDW:SC_SC	B:548:_:PHE	3.651	   	6.000	CB	CE1	   	   	   	   
 B:541:_:LEU	VDW:MC_SC	B:542:_:HIS	3.520	   	6.000	C	CB	   	   	   	   
+B:541:_:LEU	VDW:SC_SC	B:649:_:LEU	3.625	   	6.000	CD2	CD2	   	   	   	   
 B:541:_:LEU	VDW:SC_MC	B:648:_:GLU	3.685	   	6.000	CD2	C	   	   	   	   
 B:542:_:HIS	VDW:MC_SC	B:543:_:ALA	3.628	   	6.000	C	CB	   	   	   	   
 B:542:_:HIS	HBOND:MC_MC	B:544:_:SER	3.200	36.606	17.000	O	N	B:544:_:SER	   	   	   
-B:542:_:HIS	VDW:SC_SC	B:654:_:LEU	3.792	   	6.000	CE1	CD2	   	   	   	   
+B:542:_:HIS	VDW:SC_SC	B:654:_:LEU	3.696	   	6.000	CE1	CG	   	   	   	   
 B:542:_:HIS	HBOND:SC_SC	B:648:_:GLU	2.749	22.313	17.000	NE2	OE1	B:542:_:HIS	   	   	   
 B:543:_:ALA	VDW:MC_SC	B:544:_:SER	3.300	   	6.000	C	CB	   	   	   	   
 B:544:_:SER	VDW:MC_SC	B:545:_:GLU	3.580	   	6.000	C	CB	   	   	   	   
@@ -867,6 +924,7 @@ B:548:_:PHE	VDW:MC_SC	B:549:_:GLU	3.621	   	6.000	C	CB
 B:548:_:PHE	HBOND:MC_SC	B:682:_:ARG	3.439	35.707	17.000	O	NH2	B:682:_:ARG	   	   	   
 B:548:_:PHE	VDW:SC_SC	B:553:_:LEU	3.560	   	6.000	CB	CD2	   	   	   	   
 B:548:_:PHE	VDW:SC_SC	B:552:_:LYS	3.298	   	6.000	CD2	CD	   	   	   	   
+B:548:_:PHE	VDW:SC_SC	B:584:_:LEU	3.774	   	6.000	CZ	CD1	   	   	   	   
 B:549:_:GLU	VDW:MC_SC	B:550:_:MET	3.712	   	6.000	C	CB	   	   	   	   
 B:549:_:GLU	HBOND:MC_MC	B:553:_:LEU	3.091	10.334	17.000	O	N	B:553:_:LEU	   	   	   
 B:549:_:GLU	HBOND:MC_MC	B:552:_:LYS	3.193	35.396	17.000	O	N	B:552:_:LYS	   	   	   
@@ -885,6 +943,7 @@ B:552:_:LYS	HBOND:MC_MC	B:555:_:ASP	3.101	56.486	17.000	O	N	B:555:_:ASP
 B:552:_:LYS	VDW:SC_SC	B:588:_:ASN	3.454	   	6.000	CE	OD1	   	   	   	   
 B:552:_:LYS	HBOND:SC_MC	B:587:_:ASP	2.967	40.827	17.000	NZ	O	B:552:_:LYS	   	   	   
 B:552:_:LYS	IONIC:SC_SC	B:587:_:ASP	2.913	151.867	20.000	NZ	13.968,-2.688,1.944	  	B:552:_:LYS	   	   
+B:553:_:LEU	VDW:MC_SC	B:554:_:ILE	3.737	   	6.000	C	CB	   	   	   	   
 B:553:_:LEU	HBOND:MC_MC	B:557:_:ALA	3.019	17.229	17.000	O	N	B:557:_:ALA	   	   	   
 B:553:_:LEU	HBOND:MC_MC	B:556:_:ILE	3.464	60.006	17.000	O	N	B:556:_:ILE	   	   	   
 B:553:_:LEU	VDW:SC_SC	B:650:_:MET	3.610	   	6.000	CB	CE	   	   	   	   
@@ -940,6 +999,8 @@ B:564:_:MET	VDW:MC_SC	B:565:_:ASP	3.712	   	6.000	C	CB
 B:564:_:MET	HBOND:MC_MC	B:567:_:LEU	3.283	53.869	17.000	O	N	B:567:_:LEU	   	   	   
 B:564:_:MET	HBOND:MC_MC	B:568:_:HIS	2.908	5.830	17.000	O	N	B:568:_:HIS	   	   	   
 B:564:_:MET	VDW:SC_SC	B:707:_:PHE	3.326	   	6.000	CB	CE1	   	   	   	   
+B:564:_:MET	VDW:SC_SC	B:592:_:ILE	3.698	   	6.000	CG	CD1	   	   	   	   
+B:564:_:MET	VDW:SC_SC	B:577:_:LEU	3.885	   	6.000	CG	CD2	   	   	   	   
 B:564:_:MET	VDW:SC_SC	B:567:_:LEU	3.737	   	6.000	SD	CD1	   	   	   	   
 B:564:_:MET	VDW:SC_SC	B:568:_:HIS	3.881	   	6.000	CE	CD2	   	   	   	   
 B:565:_:ASP	VDW:MC_SC	B:566:_:TYR	3.714	   	6.000	C	CB	   	   	   	   
@@ -956,6 +1017,7 @@ B:568:_:HIS	HBOND:MC_MC	B:571:_:SER	3.112	20.393	17.000	O	N	B:571:_:SER
 B:568:_:HIS	VDW:SC_SC	B:635:_:PHE	3.328	   	6.000	CG	CD2	   	   	   	   
 B:568:_:HIS	VDW:SC_SC	B:638:_:ASP	3.545	   	6.000	CE1	CB	   	   	   	   
 B:568:_:HIS	VDW:SC_SC	B:707:_:PHE	3.344	   	6.000	CE1	CD2	   	   	   	   
+B:568:_:HIS	HBOND:SC_SC	B:638:_:ASP	3.004	17.107	17.000	NE2	OD2	B:568:_:HIS	   	   	   
 B:569:_:ALA	VDW:MC_SC	B:570:_:LYS	3.633	   	6.000	C	CB	   	   	   	   
 B:570:_:LYS	VDW:MC_SC	B:571:_:SER	2.986	   	6.000	C	CB	   	   	   	   
 B:571:_:SER	VDW:MC_SC	B:572:_:ILE	3.560	   	6.000	C	CB	   	   	   	   
@@ -976,6 +1038,7 @@ B:574:_:HIS	HBOND:SC_MC	B:593:_:GLY	3.003	26.046	17.000	NE2	O	B:574:_:HIS
 B:575:_:ARG	HBOND:MC_SC	B:638:_:ASP	3.072	17.419	17.000	N	OD1	B:575:_:ARG	   	   	   
 B:575:_:ARG	VDW:MC_SC	B:576:_:ASP	3.175	   	6.000	C	CB	   	   	   	   
 B:575:_:ARG	VDW:SC_SC	B:633:_:TYR	3.462	   	6.000	CG	CD2	   	   	   	   
+B:575:_:ARG	VDW:SC_SC	B:599:_:THR	3.267	   	6.000	CD	CG2	   	   	   	   
 B:575:_:ARG	HBOND:SC_MC	B:597:_:LEU	2.845	47.269	17.000	NE	O	B:575:_:ARG	   	   	   
 B:576:_:ASP	VDW:MC_SC	B:577:_:LEU	3.704	   	6.000	C	CB	   	   	   	   
 B:576:_:ASP	VDW:SC_SC	B:597:_:LEU	3.588	   	6.000	CB	CD1	   	   	   	   
@@ -985,7 +1048,11 @@ B:578:_:LYS	VDW:MC_SC	B:579:_:SER	3.722	   	6.000	C	CB
 B:578:_:LYS	HBOND:MC_MC	B:581:_:ASN	2.832	31.430	17.000	O	N	B:581:_:ASN	   	   	   
 B:578:_:LYS	HBOND:MC_MC	B:582:_:ILE	3.470	60.446	17.000	O	N	B:582:_:ILE	   	   	   
 B:578:_:LYS	VDW:SC_SC	B:619:_:TRP	3.332	   	6.000	CB	CD2	   	   	   	   
-B:580:_:ASN	VDW:MC_SC	B:581:_:ASN	3.644	   	6.000	C	CB	   	   	   	   
+B:578:_:LYS	VDW:SC_SC	B:580:_:ASN	3.535	   	6.000	CD	CB	   	   	   	   
+B:579:_:SER	VDW:MC_SC	B:580:_:ASN	3.708	   	6.000	C	CB	   	   	   	   
+B:579:_:SER	VDW:SC_SC	B:648:_:GLU	3.518	   	6.000	CB	CD	   	   	   	   
+B:580:_:ASN	VDW:MC_SC	B:581:_:ASN	3.365	   	6.000	C	ND2	   	   	   	   
+B:580:_:ASN	HBOND:MC_MC	B:582:_:ILE	3.471	49.742	17.000	O	N	B:582:_:ILE	   	   	   
 B:581:_:ASN	VDW:MC_SC	B:582:_:ILE	3.546	   	6.000	C	CB	   	   	   	   
 B:581:_:ASN	HBOND:MC_MC	B:593:_:GLY	3.179	9.420	17.000	O	N	B:593:_:GLY	   	   	   
 B:581:_:ASN	VDW:SC_SC	B:594:_:ASP	3.700	   	6.000	ND2	CB	   	   	   	   
@@ -1000,9 +1067,10 @@ B:584:_:LEU	HBOND:MC_MC	B:587:_:ASP	2.787	18.934	17.000	O	N	B:587:_:ASP
 B:585:_:HIS	HBOND:MC_MC	B:589:_:THR	3.024	41.553	17.000	N	O	B:585:_:HIS	   	   	   
 B:585:_:HIS	VDW:MC_SC	B:586:_:GLU	3.066	   	6.000	C	CB	   	   	   	   
 B:585:_:HIS	HBOND:MC_MC	B:588:_:ASN	3.199	25.159	17.000	O	N	B:588:_:ASN	   	   	   
-B:586:_:GLU	VDW:MC_SC	B:587:_:ASP	3.702	   	6.000	C	CG	   	   	   	   
+B:586:_:GLU	VDW:MC_SC	B:587:_:ASP	2.945	   	6.000	C	CB	   	   	   	   
 B:586:_:GLU	HBOND:MC_MC	B:588:_:ASN	3.041	49.614	17.000	O	N	B:588:_:ASN	   	   	   
 B:587:_:ASP	VDW:MC_SC	B:588:_:ASN	3.436	   	6.000	C	CB	   	   	   	   
+B:588:_:ASN	VDW:MC_SC	B:589:_:THR	3.546	   	6.000	C	CB	   	   	   	   
 B:589:_:THR	VDW:MC_SC	B:590:_:VAL	3.751	   	6.000	C	CB	   	   	   	   
 B:590:_:VAL	VDW:MC_SC	B:591:_:LYS	3.433	   	6.000	C	CB	   	   	   	   
 B:591:_:LYS	VDW:MC_SC	B:592:_:ILE	3.702	   	6.000	C	CB	   	   	   	   
@@ -1025,6 +1093,7 @@ B:617:_:ILE	HBOND:MC_MC	B:620:_:MET	3.083	17.194	17.000	O	N	B:620:_:MET
 B:617:_:ILE	VDW:SC_SC	B:666:_:ILE	3.594	   	6.000	CD1	CG1	   	   	   	   
 B:617:_:ILE	VDW:SC_SC	B:625:_:ILE	3.599	   	6.000	CD1	CD1	   	   	   	   
 B:618:_:LEU	VDW:MC_SC	B:619:_:TRP	3.607	   	6.000	C	CB	   	   	   	   
+B:618:_:LEU	VDW:SC_SC	B:665:_:ILE	3.884	   	6.000	CD2	CD1	   	   	   	   
 B:618:_:LEU	VDW:SC_SC	B:656:_:TYR	3.652	   	6.000	CD2	CD2	   	   	   	   
 B:619:_:TRP	VDW:MC_SC	B:620:_:MET	3.651	   	6.000	C	CB	   	   	   	   
 B:619:_:TRP	VDW:SC_SC	B:644:_:ILE	3.234	   	6.000	CD1	CG2	   	   	   	   
@@ -1036,9 +1105,12 @@ B:620:_:MET	VDW:MC_SC	B:640:_:TYR	3.473	   	6.000	C	CE2
 B:620:_:MET	VDW:SC_SC	B:625:_:ILE	3.710	   	6.000	CB	CG1	   	   	   	   
 B:620:_:MET	VDW:SC_SC	B:624:_:VAL	3.501	   	6.000	SD	CG1	   	   	   	   
 B:621:_:ALA	VDW:MC_SC	B:622:_:PRO	2.515	   	6.000	C	CD	   	   	   	   
+B:621:_:ALA	HBOND:MC_MC	B:625:_:ILE	2.887	17.363	17.000	O	N	B:625:_:ILE	   	   	   
 B:621:_:ALA	HBOND:MC_MC	B:624:_:VAL	2.783	44.295	17.000	O	N	B:624:_:VAL	   	   	   
 B:621:_:ALA	VDW:SC_SC	B:623:_:GLU	3.837	   	6.000	CB	CG	   	   	   	   
 B:621:_:ALA	VDW:SC_SC	B:640:_:TYR	3.873	   	6.000	CB	CG	   	   	   	   
+B:622:_:PRO	VDW:MC_SC	B:623:_:GLU	3.705	   	6.000	C	CB	   	   	   	   
+B:622:_:PRO	HBOND:MC_MC	B:626:_:ARG	2.778	14.273	17.000	O	N	B:626:_:ARG	   	   	   
 B:622:_:PRO	HBOND:MC_MC	B:625:_:ILE	3.224	48.003	17.000	O	N	B:625:_:ILE	   	   	   
 B:623:_:GLU	VDW:MC_SC	B:624:_:VAL	3.731	   	6.000	C	CB	   	   	   	   
 B:623:_:GLU	VDW:SC_SC	B:701:_:ARG	3.589	   	6.000	CD	CB	   	   	   	   
@@ -1049,12 +1121,14 @@ B:625:_:ILE	VDW:SC_SC	B:669:_:VAL	3.854	   	6.000	CD1	CG1
 B:626:_:ARG	VDW:SC_MC	B:670:_:GLY	3.840	   	6.000	CG	C	   	   	   	   
 B:626:_:ARG	HBOND:SC_MC	B:670:_:GLY	3.201	47.472	17.000	NE	O	B:626:_:ARG	   	   	   
 B:631:_:ASN	VDW:MC_SC	B:632:_:PRO	2.494	   	6.000	C	CD	   	   	   	   
+B:632:_:PRO	VDW:SC_SC	B:633:_:TYR	3.572	   	6.000	CG	CD1	   	   	   	   
 B:633:_:TYR	VDW:MC_SC	B:634:_:SER	3.205	   	6.000	C	CB	   	   	   	   
 B:634:_:SER	HBOND:MC_SC	B:637:_:SER	2.691	23.867	17.000	N	OG	B:634:_:SER	   	   	   
 B:634:_:SER	VDW:MC_SC	B:635:_:PHE	3.710	   	6.000	C	CB	   	   	   	   
 B:634:_:SER	HBOND:MC_MC	B:638:_:ASP	3.297	9.375	17.000	O	N	B:638:_:ASP	   	   	   
 B:634:_:SER	HBOND:SC_SC	B:701:_:ARG	3.177	60.281	17.000	OG	NH2	B:701:_:ARG	   	   	   
 B:634:_:SER	HBOND:SC_MC	B:636:_:GLN	3.112	40.361	17.000	OG	N	B:636:_:GLN	   	   	   
+B:635:_:PHE	VDW:MC_SC	B:636:_:GLN	3.714	   	6.000	C	CB	   	   	   	   
 B:635:_:PHE	HBOND:MC_MC	B:638:_:ASP	3.190	57.560	17.000	O	N	B:638:_:ASP	   	   	   
 B:635:_:PHE	HBOND:MC_MC	B:639:_:VAL	2.908	21.591	17.000	O	N	B:639:_:VAL	   	   	   
 B:636:_:GLN	VDW:MC_SC	B:637:_:SER	3.711	   	6.000	C	CB	   	   	   	   
@@ -1083,6 +1157,7 @@ B:642:_:PHE	PIPISTACK:MC_SC	B:707:_:PHE	4.996	1.853	9.400	7.852,14.809,0.950	3.1
 B:642:_:PHE	HBOND:MC_MC	B:645:_:VAL	3.163	53.201	17.000	O	N	B:645:_:VAL	   	   	   
 B:642:_:PHE	HBOND:MC_MC	B:646:_:LEU	2.943	8.827	17.000	O	N	B:646:_:LEU	   	   	   
 B:642:_:PHE	VDW:SC_SC	B:707:_:PHE	3.520	   	6.000	CB	CZ	   	   	   	   
+B:642:_:PHE	VDW:SC_SC	B:710:_:ILE	3.532	   	6.000	CE2	CG2	   	   	   	   
 B:642:_:PHE	VDW:SC_SC	B:646:_:LEU	3.675	   	6.000	CE2	CD1	   	   	   	   
 B:642:_:PHE	VDW:SC_SC	B:714:_:ILE	3.643	   	6.000	CZ	CD1	   	   	   	   
 B:643:_:GLY	VDW:MC_SC	B:644:_:ILE	3.736	   	6.000	C	CB	   	   	   	   
@@ -1110,7 +1185,7 @@ B:647:_:TYR	VDW:SC_MC	B:677:_:ASP	3.673	   	6.000	CE1	C
 B:648:_:GLU	VDW:MC_SC	B:649:_:LEU	3.679	   	6.000	C	CB	   	   	   	   
 B:648:_:GLU	HBOND:MC_MC	B:652:_:GLY	2.829	38.532	17.000	O	N	B:652:_:GLY	   	   	   
 B:648:_:GLU	VDW:SC_SC	B:654:_:LEU	3.891	   	6.000	CD	CD2	   	   	   	   
-B:649:_:LEU	VDW:MC_SC	B:650:_:MET	3.684	   	6.000	C	CB	   	   	   	   
+B:649:_:LEU	VDW:SC_SC	B:650:_:MET	3.579	   	6.000	CB	CE	   	   	   	   
 B:650:_:MET	VDW:MC_SC	B:651:_:THR	3.532	   	6.000	C	CB	   	   	   	   
 B:650:_:MET	HBOND:MC_MC	B:682:_:ARG	2.730	29.178	17.000	O	N	B:682:_:ARG	   	   	   
 B:650:_:MET	VDW:SC_SC	B:685:_:CYS	3.724	   	6.000	CG	SG	   	   	   	   
@@ -1122,23 +1197,25 @@ B:652:_:GLY	VDW:MC_SC	B:653:_:GLN	3.570	   	6.000	C	CB
 B:653:_:GLN	VDW:MC_SC	B:654:_:LEU	3.689	   	6.000	C	CB	   	   	   	   
 B:653:_:GLN	VDW:SC_SC	B:680:_:LYS	3.404	   	6.000	NE2	CD	   	   	   	   
 B:654:_:LEU	VDW:MC_SC	B:655:_:PRO	2.516	   	6.000	C	CD	   	   	   	   
-B:655:_:PRO	VDW:SC_SC	B:656:_:TYR	3.625	   	6.000	CB	CE2	   	   	   	   
+B:655:_:PRO	VDW:MC_SC	B:656:_:TYR	3.022	   	6.000	C	CB	   	   	   	   
 B:656:_:TYR	VDW:MC_SC	B:657:_:SER	3.708	   	6.000	C	CB	   	   	   	   
 B:656:_:TYR	VDW:SC_SC	B:674:_:LEU	3.339	   	6.000	CD1	CD2	   	   	   	   
+B:656:_:TYR	VDW:SC_MC	B:675:_:SER	3.716	   	6.000	CE1	C	   	   	   	   
 B:656:_:TYR	VDW:SC_SC	B:669:_:VAL	3.756	   	6.000	CZ	CG2	   	   	   	   
 B:657:_:SER	VDW:MC_SC	B:658:_:ASN	3.696	   	6.000	C	CB	   	   	   	   
 B:657:_:SER	HBOND:MC_MC	B:659:_:ILE	3.273	58.570	17.000	O	N	B:659:_:ILE	   	   	   
 B:658:_:ASN	VDW:MC_SC	B:659:_:ILE	3.503	   	6.000	C	CB	   	   	   	   
-B:659:_:ILE	VDW:MC_SC	B:660:_:ASN	3.550	   	6.000	C	CG	   	   	   	   
+B:659:_:ILE	VDW:MC_SC	B:660:_:ASN	3.006	   	6.000	C	OD1	   	   	   	   
 B:659:_:ILE	VDW:SC_SC	B:665:_:ILE	3.604	   	6.000	CG2	CG1	   	   	   	   
 B:659:_:ILE	VDW:SC_SC	B:664:_:GLN	3.751	   	6.000	CG2	CD	   	   	   	   
 B:659:_:ILE	VDW:SC_SC	B:674:_:LEU	3.405	   	6.000	CD1	CD2	   	   	   	   
 B:660:_:ASN	VDW:MC_SC	B:661:_:ASN	3.508	   	6.000	C	CB	   	   	   	   
 B:661:_:ASN	VDW:MC_SC	B:662:_:ARG	3.714	   	6.000	C	CB	   	   	   	   
 B:661:_:ASN	HBOND:MC_MC	B:664:_:GLN	3.373	38.524	17.000	O	N	B:664:_:GLN	   	   	   
+B:661:_:ASN	VDW:SC_SC	B:664:_:GLN	3.166	   	6.000	CB	NE2	   	   	   	   
 B:661:_:ASN	VDW:SC_SC	B:663:_:ASP	3.215	   	6.000	ND2	CB	   	   	   	   
-B:661:_:ASN	VDW:SC_SC	B:664:_:GLN	3.351	   	6.000	ND2	CG	   	   	   	   
 B:662:_:ARG	VDW:MC_SC	B:663:_:ASP	3.712	   	6.000	C	CB	   	   	   	   
+B:662:_:ARG	HBOND:MC_MC	B:666:_:ILE	3.081	3.948	17.000	O	N	B:666:_:ILE	   	   	   
 B:663:_:ASP	VDW:MC_SC	B:664:_:GLN	3.722	   	6.000	C	CB	   	   	   	   
 B:663:_:ASP	HBOND:MC_MC	B:667:_:GLU	2.925	14.142	17.000	O	N	B:667:_:GLU	   	   	   
 B:664:_:GLN	VDW:MC_SC	B:665:_:ILE	3.716	   	6.000	C	CB	   	   	   	   
@@ -1167,8 +1244,9 @@ B:671:_:ARG	VDW:SC_SC	B:673:_:SER	3.443	   	6.000	CZ	CB
 B:672:_:GLY	VDW:MC_SC	B:673:_:SER	3.670	   	6.000	C	CB	   	   	   	   
 B:673:_:SER	VDW:MC_SC	B:674:_:LEU	3.426	   	6.000	C	CB	   	   	   	   
 B:674:_:LEU	VDW:MC_SC	B:675:_:SER	3.273	   	6.000	C	CB	   	   	   	   
-B:675:_:SER	VDW:SC_SC	B:676:_:PRO	3.444	   	6.000	CB	CD	   	   	   	   
+B:675:_:SER	VDW:MC_SC	B:676:_:PRO	2.520	   	6.000	C	CD	   	   	   	   
 B:676:_:PRO	VDW:MC_SC	B:677:_:ASP	3.699	   	6.000	C	CB	   	   	   	   
+B:676:_:PRO	HBOND:MC_MC	B:678:_:LEU	3.112	59.807	17.000	O	N	B:678:_:LEU	   	   	   
 B:677:_:ASP	VDW:MC_SC	B:678:_:LEU	3.698	   	6.000	C	CB	   	   	   	   
 B:677:_:ASP	HBOND:MC_MC	B:680:_:LYS	3.279	19.233	17.000	O	N	B:680:_:LYS	   	   	   
 B:677:_:ASP	VDW:SC_SC	B:680:_:LYS	3.652	   	6.000	CB	CE	   	   	   	   
@@ -1185,7 +1263,7 @@ B:681:_:VAL	VDW:SC_SC	B:693:_:MET	3.813	   	6.000	CG1	CE
 B:681:_:VAL	VDW:SC_SC	B:690:_:LYS	3.480	   	6.000	CG2	CD	   	   	   	   
 B:682:_:ARG	VDW:MC_SC	B:683:_:SER	3.712	   	6.000	C	CB	   	   	   	   
 B:682:_:ARG	HBOND:MC_MC	B:685:_:CYS	3.178	29.680	17.000	O	N	B:685:_:CYS	   	   	   
-B:682:_:ARG	VDW:SC_SC	B:684:_:ASN	3.739	   	6.000	CB	CG	   	   	   	   
+B:682:_:ARG	VDW:SC_SC	B:684:_:ASN	3.066	   	6.000	CD	OD1	   	   	   	   
 B:683:_:SER	VDW:MC_SC	B:684:_:ASN	3.595	   	6.000	C	ND2	   	   	   	   
 B:684:_:ASN	VDW:MC_SC	B:685:_:CYS	3.724	   	6.000	C	CB	   	   	   	   
 B:684:_:ASN	HBOND:MC_MC	B:686:_:PRO	3.211	59.329	17.000	O	N	B:686:_:PRO	   	   	   
@@ -1193,6 +1271,7 @@ B:685:_:CYS	VDW:MC_SC	B:686:_:PRO	2.496	   	6.000	C	CD
 B:685:_:CYS	VDW:SC_SC	B:689:_:MET	3.866	   	6.000	SG	CB	   	   	   	   
 B:686:_:PRO	VDW:MC_SC	B:687:_:LYS	3.727	   	6.000	C	CB	   	   	   	   
 B:686:_:PRO	HBOND:MC_MC	B:689:_:MET	2.955	33.245	17.000	O	N	B:689:_:MET	   	   	   
+B:686:_:PRO	HBOND:MC_MC	B:690:_:LYS	3.240	5.730	17.000	O	N	B:690:_:LYS	   	   	   
 B:687:_:LYS	VDW:MC_SC	B:688:_:ARG	3.700	   	6.000	C	CB	   	   	   	   
 B:687:_:LYS	HBOND:MC_MC	B:691:_:ARG	2.823	28.765	17.000	O	N	B:691:_:ARG	   	   	   
 B:688:_:ARG	VDW:MC_SC	B:689:_:MET	3.699	   	6.000	C	CB	   	   	   	   
@@ -1202,7 +1281,10 @@ B:688:_:ARG	HBOND:MC_MC	B:691:_:ARG	3.420	56.634	17.000	O	N	B:691:_:ARG
 B:688:_:ARG	VDW:SC_SC	B:717:_:LEU	3.611	   	6.000	CZ	CB	   	   	   	   
 B:688:_:ARG	VDW:SC_SC	B:720:_:GLU	3.251	   	6.000	CZ	CD	   	   	   	   
 B:688:_:ARG	IONIC:SC_SC	B:720:_:GLU	2.957	119.423	20.000	CZ	20.284,19.337,-8.606	  	B:688:_:ARG	   	   
+B:689:_:MET	VDW:MC_SC	B:690:_:LYS	3.709	   	6.000	C	CB	   	   	   	   
+B:689:_:MET	HBOND:MC_MC	B:693:_:MET	2.715	5.527	17.000	O	N	B:693:_:MET	   	   	   
 B:689:_:MET	HBOND:MC_MC	B:692:_:LEU	3.186	60.889	17.000	O	N	B:692:_:LEU	   	   	   
+B:689:_:MET	VDW:SC_SC	B:717:_:LEU	3.841	   	6.000	CE	CD2	   	   	   	   
 B:690:_:LYS	VDW:MC_SC	B:691:_:ARG	3.706	   	6.000	C	CB	   	   	   	   
 B:690:_:LYS	HBOND:MC_MC	B:694:_:ALA	3.301	10.181	17.000	O	N	B:694:_:ALA	   	   	   
 B:691:_:ARG	VDW:MC_SC	B:692:_:LEU	3.707	   	6.000	C	CB	   	   	   	   
@@ -1219,6 +1301,7 @@ B:694:_:ALA	VDW:MC_SC	B:695:_:GLU	3.714	   	6.000	C	CB
 B:694:_:ALA	HBOND:MC_MC	B:697:_:LEU	3.226	33.968	17.000	O	N	B:697:_:LEU	   	   	   
 B:695:_:GLU	VDW:MC_SC	B:705:_:PRO	3.450	   	6.000	C	CD	   	   	   	   
 B:695:_:GLU	VDW:MC_SC	B:696:_:CYS	3.698	   	6.000	C	CB	   	   	   	   
+B:696:_:CYS	VDW:MC_SC	B:704:_:ARG	3.651	   	6.000	C	CD	   	   	   	   
 B:696:_:CYS	VDW:MC_SC	B:697:_:LEU	3.607	   	6.000	C	CB	   	   	   	   
 B:696:_:CYS	VDW:SC_SC	B:710:_:ILE	3.712	   	6.000	SG	CD1	   	   	   	   
 B:697:_:LEU	VDW:MC_SC	B:698:_:LYS	3.701	   	6.000	C	CB	   	   	   	   
@@ -1237,13 +1320,17 @@ B:702:_:ASP	VDW:MC_SC	B:703:_:GLU	3.615	   	6.000	C	CB
 B:703:_:GLU	VDW:MC_SC	B:704:_:ARG	3.679	   	6.000	C	CB	   	   	   	   
 B:704:_:ARG	VDW:MC_SC	B:705:_:PRO	2.496	   	6.000	C	CD	   	   	   	   
 B:705:_:PRO	VDW:MC_SC	B:706:_:SER	3.528	   	6.000	C	CB	   	   	   	   
+B:705:_:PRO	VDW:SC_SC	B:710:_:ILE	3.868	   	6.000	CB	CG1	   	   	   	   
 B:706:_:SER	VDW:MC_SC	B:708:_:PRO	3.219	   	6.000	C	CD	   	   	   	   
 B:706:_:SER	VDW:MC_SC	B:707:_:PHE	3.717	   	6.000	C	CB	   	   	   	   
 B:706:_:SER	VDW:MC_SC	B:710:_:ILE	3.799	   	6.000	C	CG1	   	   	   	   
 B:706:_:SER	HBOND:MC_MC	B:709:_:ARG	2.936	46.221	17.000	O	N	B:709:_:ARG	   	   	   
 B:706:_:SER	HBOND:MC_MC	B:710:_:ILE	2.786	12.580	17.000	O	N	B:710:_:ILE	   	   	   
 B:707:_:PHE	VDW:MC_SC	B:708:_:PRO	2.549	   	6.000	C	CD	   	   	   	   
+B:707:_:PHE	HBOND:MC_MC	B:710:_:ILE	3.475	60.705	17.000	O	N	B:710:_:ILE	   	   	   
 B:707:_:PHE	HBOND:MC_MC	B:711:_:LEU	2.789	10.610	17.000	O	N	B:711:_:LEU	   	   	   
+B:708:_:PRO	VDW:MC_SC	B:709:_:ARG	3.707	   	6.000	C	CB	   	   	   	   
+B:708:_:PRO	HBOND:MC_MC	B:712:_:ALA	3.066	25.104	17.000	O	N	B:712:_:ALA	   	   	   
 B:709:_:ARG	VDW:MC_SC	B:710:_:ILE	3.740	   	6.000	C	CB	   	   	   	   
 B:709:_:ARG	HBOND:MC_MC	B:712:_:ALA	3.304	50.729	17.000	O	N	B:712:_:ALA	   	   	   
 B:709:_:ARG	HBOND:MC_MC	B:713:_:GLU	3.004	12.748	17.000	O	N	B:713:_:GLU	   	   	   

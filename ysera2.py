@@ -609,20 +609,20 @@ class Edges(Nodes):
                         if self.multiple:
                             self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
                                                      f"{neig_res.get_parent().id}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
-                            self.add_bond([
-                                chain, residue, neig_res,
-                                f"PIPISTACK:{chain1}_{chain2}",
-                                f"{aromatic_distance:.3f}",
-                                f"{angle:.3f}",
-                                f"{9.4:.3f}",
-                                coord_1,
-                                coord_2,
-                                "   ",
-                                "   ",
-                                "   ",
-                                f"{orient_type}"
-                            ], 'pi_stacking')
-                        self.exclusions.append([amin, neig_amin])
+                        self.add_bond([
+                            chain, residue, neig_res,
+                            f"PIPISTACK:{chain1}_{chain2}",
+                            f"{aromatic_distance:.3f}",
+                            f"{angle:.3f}",
+                            f"{9.4:.3f}",
+                            coord_1,
+                            coord_2,
+                            "   ",
+                            "   ",
+                            "   ",
+                            f"{orient_type}"
+                        ], 'pi_stacking')
+                    self.exclusions.append([amin, neig_amin])
 
     def _pi_cation(self, chain, residue, atom):
         neighbors = self.ns.search(atom.coord, 7.2)
@@ -656,20 +656,20 @@ class Edges(Nodes):
                         if self.multiple:
                             self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
                                                      f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
-                            self.add_bond([
-                                chain, residue, neig_res,
-                                f"PICATION:{chain1}_{chain2}",
-                                f"{aromatic_distance:.3f}",
-                                "   ",
-                                f"{9.6:.3f}",
-                                atom.get_name(),
-                                neighbor.get_name(),
-                                "   ",
-                                "   ",
-                                f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}",
-                                "P"
-                            ], 'pi_cation')
-                            self.exclusions.append([amin, neig_amin])
+                        self.add_bond([
+                            chain, residue, neig_res,
+                            f"PICATION:{chain1}_{chain2}",
+                            f"{aromatic_distance:.3f}",
+                            "   ",
+                            f"{9.6:.3f}",
+                            atom.get_name(),
+                            neighbor.get_name(),
+                            "   ",
+                            "   ",
+                            f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}",
+                            "P"
+                        ], 'pi_cation')
+                        self.exclusions.append([amin, neig_amin])
             elif neig_res.get_resname() in ['TYR', 'PHE', 'TRP'] and atom.get_name in ligctn:
                 if (amin not in self.invalids and neig_amin not in self.invalids) & \
                         ([amin, neig_amin] not in self.exclusions and [neig_amin, amin] not in self.exclusions):
@@ -689,20 +689,20 @@ class Edges(Nodes):
                         if self.multiple:
                             self.bonds_check.append((f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
                                                      f"{neig_chain}:{str(neig_res.id[1])}:_:{str(neig_res.resname)}"))
-                            self.add_bond([
-                                chain, residue, neig_res,
-                                f"PICATION:{chain1}_{chain2}",
-                                f"{aromatic_distance:.3f}",
-                                "   ",
-                                f"{9.6:.3f}",
-                                atom.get_name(),
-                                neighbor.get_name(),
-                                "   ",
-                                "   ",
-                                f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
-                                "P"
-                            ], 'pi_cation')
-                            self.exclusions.append([amin, neig_amin])
+                        self.add_bond([
+                            chain, residue, neig_res,
+                            f"PICATION:{chain1}_{chain2}",
+                            f"{aromatic_distance:.3f}",
+                            "   ",
+                            f"{9.6:.3f}",
+                            atom.get_name(),
+                            neighbor.get_name(),
+                            "   ",
+                            "   ",
+                            f"{chain.id}:{str(residue.id[1])}:_:{str(residue.resname)}",
+                            "P"
+                        ], 'pi_cation')
+                        self.exclusions.append([amin, neig_amin])
     def Bonds(self):
 
         for chain in self.structure.get_chains():
@@ -729,7 +729,7 @@ class Edges(Nodes):
                     self._pi_cation(chain, residue, atom)
 
     def analyse(self, bond, lig):
-
+        n_lines=0
         """
         This function implements the analysis for the multiple mode, it checks if the same pair with the same bond exists
         more than once and takes only the one with the shortest distance between theses repeated bonds, allowing only
@@ -738,6 +738,7 @@ class Edges(Nodes):
 
         for pair in self.bonds_check:
             pair_dist, pair_idx = [], []
+            n_lines=0
 
             for line in range(len(self.nodes_id1)):
                 # getting the pair_distance and index and adding to pair_dist and pair_idx
@@ -751,6 +752,7 @@ class Edges(Nodes):
                 min_pair = pair_idx[min_idx]
                 for i in pair_idx:
                     if i != min_pair:
+                        i -= n_lines
                         self.nodes_id1.pop(i)
                         self.nodes_id2.pop(i)
                         self.donors.pop(i)
@@ -764,6 +766,7 @@ class Edges(Nodes):
                         self.cations.pop(i)
                         self.orientation.pop(i)
                         self.ligands[lig] -= 1
+                        n_lines+=1
 
     def multiple_mode(self):
         # implement the analyse function for each bond in software
@@ -782,6 +785,7 @@ class Edges(Nodes):
                                      self.angles, self.energies, self.atom1, self.atom2, self.donors, self.positives, self.cations, self.orientation)), columns=colunas)
 
         data.to_csv(f'./{self.name}_edges.txt', sep='\t', index=False)
+        print(self.ligands)
 
     def print_output(self, slow=False):
         self.Bonds()
