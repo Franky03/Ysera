@@ -3,34 +3,45 @@ import pymol
 import time
 import os
 
+class MakeFiles:
+    def __init__(self,name=False, file=None, hydrogenate=False):
 
-def run_software(name_=False, file=None, hydrogenate=False):
-    start = time.time()
+        if file is None:
+            raise Exception("Load File")
+        
+        if not hydrogenate:
+            pymol.cmd.load(file, 'myprotein')
+            pymol.cmd.h_add()
+            pymol.cmd.save('./temp/input_file.pdb')
+            
+        
+        self.edges = Edges(name, './temp/input_file.pdb')
+        self.nodes = Nodes(name, './temp/input_file.pdb')
 
-    if file is None:
-        raise Exception("Load File")
-    
-    if not hydrogenate:
-        pymol.cmd.load(file, 'myprotein')
-        pymol.cmd.h_add()
-        pymol.cmd.save('./temp/input_file.pdb')
-        time.sleep(2)
-   
-    edges = Edges(name_, './temp/input_file.pdb')
-    nodes= Nodes(name_, './temp/input_file.pdb')
-    edges.to_file()
-    nodes.to_file()
+    def get_node_degrees(self):
+        # getting the number of ligands in a residue 
+        for node in self.nodes.nodes_id:
+            degree = 0
+            degree += self.edges.nodes_id1.count(node)
+            degree += self.edges.nodes_id2.count(node)
 
-    finish = (time.time() - start)
+            self.nodes.degrees.append(degree)
 
-    print(f"---{finish} seconds ---")
+    def run_software(self):
 
-    with open("time_log.txt", "a") as file:
-        file.write(f"---{finish} seconds ---\n")
+        start = time.time()
+        self.edges.to_file()
+        self.nodes.search_nodes()
+        self.get_node_degrees()
+        self.nodes.to_file()
 
-    #os.remove('./temp/input_file.pdb')
+        finish = (time.time() - start)
+
+        print(f"---{finish} seconds ---")
 
 
-filename = 'file_24.pdb'
+filename = '3og7.pdb'
 path = f'./temp/{filename}'
-run_software('FILE_24', path, hydrogenate=False)
+
+run = MakeFiles('3og7', path, hydrogenate=False)
+run.run_software()

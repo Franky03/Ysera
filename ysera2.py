@@ -100,9 +100,7 @@ class Nodes:
 
                 self.all_dssps.append(self.dssp_md[0][i] if self.dssp_md[0][i] not in ['C', 'NA'] else '    ')
 
-        # Degree - the number of bonds in a residue
-        self.get_node_degrees()
-
+        
 
     def print_output(self):
         self.search_nodes()
@@ -121,7 +119,7 @@ class Nodes:
                     )
 
     def to_file(self):
-        self.search_nodes()
+        #self.search_nodes()
 
         colunas = ["NodeId", "Chain", "Position", "Residue", "Dssp", "Degree", "Bfactor_CA", "x", "y", "z",
                    "pdbFileName", "Model"]
@@ -808,3 +806,6 @@ class Edges(Nodes):
                     f"{self.nodes_id1[n]}\t{self.bonds[n]}\t{self.nodes_id2[n]}\t{self.distances[n]}\t{self.angles[n]}"
                     f"\t\t{self.energies[n]}\t\t{self.atom1[n]}\t{self.atom2[n]}\t{self.donors[n]}\t{self.orientation[n]}")
         print(self.ligands)
+
+    
+    
